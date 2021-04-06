@@ -15,10 +15,10 @@
     "noImplicitThis": true,
     "resolveJsonModule": true, 
     "paths": {
-      "@server/_shared/*": ["./ecosystem/server/_shared/*"],
-      "@server/http-server/*": ["./ecosystem/server/http-server/*"],
-      "@server/notifications/*": ["./ecosystem/server/notifications/*"],
-      "@server/tickets/*": ["./ecosystem/server/tickets/*"],
+      "@server/_shared/*": ["./packages/server/_shared/*"],
+      "@server/http-server/*": ["./packages/server/http-server/*"],
+      "@server/notifications/*": ["./packages/server/notifications/*"],
+      "@server/tickets/*": ["./packages/server/tickets/*"],
     }
   },
   "exclude": ["node_modules", "dist"]

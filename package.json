@@ -14,10 +14,10 @@
   "license": "ISC",
   "private": true,
   "workspaces": [
-    "ecosystem/_shared",
-    "ecosystem/http-server",
-    "ecosystem/notifications",
-    "ecosystem/tickets"
+    "packages/server/_shared",
+    "packages/server/http-server",
+    "packages/server/notifications",
+    "packages/server/tickets"
   ],
   "bugs": {
     "url": "https://github.com/gabrielbartoczevicz/next-vaccination/issues"
