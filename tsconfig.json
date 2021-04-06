@@ -13,7 +13,13 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true, 
+    "paths": {
+      "@_shared/*": ["./ecosystem/_shared/*"],
+      "@http-server/*": ["./ecosystem/http-server/*"],
+      "@notifications/*": ["./ecosystem/notifications/*"],
+      "@tickets/*": ["./ecosystem/tickets/*"],
+    }
   },
   "exclude": ["node_modules", "dist"]
 }
