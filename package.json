@@ -1,7 +1,7 @@
 {
-  "name": "jornada-de-aprendizagem",
+  "name": "next-vaccination",
   "version": "1.0.0",
-  "description": "Primeiro commit para o projeto, testando a integração do Clubhouse",
+  "description": "Projeto da Jornada de Aprendizagem da Faculdade - Logística de Vacinação",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,7 +11,7 @@
     "url": "git+https://github.com/gabrielbartoczevicz/next-vaccination.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "private": true,
   "workspaces": [
     "packages/server/_shared",
