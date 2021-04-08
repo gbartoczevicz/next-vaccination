@@ -10,4 +10,4 @@ app.use(cors());
 
 app.use(routes);
 
-export { app as Server };
+export { app as server };
