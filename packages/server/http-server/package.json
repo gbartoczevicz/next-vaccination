@@ -7,6 +7,7 @@
     "dev": "tsnd -r tsconfig-paths/register --inspect --transpile-only --ignore-watch node_modules --respawn src/index.ts"
   },
   "dependencies": {
+    "@server/shared": "*",
     "cors": "^2.8.5",
     "express": "^4.17.1"
   },
