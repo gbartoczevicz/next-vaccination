@@ -1,4 +1,3 @@
-import { ICreateUserDTO, IFindUserByEmailDTO } from '@modules/users/dtos';
 import { User } from '@modules/users/entities';
 import { IUsersRepository } from '@modules/users/repositories/IUsersRepository';
 
@@ -9,17 +8,13 @@ export class FakeUsersRepository implements IUsersRepository {
     this.users = [];
   }
 
-  public async create(data: ICreateUserDTO): Promise<User> {
-    const user = new User(data);
-
+  public async create(user: User): Promise<User> {
     this.users.push(user);
 
     return user;
   }
 
-  public async findByEmail({ email }: IFindUserByEmailDTO): Promise<User | null> {
-    const toFindUser = this.users.find((user) => user.email === email);
-
-    return toFindUser;
+  public async findByEmail(email: string): Promise<User | null> {
+    return this.users.find((user) => user.email.value === email);
   }
 }

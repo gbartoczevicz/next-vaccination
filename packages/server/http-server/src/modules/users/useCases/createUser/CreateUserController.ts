@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { CreateUserUseCase } from '@modules/users/useCases/createUser/CreateUserUseCase';
-import { ICreateUserDTO } from '@modules/users/dtos';
+import { ICreateUserDTO } from '@modules/users/useCases/createUser/ICreateUserDTO';
 
 export class CreateUserController {
   private createUserUseCase: CreateUserUseCase;
@@ -17,9 +17,8 @@ export class CreateUserController {
       const userCreated = await this.createUserUseCase.execute(toCreateUser);
 
       return response.json({
-        id: userCreated.id,
         name: userCreated.name,
-        email: userCreated.email,
+        email: userCreated.email.value,
         password: userCreated.password
       });
     } catch (err) {

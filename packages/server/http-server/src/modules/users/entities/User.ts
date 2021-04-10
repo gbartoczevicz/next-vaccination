@@ -1,25 +1,19 @@
-import { EntityID } from '@server/shared';
+import { Entity, EntityID } from '@server/shared';
+import { UserEmail } from '@modules/users/entities';
 
 interface IUserProps {
-  id?: EntityID;
   name: string;
-  email: string;
+  email: UserEmail;
   phone: string;
   password: string;
 }
 
-export class User {
-  private props: IUserProps;
-
-  get id(): string {
-    return this.props.id?.toValue();
-  }
-
+export class User extends Entity<IUserProps> {
   get name(): string {
     return this.props.name;
   }
 
-  get email(): string {
+  get email(): UserEmail {
     return this.props.email;
   }
 
@@ -31,10 +25,13 @@ export class User {
     return this.props.password;
   }
 
-  constructor(props: IUserProps) {
-    this.props = {
-      ...props,
-      id: props.id || new EntityID()
-    };
+  private constructor(props: IUserProps, id?: EntityID) {
+    super(props, id);
+  }
+
+  public static create(props: IUserProps, id?: EntityID): User {
+    const user = new User(props, id);
+
+    return user;
   }
 }
