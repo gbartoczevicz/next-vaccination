@@ -15,7 +15,7 @@
     "noImplicitThis": true,
     "resolveJsonModule": true, 
     "paths": {
-      "@server/_shared/*": ["./packages/server/_shared/*"],
+      "@server/shared/*": ["./packages/server/_shared/*"],
       "@server/http-server/*": ["./packages/server/http-server/*"],
       "@server/notifications/*": ["./packages/server/notifications/*"],
       "@server/tickets/*": ["./packages/server/tickets/*"],
