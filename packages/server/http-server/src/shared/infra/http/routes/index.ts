@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { EntityID } from '@server/shared/src';
+import { EntityID } from '@server/shared';
 
 const routes = Router();
 
