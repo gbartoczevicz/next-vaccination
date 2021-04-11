@@ -1,3 +1,5 @@
+import { AppError } from '@server/shared';
+
 /* eslint-disable max-len */
 interface IUserEmailProps {
   value: string;
@@ -22,7 +24,7 @@ export class UserEmail {
 
   public static create(email: string) {
     if (!this.isValid(email)) {
-      throw new Error(`Email ${email} is invalid`);
+      throw new AppError(`Email address ${email} is invalid`);
     }
 
     return new UserEmail({ value: email });

@@ -1,6 +1,7 @@
 import { ICreateUserDTO } from '@modules/users/useCases/createUser/ICreateUserDTO';
 import { User, UserEmail } from '@modules/users/entities';
 import { IUsersRepository } from '@modules/users/repositories/IUsersRepository';
+import { AccountAlreadyExists } from '@modules/users/useCases/createUser/CreateUserErrors';
 
 export class CreateUserUseCase {
   private usersRepository: IUsersRepository;
@@ -10,13 +11,13 @@ export class CreateUserUseCase {
   }
 
   public async execute(request: ICreateUserDTO): Promise<User> {
-    const doesUserAlreadyInUse = await this.usersRepository.findByEmail(request.email);
-
-    if (doesUserAlreadyInUse) {
-      throw new Error(`E-mail ${request.email} already in use`);
-    }
-
     const userEmail = UserEmail.create(request.email);
+
+    const doesAccountAlreadyExists = await this.usersRepository.findByEmail(userEmail);
+
+    if (doesAccountAlreadyExists) {
+      throw new AccountAlreadyExists(doesAccountAlreadyExists.email.value);
+    }
 
     const user = User.create({
       name: request.name,

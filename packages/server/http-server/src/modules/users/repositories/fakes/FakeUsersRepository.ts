@@ -1,4 +1,4 @@
-import { User } from '@modules/users/entities';
+import { User, UserEmail } from '@modules/users/entities';
 import { IUsersRepository } from '@modules/users/repositories/IUsersRepository';
 
 export class FakeUsersRepository implements IUsersRepository {
@@ -14,7 +14,7 @@ export class FakeUsersRepository implements IUsersRepository {
     return user;
   }
 
-  public async findByEmail(email: string): Promise<User | null> {
-    return this.users.find((user) => user.email.value === email);
+  public async findByEmail(email: UserEmail): Promise<User | null> {
+    return this.users.find((user) => user.email.value === email.value);
   }
 }
