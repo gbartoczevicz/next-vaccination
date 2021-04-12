@@ -4,7 +4,13 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "dev": "tsnd -r tsconfig-paths/register --inspect --transpile-only --ignore-watch node_modules --respawn src/index.ts"
+    "dev": "tsnd -r tsconfig-paths/register --inspect --transpile-only --ignore-watch node_modules --respawn src/index.ts",
+    "test": "NODE_ENV=test jest --passWithNoTests --runInBand",
+    "test:verbose": "NODE_ENV=test jest --passWithNoTests",
+    "test:unit": "yarn test -- --watch -c jest-unit.config.js",
+    "test:integration": "yarn test -- --watch -c jest-integration.config.js",
+    "test:staged": "yarn test -- --findRelatedTests",
+    "test:ci": "yarn test -- --coverage"
   },
   "dependencies": {
     "@server/shared": "*",
