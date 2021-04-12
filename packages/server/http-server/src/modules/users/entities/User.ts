@@ -1,10 +1,11 @@
 import { Entity, EntityID, Result } from '@server/shared';
 import { UserEmail } from '@modules/users/entities';
+import { UserPhone } from './UserPhone';
 
 interface IUserProps {
   name: string;
   email: UserEmail;
-  phone: string;
+  phone: UserPhone;
   password: string;
 }
 
@@ -17,7 +18,7 @@ export class User extends Entity<IUserProps> {
     return this.props.email;
   }
 
-  get phone(): string {
+  get phone(): UserPhone {
     return this.props.phone;
   }
 
@@ -34,12 +35,12 @@ export class User extends Entity<IUserProps> {
       return Result.fail<User>('Name is required');
     }
 
-    if (!props.phone) {
-      return Result.fail<User>('Phone is required');
-    }
-
     if (!props.password) {
       return Result.fail<User>('Password is required');
+    }
+
+    if (props.password.length < 8) {
+      return Result.fail<User>('Password needs at least 8 characters');
     }
 
     const user = new User(props, id);

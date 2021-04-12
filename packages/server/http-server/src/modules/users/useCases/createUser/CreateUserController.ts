@@ -3,8 +3,7 @@ import { Response } from 'express';
 import { BaseController } from '@shared/infra/http/controllers/BaseController';
 import { CreateUserUseCase } from '@modules/users/useCases/createUser/CreateUserUseCase';
 import { ICreateUserDTO } from '@modules/users/useCases/createUser/ICreateUserDTO';
-import { AppError } from '@server/shared';
-import { AccountAlreadyExists } from '@modules/users/useCases/createUser/CreateUserErrors';
+import { AccountAlreadyExists, UserValidationError } from '@modules/users/useCases/createUser/CreateUserErrors';
 
 export class CreateUserController extends BaseController {
   private createUserUseCase: CreateUserUseCase;
@@ -25,7 +24,7 @@ export class CreateUserController extends BaseController {
         return this.conflict(err.message);
       }
 
-      if (err instanceof AppError) {
+      if (err instanceof UserValidationError) {
         return this.badRequest(err.message);
       }
 
