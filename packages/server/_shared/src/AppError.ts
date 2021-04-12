@@ -1,4 +1,4 @@
-export class AppError {
+export class UnexpectedError {
   public readonly message: string;
 
   constructor(message: string) {

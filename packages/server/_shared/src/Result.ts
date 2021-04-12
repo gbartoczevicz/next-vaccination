@@ -8,7 +8,7 @@ export class Result<T> {
 
   private value: T;
 
-  private constructor(isSuccess: boolean, error?: string, value?: T) {
+  constructor(isSuccess: boolean, error?: string, value?: T) {
     if (isSuccess && error) {
       throw new Error(`InvalidOperation: A result cannot be 
         successful and contain an error`);

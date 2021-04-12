@@ -1,13 +1,13 @@
-import { AppError } from '@server/shared';
+import { Result, UseCaseError } from '@server/shared';
 
-export class AccountAlreadyExists extends AppError {
+export class AccountAlreadyExists extends Result<UseCaseError> {
   constructor(email: string) {
-    super(`Account with e-mail ${email} already exists`);
+    super(false, `E-mail address ${email} is already in use`);
   }
 }
 
-export class UserValidationError extends AppError {
-  constructor(message: string) {
-    super(`User validation failed: ${message}`);
+export class UserValidation extends Result<UseCaseError> {
+  constructor(error: string) {
+    super(false, `User validation failed: ${error}`);
   }
 }

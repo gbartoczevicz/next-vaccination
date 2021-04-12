@@ -3,7 +3,8 @@ import { Response } from 'express';
 import { BaseController } from '@shared/infra/http/controllers/BaseController';
 import { CreateUserUseCase } from '@modules/users/useCases/createUser/CreateUserUseCase';
 import { ICreateUserDTO } from '@modules/users/useCases/createUser/ICreateUserDTO';
-import { AccountAlreadyExists, UserValidationError } from '@modules/users/useCases/createUser/CreateUserErrors';
+import { AccountAlreadyExists, UserValidation } from '@modules/users/useCases/createUser/CreateUserErrors';
+import { UnexpectedError } from '@server/shared';
 
 export class CreateUserController extends BaseController {
   private createUserUseCase: CreateUserUseCase;
@@ -18,16 +19,24 @@ export class CreateUserController extends BaseController {
     const dto = this.request.body as ICreateUserDTO;
 
     try {
-      await this.createUserUseCase.execute(dto);
+      const result = await this.createUserUseCase.execute(dto);
+
+      if (result.isLeft()) {
+        const error = result.value;
+
+        if (error instanceof AccountAlreadyExists) {
+          return this.conflict(error.error);
+        }
+
+        if (error instanceof UserValidation) {
+          return this.badRequest(error.error);
+        }
+
+        const { message }: UnexpectedError = error;
+
+        return this.internalServerError(message);
+      }
     } catch (err) {
-      if (err instanceof AccountAlreadyExists) {
-        return this.conflict(err.message);
-      }
-
-      if (err instanceof UserValidationError) {
-        return this.badRequest(err.message);
-      }
-
       return this.internalServerError(err);
     }
 
