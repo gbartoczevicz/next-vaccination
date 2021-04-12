@@ -3,14 +3,18 @@ import { User, UserEmail, UserPhone } from '@modules/users/entities';
 import { IUsersRepository } from '@modules/users/repositories/IUsersRepository';
 import { AccountAlreadyExists, UserValidation } from '@modules/users/useCases/createUser/CreateUserErrors';
 import { Either, left, Result, right, UnexpectedError } from '@server/shared';
+import { IPasswordService } from '@modules/users/services/password/IPasswordService';
 
 type Response = Either<AccountAlreadyExists | UnexpectedError | UserValidation, Result<void>>;
 
 export class CreateUserUseCase {
   private usersRepository: IUsersRepository;
 
-  constructor(usersRepository: IUsersRepository) {
+  private passwordService: IPasswordService;
+
+  constructor(usersRepository: IUsersRepository, passwordService: IPasswordService) {
     this.usersRepository = usersRepository;
+    this.passwordService = passwordService;
   }
 
   public async execute(request: ICreateUserDTO): Promise<Response> {
@@ -31,10 +35,12 @@ export class CreateUserUseCase {
       return left(new AccountAlreadyExists(userEmail.value));
     }
 
+    const encryptedPassword = await this.passwordService.encrypt(request.password);
+
     const userOrError = User.create({
       name: request.name,
       email: userEmail,
-      password: request.password,
+      password: encryptedPassword,
       phone: userPhoneOrError.getValue()
     });
 
@@ -49,6 +55,8 @@ export class CreateUserUseCase {
     } catch (err) {
       return left(new UnexpectedError(err));
     }
+
+    console.log(user);
 
     return right(Result.ok());
   }
