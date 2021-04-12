@@ -16,7 +16,7 @@ export class UserPhone {
   }
 
   private static isValid(phone: string): boolean {
-    const re = /^\(\d{2}\) \d{4,5}-\d{4,5}/;
+    const re = /^\(\d{2}\) \d{4,5}-\d{4}$/;
 
     return re.test(phone);
   }
