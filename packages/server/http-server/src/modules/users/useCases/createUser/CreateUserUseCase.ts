@@ -1,27 +1,24 @@
 import { ICreateUserDTO } from '@modules/users/useCases/createUser/ICreateUserDTO';
-import { User, UserEmail, UserPhone } from '@modules/users/entities';
+import { User, UserEmail, UserPassword, UserPhone } from '@modules/users/entities';
 import { IUsersRepository } from '@modules/users/repositories/IUsersRepository';
 import { AccountAlreadyExists, UserValidation } from '@modules/users/useCases/createUser/CreateUserErrors';
 import { Either, left, Result, right, UnexpectedError } from '@server/shared';
-import { IPasswordService } from '@modules/users/services/password/IPasswordService';
 
 type Response = Either<AccountAlreadyExists | UnexpectedError | UserValidation, Result<void>>;
 
 export class CreateUserUseCase {
   private usersRepository: IUsersRepository;
 
-  private passwordService: IPasswordService;
-
-  constructor(usersRepository: IUsersRepository, passwordService: IPasswordService) {
+  constructor(usersRepository: IUsersRepository) {
     this.usersRepository = usersRepository;
-    this.passwordService = passwordService;
   }
 
   public async execute(request: ICreateUserDTO): Promise<Response> {
     const userEmailOrError = UserEmail.create(request.email);
     const userPhoneOrError = UserPhone.create(request.phone);
+    const userPasswordOrError = UserPassword.create({ value: request.password });
 
-    const result = Result.combine([userEmailOrError, userPhoneOrError]);
+    const result = Result.combine([userEmailOrError, userPhoneOrError, userPasswordOrError]);
 
     if (result.isFailure) {
       return left(new UserValidation(result.error));
@@ -35,12 +32,19 @@ export class CreateUserUseCase {
       return left(new AccountAlreadyExists(userEmail.value));
     }
 
-    const encryptedPassword = await this.passwordService.encrypt(request.password);
+    const userPassword = userPasswordOrError.getValue();
+
+    const hashedPassword = await userPassword.getHashedValue();
+
+    const hashedUserPassword = UserPassword.create({
+      value: hashedPassword,
+      hashed: true
+    }).getValue();
 
     const userOrError = User.create({
       name: request.name,
       email: userEmail,
-      password: encryptedPassword,
+      password: hashedUserPassword,
       phone: userPhoneOrError.getValue()
     });
 
@@ -56,7 +60,7 @@ export class CreateUserUseCase {
       return left(new UnexpectedError(err));
     }
 
-    console.log(user);
+    console.log(JSON.stringify(user));
 
     return right(Result.ok());
   }
