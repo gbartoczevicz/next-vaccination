@@ -1,4 +1,4 @@
-import { Entity, EntityID } from '@server/shared';
+import { Entity, EntityID, Result } from '@server/shared';
 import { UserEmail } from '@modules/users/entities';
 
 interface IUserProps {
@@ -29,9 +29,21 @@ export class User extends Entity<IUserProps> {
     super(props, id);
   }
 
-  public static create(props: IUserProps, id?: EntityID): User {
+  public static create(props: IUserProps, id?: EntityID): Result<User> {
+    if (!props.name) {
+      return Result.fail<User>('Name is required');
+    }
+
+    if (!props.phone) {
+      return Result.fail<User>('Phone is required');
+    }
+
+    if (!props.password) {
+      return Result.fail<User>('Password is required');
+    }
+
     const user = new User(props, id);
 
-    return user;
+    return Result.ok<User>(user);
   }
 }

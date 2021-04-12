@@ -1,4 +1,4 @@
-import { AppError } from '@server/shared';
+import { Result } from '@server/shared';
 
 /* eslint-disable max-len */
 interface IUserEmailProps {
@@ -22,11 +22,17 @@ export class UserEmail {
     return re.test(email);
   }
 
-  public static create(email: string) {
-    if (!this.isValid(email)) {
-      throw new AppError(`Email address ${email} is invalid`);
+  public static create(email: string): Result<UserEmail> {
+    if (!email) {
+      return Result.fail<UserEmail>('E-mail is required');
     }
 
-    return new UserEmail({ value: email });
+    if (!this.isValid(email)) {
+      return Result.fail<UserEmail>(`E-mail address ${email} is invalid`);
+    }
+
+    const userEmail = new UserEmail({ value: email });
+
+    return Result.ok<UserEmail>(userEmail);
   }
 }
