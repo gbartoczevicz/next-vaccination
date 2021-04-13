@@ -1,5 +1,5 @@
 import { ICreateUserDTO } from '@modules/users/useCases/createUser/ICreateUserDTO';
-import { User, UserEmail, UserPhone } from '@modules/users/entities';
+import { User, UserEmail, UserPassword, UserPhone } from '@modules/users/entities';
 import { IUsersRepository } from '@modules/users/repositories/IUsersRepository';
 import { AccountAlreadyExists, UserValidation } from '@modules/users/useCases/createUser/CreateUserErrors';
 import { Either, left, Result, right, UnexpectedError } from '@server/shared';
@@ -16,8 +16,9 @@ export class CreateUserUseCase {
   public async execute(request: ICreateUserDTO): Promise<Response> {
     const userEmailOrError = UserEmail.create(request.email);
     const userPhoneOrError = UserPhone.create(request.phone);
+    const userPasswordOrError = UserPassword.create({ value: request.password });
 
-    const result = Result.combine([userEmailOrError, userPhoneOrError]);
+    const result = Result.combine([userEmailOrError, userPhoneOrError, userPasswordOrError]);
 
     if (result.isFailure) {
       return left(new UserValidation(result.error));
@@ -31,10 +32,19 @@ export class CreateUserUseCase {
       return left(new AccountAlreadyExists(userEmail.value));
     }
 
+    const userPassword = userPasswordOrError.getValue();
+
+    const hashedPassword = await userPassword.getHashedValue();
+
+    const hashedUserPassword = UserPassword.create({
+      value: hashedPassword,
+      hashed: true
+    }).getValue();
+
     const userOrError = User.create({
       name: request.name,
       email: userEmail,
-      password: request.password,
+      password: hashedUserPassword,
       phone: userPhoneOrError.getValue()
     });
 
@@ -49,6 +59,8 @@ export class CreateUserUseCase {
     } catch (err) {
       return left(new UnexpectedError(err));
     }
+
+    console.log(JSON.stringify(user));
 
     return right(Result.ok());
   }
