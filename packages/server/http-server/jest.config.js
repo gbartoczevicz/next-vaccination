@@ -11,10 +11,7 @@ module.exports = {
     '.+\\.ts$': 'ts-jest'
   },
   moduleNameMapper: {
-    '@/(A-Za-z)-entities/(.*)': '<rootDir>/src/modules/$1/entities/$2',
-    '@/(A-Za-z)-usecases/(.*)': '<rootDir>/src/modules/$1/usecases/$2',
-    '@/(A-Za-z)-infra/(.*)': '<rootDir>/src/modules/$1/infra/$2',
-    '@/(A-Za-z)-adapters/(.*)': '<rootDir>/src/modules/$1/adapters/$2',
-    '@/(A-Za-z)-main/(.*)': '<rootDir>/src/modules/$1/main/$2'
+    '@/entities/(.*)': '<rootDir>/src/domain/entities/$1',
+    '@/usecases/(.*)': '<rootDir>/src/domain/usecases/$1'
   }
 };
