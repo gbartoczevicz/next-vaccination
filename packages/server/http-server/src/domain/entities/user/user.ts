@@ -1,12 +1,17 @@
-import { Entity, EntityID, Result } from '@server/shared';
+import { Either, Entity, EntityID, Result, left, right } from '@server/shared';
 import { UserEmail, UserPhone, UserPassword } from '@entities/user/values';
-
+import { InvalidUserName, InvalidUserEmail, InvalidUserPassword, InvalidUserPhone } from '@entities/user/errors';
 interface IUserProps {
   name: string;
   email: UserEmail;
   phone: UserPhone;
   password: UserPassword;
 }
+
+type CreateReturnType = Either<
+  InvalidUserName | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword, 
+  User
+>
 
 export class User extends Entity<IUserProps> {
   get name(): string {
@@ -25,29 +30,45 @@ export class User extends Entity<IUserProps> {
     return this.props.password;
   }
 
-  private constructor(props: IUserProps, id?: EntityID) {
+  constructor(props: IUserProps, id?: EntityID) {
     super(props, id);
   }
 
-  public static create(props: IUserProps, id?: EntityID): Result<User> {
-    if (!props.name) {
-      return Result.fail<User>('Name is required');
+  static create(props: IUserProps, id?: EntityID): CreateReturnType {
+    const { name } = props;
+
+    if (!name) {
+      return left(new InvalidUserName('Name is required'));
     }
 
-    if (!props.email) {
-      return Result.fail<User>('E-mail is required');
+    const userEmailOrError = UserEmail.create(props.email.value);
+
+    if (userEmailOrError.isLeft()) {
+      return left(userEmailOrError.value);
     }
 
-    if (!props.phone) {
-      return Result.fail<User>('Phone is required');
+    const userPhoneOrError = UserPhone.create(props.phone.value);
+
+    if (userPhoneOrError.isLeft()) {
+      return left(userPhoneOrError.value);
     }
 
-    if (!props.password) {
-      return Result.fail<User>('Password is required');
+    const userPasswordOrError = UserPassword.create({
+      value: props.password.value,
+      hashed: props.password.isAlreadyHashed()
+    });
+
+    if (userPasswordOrError.isLeft()) {
+      return left(userPasswordOrError.value);
     }
 
-    const user = new User(props, id);
+    const user = new User({
+      name,
+      email: userEmailOrError.value,
+      password: userPasswordOrError.value,
+      phone: userPhoneOrError.value
+    }, id);
 
-    return Result.ok<User>(user);
+    return right(user);
   }
 }

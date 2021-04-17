@@ -1,19 +1,17 @@
-import { Result } from '@server/shared';
+import { Either, left, right, ValueObject } from '@server/shared';
+import { InvalidUserEmail } from '@entities/user/errors';
 
-/* eslint-disable max-len */
 interface IUserEmailProps {
   value: string;
 }
 
-export class UserEmail {
-  private props: IUserEmailProps;
-
+export class UserEmail extends ValueObject<IUserEmailProps> {
   get value(): string {
     return this.props.value;
   }
 
-  private constructor(props: IUserEmailProps) {
-    this.props = props;
+  constructor(props: IUserEmailProps) {
+    super(props);
   }
 
   private static isValid(email: string): boolean {
@@ -22,17 +20,17 @@ export class UserEmail {
     return re.test(email);
   }
 
-  public static create(email: string): Result<UserEmail> {
+  static create(email: string): Either<InvalidUserEmail, UserEmail> {
     if (!email) {
-      return Result.fail<UserEmail>('E-mail is required');
+      return left(new InvalidUserEmail(`E-mail is required`));
     }
 
     if (!this.isValid(email)) {
-      return Result.fail<UserEmail>(`E-mail address ${email} is invalid`);
+      return left(new InvalidUserEmail(`E-mail ${email} is invalid`));
     }
 
     const userEmail = new UserEmail({ value: email });
 
-    return Result.ok<UserEmail>(userEmail);
+    return right(userEmail);
   }
 }

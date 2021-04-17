@@ -1,18 +1,17 @@
-import { Result } from '@server/shared';
+import { Either, left, right, ValueObject } from '@server/shared';
+import { InvalidUserPhone } from '@entities/user/errors';
 
 interface IUserPhoneProps {
   value: string;
 }
 
-export class UserPhone {
-  private props: IUserPhoneProps;
-
+export class UserPhone extends ValueObject<IUserPhoneProps> {
   get value(): string {
     return this.props.value;
   }
 
-  private constructor(props: IUserPhoneProps) {
-    this.props = props;
+  constructor(props: IUserPhoneProps) {
+    super(props);
   }
 
   private static isValid(phone: string): boolean {
@@ -21,17 +20,17 @@ export class UserPhone {
     return re.test(phone);
   }
 
-  public static create(phone: string) {
+  static create(phone: string): Either<InvalidUserPhone, UserPhone> {
     if (!phone) {
-      return Result.fail<UserPhone>('Phone number is required');
+      return left(new InvalidUserPhone('Phone number is required'))
     }
 
     if (!this.isValid(phone)) {
-      return Result.fail<UserPhone>(`Phone number ${phone} is invalid`);
+      return left(new InvalidUserPhone(`Phone number ${phone} is invalid`))
     }
 
     const userPhone = new UserPhone({ value: phone });
 
-    return Result.ok<UserPhone>(userPhone);
+    return right(userPhone);
   }
 }
