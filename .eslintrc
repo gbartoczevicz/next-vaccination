@@ -12,6 +12,7 @@
     "max-len": ["error", { "code": 120, "tabWidth": 2 }],
     "@typescript-eslint/no-throw-literal": "off",
     "max-classes-per-file": "off", 
-    "@typescript-eslint/no-useless-constructor": "off"
+    "@typescript-eslint/no-useless-constructor": "off",
+    "no-console": "off"
   }
 }
