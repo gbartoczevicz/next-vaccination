@@ -4,7 +4,8 @@
   "description": "Projeto da Jornada de Aprendizagem da Faculdade - Logística de Vacinação",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./packages/**/**/src --ext .ts",
+    "lint:fix": "yarn lint -- --fix"
   },
   "repository": {
     "type": "git",
