@@ -15,7 +15,6 @@ describe('Phone Unitary Tests', () => {
 
     expect(testable.isRight()).toBeTruthy();
     expect(testable.isLeft()).toBeFalsy();
-
     if (testable.isRight()) {
       expect(testable.value.value).toEqual('9940028922');
     }
@@ -24,10 +23,9 @@ describe('Phone Unitary Tests', () => {
   it('should return left when creating an invalid phone', () => {
     const { sut } = makeSut();
 
-    const testable = sut.create('momento ronaldo');
+    const testable = sut.create('any_wrong_phone');
 
     expect(testable.isLeft()).toBeTruthy();
-
     expect(testable.value).toEqual(new InvalidUserPhone(`Phone number momento ronaldo is invalid`));
   });
 });
