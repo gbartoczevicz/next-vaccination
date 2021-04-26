@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Either, left, right, ValueObject } from '@server/shared';
 import { InvalidUserEmail } from '@entities/user/errors';
 

@@ -1,5 +1,4 @@
-
-import { Either, left, Result, right, ValueObject } from '@server/shared';
+import { Either, left, right, ValueObject } from '@server/shared';
 import { InvalidUserPassword } from '../errors';
 
 interface IUserPasswordProps {
@@ -22,7 +21,7 @@ export class UserPassword extends ValueObject<IUserPasswordProps> {
 
   static create({ value, hashed }: IUserPasswordProps): Either<InvalidUserPassword, UserPassword> {
     if (!value) {
-      return left(new InvalidUserPassword('Password must not be null or undefined'))
+      return left(new InvalidUserPassword('Password must not be null or undefined'));
     }
 
     if (!hashed && value.length < 8) {
