@@ -14,10 +14,7 @@ describe('Email Unitary Tests', () => {
     const testable = sut.create('any_mail@mail.com');
 
     expect(testable.isRight()).toBeTruthy();
-    expect(testable.isLeft()).toBeFalsy();
-    if (testable.isRight()) {
-      expect(testable.value.value).toEqual('any_mail@mail.com');
-    }
+    expect((<UserEmail>testable.value).email).toEqual('any_mail@mail.com');
   });
 
   describe('Left responses', () => {
