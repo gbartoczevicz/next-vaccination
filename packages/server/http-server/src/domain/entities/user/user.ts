@@ -3,7 +3,7 @@ import { UserEmail, UserPhone, UserPassword } from '@entities/user/values';
 import { InvalidUserName, InvalidUserEmail, InvalidUserPassword, InvalidUserPhone } from '@entities/user/errors';
 
 interface IUserProps {
-  id: EntityID;
+  id?: EntityID;
   name: string;
   email: UserEmail;
   phone: UserPhone;
@@ -23,15 +23,15 @@ export class User {
 
   readonly password: UserPassword;
 
-  constructor(props: IUserProps, id?: EntityID) {
-    this.id = id || new EntityID();
+  constructor(props: IUserProps) {
+    this.id = props.id || new EntityID();
     this.name = props.name;
     this.email = props.email;
     this.phone = props.phone;
     this.password = props.password;
   }
 
-  static create(props: IUserProps, id?: EntityID): CreateResponse {
+  static create(props: IUserProps): CreateResponse {
     const { name } = props;
 
     if (!name) {
@@ -62,7 +62,7 @@ export class User {
     }
 
     const user = new User({
-      id,
+      id: props.id,
       name,
       email: emailOrError.value,
       phone: phoneOrError.value,
