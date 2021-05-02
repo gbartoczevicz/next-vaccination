@@ -9,13 +9,13 @@ export class FakeUsersRepository implements IUsersRepository {
     this.users = [];
   }
 
-  public async create(user: User): Promise<User> {
+  async save(user: User): Promise<User> {
     this.users.push(user);
 
     return user;
   }
 
-  public async findByEmail(email: UserEmail): Promise<User | null> {
-    return this.users.find((user) => user.email.value === email.value);
+  async findByEmail(email: UserEmail): Promise<User | null> {
+    return this.users.find((user) => user.email.email === email.email);
   }
 }

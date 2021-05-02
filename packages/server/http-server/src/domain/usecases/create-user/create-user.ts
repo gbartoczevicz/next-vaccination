@@ -14,7 +14,7 @@ export class CreateUserUseCase {
     this.usersRepository = usersRepository;
   }
 
-  public async execute(request: ICreateUserDTO): Promise<Response> {
+  async execute(request: ICreateUserDTO): Promise<Response> {
     const userEmailOrError = UserEmail.create(request.email);
     const userPhoneOrError = UserPhone.create(request.phone);
     const userPasswordOrError = UserPassword.create({
@@ -55,7 +55,7 @@ export class CreateUserUseCase {
     const user = userOrError.value;
 
     try {
-      await this.usersRepository.create(user);
+      await this.usersRepository.save(user);
     } catch (err) {
       return left(new UnexpectedError(err));
     }
