@@ -1,7 +1,5 @@
-import { Result, UseCaseError } from '@server/shared';
-
-export class AccountAlreadyExists extends Result<UseCaseError> {
+export class AccountAlreadyExists extends Error {
   constructor(email: string) {
-    super(false, `E-mail address ${email} is already in use`);
+    super(`E-mail address ${email} is already in use`);
   }
 }

@@ -1,7 +1,5 @@
-import { Result, UseCaseError } from '@server/shared';
-
-export class UserValidation extends Result<UseCaseError> {
+export class UserValidation extends Error {
   constructor(error: string) {
-    super(false, `User validation failed: ${error}`);
+    super(`User validation failed: ${error}`);
   }
 }
