@@ -1,35 +1,40 @@
-import { Either, left, right, ValueObject } from '@server/shared';
+import { Either, left, right } from '@server/shared';
 import { InvalidUserPassword } from '../errors';
 
 interface IUserPasswordProps {
-  value: string;
+  password: string;
   hashed?: boolean;
 }
 
-export class UserPassword extends ValueObject<IUserPasswordProps> {
-  get value(): string {
-    return this.props.value;
-  }
+export class UserPassword {
+  readonly password: string;
+
+  readonly hashed: boolean;
 
   constructor(props: IUserPasswordProps) {
-    super(props);
+    this.password = props.password;
+    this.hashed = props.hashed;
   }
 
-  isAlreadyHashed(): boolean {
-    return this.props.hashed;
-  }
+  static create(props: IUserPasswordProps): Either<InvalidUserPassword, UserPassword> {
+    const { password, hashed } = props;
 
-  static create({ value, hashed }: IUserPasswordProps): Either<InvalidUserPassword, UserPassword> {
-    if (!value) {
+    if (!password) {
       return left(new InvalidUserPassword('Password must not be null or undefined'));
     }
 
-    if (!hashed && value.length < 8) {
-      return left(new InvalidUserPassword('Password must have at least 8 characters'));
+    if (!hashed) {
+      if (password.length < 8) {
+        return left(new InvalidUserPassword('Password must have at least 8 characters'));
+      }
+
+      if (password.includes(' ')) {
+        return left(new InvalidUserPassword('Password must not contain white spaces'));
+      }
     }
 
     const userPassword = new UserPassword({
-      value,
+      password,
       hashed
     });
 
