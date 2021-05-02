@@ -1,7 +1,5 @@
-export class UnexpectedError {
-  public readonly message: string;
-
+export class UnexpectedError extends Error {
   constructor(message: string) {
-    this.message = message;
+    super(message);
   }
 }
