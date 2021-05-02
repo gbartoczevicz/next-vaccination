@@ -1,6 +1,7 @@
-import { Either, Entity, EntityID, Result, left, right } from '@server/shared';
+import { Either, Entity, EntityID, left, right } from '@server/shared';
 import { UserEmail, UserPhone, UserPassword } from '@entities/user/values';
 import { InvalidUserName, InvalidUserEmail, InvalidUserPassword, InvalidUserPhone } from '@entities/user/errors';
+
 interface IUserProps {
   name: string;
   email: UserEmail;
@@ -8,10 +9,7 @@ interface IUserProps {
   password: UserPassword;
 }
 
-type CreateReturnType = Either<
-  InvalidUserName | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword, 
-  User
->
+type CreateReturnType = Either<InvalidUserName | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword, User>;
 
 export class User extends Entity<IUserProps> {
   get name(): string {
@@ -62,12 +60,15 @@ export class User extends Entity<IUserProps> {
       return left(userPasswordOrError.value);
     }
 
-    const user = new User({
-      name,
-      email: userEmailOrError.value,
-      password: userPasswordOrError.value,
-      phone: userPhoneOrError.value
-    }, id);
+    const user = new User(
+      {
+        name,
+        email: userEmailOrError.value,
+        password: userPasswordOrError.value,
+        phone: userPhoneOrError.value
+      },
+      id
+    );
 
     return right(user);
   }

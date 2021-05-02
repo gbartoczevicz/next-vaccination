@@ -11,7 +11,7 @@ module.exports = {
     '.+\\.ts$': 'ts-jest'
   },
   moduleNameMapper: {
-    '@/entities/(.*)': '<rootDir>/src/domain/entities/$1',
-    '@/usecases/(.*)': '<rootDir>/src/domain/usecases/$1'
+    '@entities/(.*)': '<rootDir>/src/domain/entities/$1',
+    '@usecases/(.*)': '<rootDir>/src/domain/usecases/$1'
   }
 };
