@@ -1,4 +1,5 @@
 import { Either, left, right } from '@server/shared';
+import { Encrypter } from '@entities/output-ports/encrypter';
 import { InvalidUserPassword } from '@entities/user/errors';
 
 export interface IUserPasswordProps {
@@ -11,9 +12,15 @@ export class UserPassword {
 
   readonly hashed: boolean;
 
+  private encrypter: Encrypter;
+
   constructor(props: IUserPasswordProps) {
     this.password = props.password;
     this.hashed = props.hashed;
+  }
+
+  public injectDependencies(encrypter: Encrypter): void {
+    this.encrypter = encrypter;
   }
 
   static create(props: IUserPasswordProps): Either<InvalidUserPassword, UserPassword> {
