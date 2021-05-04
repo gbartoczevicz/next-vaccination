@@ -12,7 +12,7 @@ export class UserPassword {
 
   readonly hashed: boolean;
 
-  private encrypter: Encrypter;
+  public encrypter: Encrypter;
 
   constructor(props: IUserPasswordProps) {
     this.password = props.password;
@@ -46,5 +46,9 @@ export class UserPassword {
     });
 
     return right(userPassword);
+  }
+
+  public async encrypt(): Promise<string> {
+    return !this.hashed ? this.encrypter.encrypt(this.password) : this.password;
   }
 }
