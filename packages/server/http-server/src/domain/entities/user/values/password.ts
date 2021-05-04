@@ -51,4 +51,12 @@ export class UserPassword {
   public async encrypt(): Promise<string> {
     return !this.hashed ? this.encrypter.encrypt(this.password) : this.password;
   }
+
+  public async compare(toCompare: string): Promise<boolean> {
+    if (!this.hashed) {
+      return this.password === toCompare;
+    }
+
+    return this.encrypter.compare(this.password, toCompare);
+  }
 }
