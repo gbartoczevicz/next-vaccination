@@ -1,5 +1,6 @@
 import { Either, EntityID, left, right } from '@server/shared';
 import { UserEmail, UserPhone, UserPassword } from '@entities/user/values';
+import { makePassword } from '@entities/user/values/factories/make-password';
 import { InvalidUserName, InvalidUserEmail, InvalidUserPassword, InvalidUserPhone } from '@entities/user/errors';
 
 interface IUserProps {
@@ -52,7 +53,7 @@ export class User {
 
     const { password, hashed } = props.password;
 
-    const passwordOrError = UserPassword.create({
+    const passwordOrError = makePassword({
       password,
       hashed
     });
