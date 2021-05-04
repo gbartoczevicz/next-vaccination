@@ -1,4 +1,5 @@
-import { UserPassword, IUserPasswordProps } from '@entities/user/values';
+import { makePassword } from '@entities/user/values/factories/make-password';
+import { IUserPasswordProps } from '@entities/user/values';
 import { InvalidUserPassword } from '@entities/user/errors';
 
 const makeFixture = ({ password, hashed = false }: IUserPasswordProps) => ({
@@ -8,7 +9,7 @@ const makeFixture = ({ password, hashed = false }: IUserPasswordProps) => ({
 
 const makeSut = () => {
   return {
-    sut: UserPassword
+    sut: makePassword
   };
 };
 
@@ -16,13 +17,13 @@ describe('Password Unitary Tests', () => {
   it('should be create a non hashed valid password', () => {
     const { sut } = makeSut();
 
-    const testableEmptyPassword = sut.create(makeFixture({ password: '' }));
+    const testableEmptyPassword = sut(makeFixture({ password: '' }));
     expect(testableEmptyPassword.value).toEqual(new InvalidUserPassword('Password must not be null or undefined'));
 
-    const testableLenghtPassword = sut.create(makeFixture({ password: '>8' }));
+    const testableLenghtPassword = sut(makeFixture({ password: '>8' }));
     expect(testableLenghtPassword.value).toEqual(new InvalidUserPassword('Password must have at least 8 characters'));
 
-    const testableSpacedPassword = sut.create(makeFixture({ password: '12345678 ' }));
+    const testableSpacedPassword = sut(makeFixture({ password: '12345678 ' }));
     expect(testableSpacedPassword.value).toEqual(new InvalidUserPassword('Password must not contain white spaces'));
   });
 });
