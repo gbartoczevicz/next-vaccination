@@ -1,5 +1,5 @@
 import { makePassword } from '@entities/user/values/factories/make-password';
-import { IUserPasswordProps } from '@entities/user/values';
+import { UserPassword, IUserPasswordProps } from '@entities/user/values';
 import { InvalidUserPassword } from '@entities/user/errors';
 
 const makeFixture = ({ password, hashed = false }: IUserPasswordProps) => ({
@@ -25,5 +25,34 @@ describe('Password Unitary Tests', () => {
 
     const testableSpacedPassword = sut(makeFixture({ password: '12345678 ' }));
     expect(testableSpacedPassword.value).toEqual(new InvalidUserPassword('Password must not contain white spaces'));
+  });
+
+  describe('Encrypter patterns', () => {
+    it('should be encrypt password', async () => {
+      const { sut } = makeSut();
+
+      const makedSut = sut(makeFixture({ password: 'any_correct_password' }));
+      const testable = <UserPassword>makedSut.value;
+
+      const spyEncrypt = jest.spyOn(testable.encrypter, 'encrypt');
+
+      await testable.encrypt();
+
+      expect(spyEncrypt).toHaveBeenCalledTimes(1);
+      expect(spyEncrypt).toHaveBeenCalledWith('any_correct_password');
+    });
+
+    it('should be encrypt password if hashed === false', async () => {
+      const { sut } = makeSut();
+
+      const makedSut = sut(makeFixture({ password: 'any_correct_password', hashed: true }));
+      const testable = <UserPassword>makedSut.value;
+
+      const spyEncrypt = jest.spyOn(testable.encrypter, 'encrypt');
+
+      await testable.encrypt();
+
+      expect(spyEncrypt).toHaveBeenCalledTimes(0);
+    });
   });
 });
