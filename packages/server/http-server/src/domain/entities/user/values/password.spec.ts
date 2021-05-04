@@ -27,7 +27,7 @@ describe('Password Unitary Tests', () => {
     expect(testableSpacedPassword.value).toEqual(new InvalidUserPassword('Password must not contain white spaces'));
   });
 
-  describe('Encrypter patterns', () => {
+  describe('Encrypt', () => {
     it('should be encrypt password', async () => {
       const { sut } = makeSut();
 
@@ -53,6 +53,31 @@ describe('Password Unitary Tests', () => {
       await testable.encrypt();
 
       expect(spyEncrypt).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe('Compare', () => {
+    it('should be compare non encrypted passwords', async () => {
+      const { sut } = makeSut();
+
+      const makedSut = sut(makeFixture({ password: 'any_correct_password' }));
+      const testable = <UserPassword>makedSut.value;
+
+      expect(await testable.compare('another_correct_password')).toBeFalsy();
+    });
+
+    it('should be compare encrypted passwords', async () => {
+      const { sut } = makeSut();
+
+      const makedSut = sut(makeFixture({ password: 'any_correct_password', hashed: true }));
+      const testable = <UserPassword>makedSut.value;
+
+      const spyCompare = jest.spyOn(testable.encrypter, 'compare');
+
+      await testable.compare('another_correct_password');
+
+      expect(spyCompare).toHaveBeenCalledTimes(1);
+      expect(spyCompare).toHaveBeenCalledWith('any_correct_password', 'another_correct_password');
     });
   });
 });
