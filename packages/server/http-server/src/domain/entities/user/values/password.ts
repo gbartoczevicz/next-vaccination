@@ -1,7 +1,7 @@
 import { Either, left, right } from '@server/shared';
-import { InvalidUserPassword } from '../errors';
+import { InvalidUserPassword } from '@entities/user/errors';
 
-interface IUserPasswordProps {
+export interface IUserPasswordProps {
   password: string;
   hashed?: boolean;
 }
