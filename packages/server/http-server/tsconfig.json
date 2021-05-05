@@ -11,7 +11,8 @@
       "@shared/*": ["./src/shared/*"],
       "@modules/*": ["./src/modules/*"],
       "@entities/*": ["./src/domain/entities/*"],
-      "@usecases/*": ["./src/domain/usecases/*"]
+      "@usecases/*": ["./src/domain/usecases/*"],
+      "@external/*": ["./src/external/*"]
     }
   },
   "exclude": ["node_modules", "dist"]
