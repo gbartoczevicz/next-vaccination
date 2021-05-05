@@ -1,14 +1,14 @@
 import { Either, EntityID, left, right } from '@server/shared';
-import { UserEmail, UserPhone, UserPassword } from '@entities/user/values';
+import { UserEmail, UserPhone, UserPassword, IUserPasswordProps } from '@entities/user/values';
 import { makePassword } from '@entities/user/values/factories/make-password';
 import { InvalidUserName, InvalidUserEmail, InvalidUserPassword, InvalidUserPhone } from '@entities/user/errors';
 
 interface IUserProps {
   id?: EntityID;
   name: string;
-  email: UserEmail;
-  phone: UserPhone;
-  password: UserPassword;
+  email: string;
+  phone: string;
+  password: IUserPasswordProps;
 }
 
 type CreateResponse = Either<InvalidUserName | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword, User>;
@@ -24,51 +24,35 @@ export class User {
 
   readonly password: UserPassword;
 
-  constructor(props: IUserProps) {
-    this.id = props.id || new EntityID();
-    this.name = props.name;
-    this.email = props.email;
-    this.phone = props.phone;
-    this.password = props.password;
+  constructor(name: string, email: UserEmail, phone: UserPhone, password: UserPassword, id?: EntityID) {
+    this.id = id || new EntityID();
+    this.name = name;
+    this.email = email;
+    this.phone = phone;
+    this.password = password;
   }
 
   static create(props: IUserProps): CreateResponse {
-    const { name } = props;
-
-    if (!name) {
+    if (!props.name) {
       return left(new InvalidUserName('Name is required'));
     }
 
-    const emailOrError = UserEmail.create(props.email?.email);
-
+    const emailOrError = UserEmail.create(props.email);
     if (emailOrError.isLeft()) {
       return left(emailOrError.value);
     }
 
-    const phoneOrError = UserPhone.create(props.phone?.phone);
-
+    const phoneOrError = UserPhone.create(props.phone);
     if (phoneOrError.isLeft()) {
       return left(phoneOrError.value);
     }
 
-    const { password, hashed } = props.password;
-
-    const passwordOrError = makePassword({
-      password,
-      hashed
-    });
-
+    const passwordOrError = makePassword(props.password);
     if (passwordOrError.isLeft()) {
       return left(passwordOrError.value);
     }
 
-    const user = new User({
-      id: props.id,
-      name,
-      email: emailOrError.value,
-      phone: phoneOrError.value,
-      password: passwordOrError.value
-    });
+    const user = new User(props.name, emailOrError.value, phoneOrError.value, passwordOrError.value, props.id);
 
     return right(user);
   }
