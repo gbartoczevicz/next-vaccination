@@ -84,4 +84,18 @@ describe('Create User Use Case Unitary Tests', () => {
     expect(testable.isLeft()).toBeTruthy();
     expect(testable.value).toEqual(new AccountAlreadyExists(makeFixture({}).email));
   });
+
+  it('should return left if savedUser returns left', async () => {
+    const { sut, fakeUsersRepository } = makeSut();
+
+    jest.spyOn(fakeUsersRepository, 'findByEmail').mockImplementation(() => Promise.resolve(right(null)));
+    const spyFakeUsersRepository = jest.spyOn(fakeUsersRepository, 'save');
+    spyFakeUsersRepository.mockImplementation(() => Promise.resolve(left(new InfraError('any_infra_error'))));
+
+    const testable = await sut.execute(makeFixture({}));
+
+    expect(spyFakeUsersRepository).toHaveBeenCalledTimes(1);
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new InfraError('any_infra_error'));
+  });
 });
