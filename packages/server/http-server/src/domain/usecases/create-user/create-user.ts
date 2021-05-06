@@ -25,6 +25,13 @@ export class CreateUserUseCase {
       return left(userOrError.value);
     }
 
-    return right(userOrError.value);
+    const user = userOrError.value;
+
+    const doesAccountAlreadyExistsOrError = await this.usersRepository.findByEmail(user.email);
+    if (doesAccountAlreadyExistsOrError.isLeft()) {
+      return left(doesAccountAlreadyExistsOrError.value);
+    }
+
+    return right(user);
   }
 }
