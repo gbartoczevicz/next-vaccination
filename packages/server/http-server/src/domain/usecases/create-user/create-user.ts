@@ -2,9 +2,10 @@ import { ICreateUserDTO } from '@usecases/create-user';
 import { User } from '@entities/user';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
 import { AccountAlreadyExists, UserValidation } from '@usecases/create-user/errors';
-import { Either, left, right, UnexpectedError } from '@server/shared';
+import { InfraError } from '@usecases/output-ports/errors';
+import { Either, left, right } from '@server/shared';
 
-type Response = Either<AccountAlreadyExists | UnexpectedError | UserValidation, User>;
+type Response = Either<AccountAlreadyExists | InfraError | UserValidation, User>;
 
 export class CreateUserUseCase {
   private usersRepository: IUsersRepository;
