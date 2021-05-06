@@ -1,35 +1,35 @@
-import { Either, left, right, ValueObject } from '@server/shared';
+import { Either, left, right } from '@server/shared';
 import { InvalidUserPhone } from '@entities/user/errors';
 
-interface IUserPhoneProps {
-  value: string;
-}
+export class UserPhone {
+  readonly phone: string;
 
-export class UserPhone extends ValueObject<IUserPhoneProps> {
-  get value(): string {
-    return this.props.value;
-  }
-
-  constructor(props: IUserPhoneProps) {
-    super(props);
+  constructor(phone: string) {
+    this.phone = phone;
   }
 
   private static isValid(phone: string): boolean {
-    const re = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+    const re = /^\d{8,12}$/;
 
     return re.test(phone);
   }
 
+  private static format(phone: string): string {
+    return phone.trim().replace(' ', '').replace('(', '').replace(')', '').replace('-', '');
+  }
+
   static create(phone: string): Either<InvalidUserPhone, UserPhone> {
     if (!phone) {
-      return left(new InvalidUserPhone('Phone number is required'))
+      return left(new InvalidUserPhone('Phone number is required'));
     }
 
-    if (!this.isValid(phone)) {
-      return left(new InvalidUserPhone(`Phone number ${phone} is invalid`))
+    const formattedPhone = this.format(phone);
+
+    if (!this.isValid(formattedPhone)) {
+      return left(new InvalidUserPhone(`Phone number ${phone} is invalid`));
     }
 
-    const userPhone = new UserPhone({ value: phone });
+    const userPhone = new UserPhone(formattedPhone);
 
     return right(userPhone);
   }

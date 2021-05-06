@@ -1,11 +1,11 @@
 import { ICreateUserDTO } from '@usecases/create-user';
 import { User } from '@entities/user';
-import { UserEmail, UserPassword, UserPhone } from '@entities/user/values';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
 import { AccountAlreadyExists, UserValidation } from '@usecases/create-user/errors';
-import { Either, left, Result, right, UnexpectedError } from '@server/shared';
+import { InfraError } from '@usecases/output-ports/errors';
+import { Either, left, right } from '@server/shared';
 
-type Response = Either<AccountAlreadyExists | UnexpectedError | UserValidation, Result<void>>;
+type Response = Either<AccountAlreadyExists | InfraError | UserValidation, User>;
 
 export class CreateUserUseCase {
   private usersRepository: IUsersRepository;
@@ -14,53 +14,34 @@ export class CreateUserUseCase {
     this.usersRepository = usersRepository;
   }
 
-  public async execute(request: ICreateUserDTO): Promise<Response> {
-    const userEmailOrError = UserEmail.create(request.email);
-    const userPhoneOrError = UserPhone.create(request.phone);
-    const userPasswordOrError = UserPassword.create({ value: request.password });
-
-    const result = Result.combine([userEmailOrError, userPhoneOrError, userPasswordOrError]);
-
-    if (result.isFailure) {
-      return left(new UserValidation(result.error));
-    }
-
-    const userEmail = userEmailOrError.getValue();
-
-    const doesAccountAlreadyExists = await this.usersRepository.findByEmail(userEmail);
-
-    if (doesAccountAlreadyExists) {
-      return left(new AccountAlreadyExists(userEmail.value));
-    }
-
-    const userPassword = userPasswordOrError.getValue();
-
-    const hashedPassword = await userPassword.getHashedValue();
-
-    const hashedUserPassword = UserPassword.create({
-      value: hashedPassword,
-      hashed: true
-    }).getValue();
-
+  async execute(request: ICreateUserDTO): Promise<Response> {
     const userOrError = User.create({
-      name: request.name,
-      email: userEmail,
-      password: hashedUserPassword,
-      phone: userPhoneOrError.getValue()
+      ...request,
+      password: {
+        password: request.password
+      }
     });
-
-    if (userOrError.isFailure) {
-      return left(new UserValidation(userOrError.error));
+    if (userOrError.isLeft()) {
+      return left(userOrError.value);
     }
 
-    const user = userOrError.getValue();
+    const user = userOrError.value;
 
-    try {
-      await this.usersRepository.create(user);
-    } catch (err) {
-      return left(new UnexpectedError(err));
+    const doesAccountAlreadyExistsOrError = await this.usersRepository.findByEmail(user.email);
+    if (doesAccountAlreadyExistsOrError.isLeft()) {
+      return left(doesAccountAlreadyExistsOrError.value);
     }
 
-    return right(Result.ok());
+    const doesAccountAlreadyExists = doesAccountAlreadyExistsOrError.value;
+    if (doesAccountAlreadyExists) {
+      return left(new AccountAlreadyExists(doesAccountAlreadyExists.email.email));
+    }
+
+    const savedUserOrError = await this.usersRepository.save(user);
+    if (savedUserOrError.isLeft()) {
+      return left(savedUserOrError.value);
+    }
+
+    return right(user);
   }
 }

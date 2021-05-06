@@ -1,73 +1,58 @@
-import { Either, Entity, EntityID, Result, left, right } from '@server/shared';
-import { UserEmail, UserPhone, UserPassword } from '@entities/user/values';
+import { Either, EntityID, left, right } from '@server/shared';
+import { UserEmail, UserPhone, UserPassword, IUserPasswordProps } from '@entities/user/values';
+import { makePassword } from '@entities/user/values/factories/make-password';
 import { InvalidUserName, InvalidUserEmail, InvalidUserPassword, InvalidUserPhone } from '@entities/user/errors';
+
 interface IUserProps {
+  id?: EntityID;
   name: string;
-  email: UserEmail;
-  phone: UserPhone;
-  password: UserPassword;
+  email: string;
+  phone: string;
+  password: IUserPasswordProps;
 }
 
-type CreateReturnType = Either<
-  InvalidUserName | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword, 
-  User
->
+type CreateResponse = Either<InvalidUserName | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword, User>;
 
-export class User extends Entity<IUserProps> {
-  get name(): string {
-    return this.props.name;
+export class User {
+  readonly id: EntityID;
+
+  readonly name: string;
+
+  readonly email: UserEmail;
+
+  readonly phone: UserPhone;
+
+  readonly password: UserPassword;
+
+  constructor(name: string, email: UserEmail, phone: UserPhone, password: UserPassword, id?: EntityID) {
+    this.id = id || new EntityID();
+    this.name = name;
+    this.email = email;
+    this.phone = phone;
+    this.password = password;
   }
 
-  get email(): UserEmail {
-    return this.props.email;
-  }
-
-  get phone(): UserPhone {
-    return this.props.phone;
-  }
-
-  get password(): UserPassword {
-    return this.props.password;
-  }
-
-  constructor(props: IUserProps, id?: EntityID) {
-    super(props, id);
-  }
-
-  static create(props: IUserProps, id?: EntityID): CreateReturnType {
-    const { name } = props;
-
-    if (!name) {
+  static create(props: IUserProps): CreateResponse {
+    if (!props.name) {
       return left(new InvalidUserName('Name is required'));
     }
 
-    const userEmailOrError = UserEmail.create(props.email.value);
-
-    if (userEmailOrError.isLeft()) {
-      return left(userEmailOrError.value);
+    const emailOrError = UserEmail.create(props.email);
+    if (emailOrError.isLeft()) {
+      return left(emailOrError.value);
     }
 
-    const userPhoneOrError = UserPhone.create(props.phone.value);
-
-    if (userPhoneOrError.isLeft()) {
-      return left(userPhoneOrError.value);
+    const phoneOrError = UserPhone.create(props.phone);
+    if (phoneOrError.isLeft()) {
+      return left(phoneOrError.value);
     }
 
-    const userPasswordOrError = UserPassword.create({
-      value: props.password.value,
-      hashed: props.password.isAlreadyHashed()
-    });
-
-    if (userPasswordOrError.isLeft()) {
-      return left(userPasswordOrError.value);
+    const passwordOrError = makePassword(props.password);
+    if (passwordOrError.isLeft()) {
+      return left(passwordOrError.value);
     }
 
-    const user = new User({
-      name,
-      email: userEmailOrError.value,
-      password: userPasswordOrError.value,
-      phone: userPhoneOrError.value
-    }, id);
+    const user = new User(props.name, emailOrError.value, phoneOrError.value, passwordOrError.value, props.id);
 
     return right(user);
   }

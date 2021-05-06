@@ -1,39 +1,62 @@
+import { Either, left, right } from '@server/shared';
+import { Encrypter } from '@entities/output-ports/encrypter';
+import { InvalidUserPassword } from '@entities/user/errors';
 
-import { Either, left, Result, right, ValueObject } from '@server/shared';
-import { InvalidUserPassword } from '../errors';
-
-interface IUserPasswordProps {
-  value: string;
+export interface IUserPasswordProps {
+  password: string;
   hashed?: boolean;
 }
 
-export class UserPassword extends ValueObject<IUserPasswordProps> {
-  get value(): string {
-    return this.props.value;
-  }
+export class UserPassword {
+  readonly password: string;
+
+  readonly hashed: boolean;
+
+  public encrypter: Encrypter;
 
   constructor(props: IUserPasswordProps) {
-    super(props);
+    this.password = props.password;
+    this.hashed = props.hashed;
   }
 
-  isAlreadyHashed(): boolean {
-    return this.props.hashed;
+  public injectDependencies(encrypter: Encrypter): void {
+    this.encrypter = encrypter;
   }
 
-  static create({ value, hashed }: IUserPasswordProps): Either<InvalidUserPassword, UserPassword> {
-    if (!value) {
-      return left(new InvalidUserPassword('Password must not be null or undefined'))
+  static create(props: IUserPasswordProps): Either<InvalidUserPassword, UserPassword> {
+    const { password, hashed } = props;
+
+    if (!password) {
+      return left(new InvalidUserPassword('Password must not be null or undefined'));
     }
 
-    if (!hashed && value.length < 8) {
-      return left(new InvalidUserPassword('Password must have at least 8 characters'));
+    if (!hashed) {
+      if (password.length < 8) {
+        return left(new InvalidUserPassword('Password must have at least 8 characters'));
+      }
+
+      if (password.includes(' ')) {
+        return left(new InvalidUserPassword('Password must not contain white spaces'));
+      }
     }
 
     const userPassword = new UserPassword({
-      value,
+      password,
       hashed
     });
 
     return right(userPassword);
+  }
+
+  public async encrypt(): Promise<string> {
+    return !this.hashed ? this.encrypter.encrypt(this.password) : this.password;
+  }
+
+  public async compare(toCompare: string): Promise<boolean> {
+    if (!this.hashed) {
+      return this.password === toCompare;
+    }
+
+    return this.encrypter.compare(this.password, toCompare);
   }
 }
