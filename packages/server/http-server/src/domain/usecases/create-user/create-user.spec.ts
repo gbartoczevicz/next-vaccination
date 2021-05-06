@@ -1,4 +1,5 @@
 import { User } from '@entities/user';
+import { InvalidUserEmail } from '@entities/user/errors';
 import { CreateUserUseCase } from '@usecases/create-user';
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users/fake';
 
@@ -35,5 +36,19 @@ describe('Create User Use Case Unitary Tests', () => {
     expect(user.name).toEqual('any_correct_name');
     expect(user.email.email).toEqual('any_correct_email@mail.com');
     expect(user.phone.phone).toEqual('99999999999');
+  });
+
+  it('should return left if User params is invalid', async () => {
+    const { sut } = makeSut();
+
+    const testable = await sut.execute({
+      name: 'any_correct_name',
+      email: 'any_wrong_email',
+      phone: '(99) 99999-9999',
+      password: 'any_correct_password'
+    });
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new InvalidUserEmail('E-mail any_wrong_email is invalid'));
   });
 });
