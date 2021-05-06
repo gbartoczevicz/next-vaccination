@@ -37,6 +37,11 @@ export class CreateUserUseCase {
       return left(new AccountAlreadyExists(doesAccountAlreadyExists.email.email));
     }
 
+    const savedUserOrError = await this.usersRepository.save(user);
+    if (savedUserOrError.isLeft()) {
+      return left(savedUserOrError.value);
+    }
+
     return right(user);
   }
 }
