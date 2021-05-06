@@ -1,7 +1,8 @@
 import { User } from '@entities/user';
 import { InvalidUserEmail } from '@entities/user/errors';
-import { left } from '@server/shared';
+import { left, right } from '@server/shared';
 import { CreateUserUseCase } from '@usecases/create-user';
+import { AccountAlreadyExists } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users/fake';
 
@@ -34,7 +35,10 @@ const makeSut = (): SutTypes => {
 
 describe('Create User Use Case Unitary Tests', () => {
   it('should instance correct User', async () => {
-    const { sut } = makeSut();
+    const { sut, fakeUsersRepository } = makeSut();
+
+    const spyFakeUsersRepository = jest.spyOn(fakeUsersRepository, 'findByEmail');
+    spyFakeUsersRepository.mockImplementation(() => Promise.resolve(right(null)));
 
     const testable = await sut.execute(makeFixture({}));
 
@@ -56,7 +60,7 @@ describe('Create User Use Case Unitary Tests', () => {
     expect(testable.value).toEqual(new InvalidUserEmail('E-mail any_wrong_email is invalid'));
   });
 
-  it('should return left if email already in use', async () => {
+  it('should return left if findByEmail explodes InfraError', async () => {
     const { sut, fakeUsersRepository } = makeSut();
 
     const spyFakeUsersRepository = jest.spyOn(fakeUsersRepository, 'findByEmail');
@@ -67,5 +71,17 @@ describe('Create User Use Case Unitary Tests', () => {
     expect(spyFakeUsersRepository).toHaveBeenCalledTimes(1);
     expect(testable.isLeft()).toBeTruthy();
     expect(testable.value).toEqual(new InfraError('any_infra_error'));
+  });
+
+  it('should return left if email already in use', async () => {
+    const { sut, fakeUsersRepository } = makeSut();
+
+    const spyFakeUsersRepository = jest.spyOn(fakeUsersRepository, 'findByEmail');
+
+    const testable = await sut.execute(makeFixture({}));
+
+    expect(spyFakeUsersRepository).toHaveBeenCalledTimes(1);
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new AccountAlreadyExists(makeFixture({}).email));
   });
 });
