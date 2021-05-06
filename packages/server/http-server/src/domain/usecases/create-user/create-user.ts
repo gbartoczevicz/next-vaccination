@@ -32,6 +32,11 @@ export class CreateUserUseCase {
       return left(doesAccountAlreadyExistsOrError.value);
     }
 
+    const doesAccountAlreadyExists = doesAccountAlreadyExistsOrError.value;
+    if (doesAccountAlreadyExists) {
+      return left(new AccountAlreadyExists(doesAccountAlreadyExists.email.email));
+    }
+
     return right(user);
   }
 }
