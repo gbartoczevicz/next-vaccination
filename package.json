@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint ./packages/**/**/src --ext .ts",
-    "lint:fix": "yarn lint -- --fix"
+    "lint:fix": "yarn lint -- --fix", 
+    "tp:http-server": "cd packages/server/http-server"
   },
   "repository": {
     "type": "git",
