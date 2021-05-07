@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "packages/server/http-server/**"
+  pull_request:
 
 jobs:
   test-routine:
