@@ -26,5 +26,4 @@ jobs:
         env:
           NODE_ENV: test
       - run: yarn
-      - run: yarn tp:http-server
-      - run: yarn test:ci
+      - run: yarn tp:http-server && yarn test:ci
