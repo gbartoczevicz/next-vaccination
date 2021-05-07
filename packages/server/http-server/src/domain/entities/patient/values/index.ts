@@ -1,1 +1,1 @@
-export * from './patient-birthday';
+export * from './birthday';

@@ -3,19 +3,16 @@ import { Either, left, right } from '@server/shared';
 import { InvalidBirthday } from '../errors';
 
 export class PatientBirthday {
-  readonly date: Date;
+  private value: Date;
 
   dateParser: IDateParser;
 
-  constructor(date: Date) {
-    this.date = date;
+  get date(): Date {
+    return this.dateParser.parseToUTCZuluTime(this.value);
   }
 
-  /**
-   * TODO: format date to UTC 00:00 and remove time
-   */
-  private static format(dateToFormat: Date): Date {
-    return dateToFormat;
+  constructor(date: Date) {
+    this.value = date;
   }
 
   intejctDependencies(dateParser: IDateParser): void {
@@ -31,12 +28,6 @@ export class PatientBirthday {
       return left(new InvalidBirthday('Birthday is required'));
     }
 
-    if (date.getTimezoneOffset() !== 0) {
-      return left(new InvalidBirthday('Birthday must have UTC 00:00 offset'));
-    }
-
-    const formattedDate = this.format(date);
-
-    return right(new PatientBirthday(formattedDate));
+    return right(new PatientBirthday(date));
   }
 }

@@ -1,7 +1,7 @@
 import { InvalidBirthday } from '@entities/patient/errors';
 import { FakeDateParser } from '@external/date-parser';
 import { Either, left, right } from '@server/shared';
-import { PatientBirthday } from '../patient-birthday';
+import { PatientBirthday } from '@entities/patient/values';
 
 export const makeBirthday = (date: Date): Either<InvalidBirthday, PatientBirthday> => {
   const patientBirthdayOrError = PatientBirthday.create(date);
