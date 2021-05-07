@@ -20,12 +20,8 @@ export class PatientBirthday {
   }
 
   static create(date: Date): Either<InvalidBirthday, PatientBirthday> {
-    if (!(date instanceof Date)) {
-      return left(new InvalidBirthday(`Value ${date} must be a Date object`));
-    }
-
     if (!date) {
-      return left(new InvalidBirthday('Birthday is required'));
+      return left(new InvalidBirthday('Date is required'));
     }
 
     return right(new PatientBirthday(date));

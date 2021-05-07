@@ -57,10 +57,12 @@ export class Patient {
       return left(new InvalidPatient('Document is required'));
     }
 
-    const birthday = birthdayOrError.value;
+    if (!props.user) {
+      return left(new InvalidPatient('User is required'));
+    }
 
     const { document, user, avatar, ticket, id } = props;
 
-    return right(new Patient(birthday, user, document, avatar, ticket, id));
+    return right(new Patient(birthdayOrError.value, user, document, avatar, ticket, id));
   }
 }
