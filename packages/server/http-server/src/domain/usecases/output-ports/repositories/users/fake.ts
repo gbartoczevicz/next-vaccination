@@ -14,7 +14,7 @@ export class FakeUsersRepository implements IUsersRepository {
       id: new EntityID(id),
       name: 'Name',
       email: 'contact@email.com',
-      password: { password: 'secret' },
+      password: { password: 'any_password' },
       phone: '0000-0000'
     }).value as User;
 

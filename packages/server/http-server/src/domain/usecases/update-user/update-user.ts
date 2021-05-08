@@ -13,6 +13,10 @@ type Response = Either<
 export class UpdateUserUseCase {
   private usersRepository: IUsersRepository;
 
+  constructor(usersRepository: IUsersRepository) {
+    this.usersRepository = usersRepository;
+  }
+
   async execute(request: IUpdateUserDTO): Promise<Response> {
     const { id, email, name, password, phone, currentPassword } = request;
 
@@ -50,7 +54,7 @@ export class UpdateUserUseCase {
 
     const userWithSameEmail = userWithSameEmailOrError.value;
 
-    if (!userWithSameEmail?.id.equals(userToUpdate.id)) {
+    if (userWithSameEmail && !userWithSameEmail.id.equals(userToUpdate.id)) {
       return left(new AccountAlreadyExists(email));
     }
 
