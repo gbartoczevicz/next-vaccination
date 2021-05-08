@@ -9,11 +9,11 @@ interface IPatientProps {
   birthday: Date;
   user: User;
   document: string;
-  avatar?: string;
+  avatar: string;
   ticket?: string;
 }
 
-type CreatePatientErrors = InvalidPatient | InvalidBirthday;
+export type CreatePatientErrors = InvalidPatient | InvalidBirthday;
 
 type CreatePatient = Either<CreatePatientErrors, Patient>;
 
@@ -30,14 +30,7 @@ export class Patient {
 
   readonly ticket?: string;
 
-  constructor(
-    birthday: PatientBirthday,
-    user: User,
-    document: string,
-    avatar?: string,
-    ticket?: string,
-    id?: EntityID
-  ) {
+  constructor(birthday: PatientBirthday, user: User, document: string, avatar: string, ticket?: string, id?: EntityID) {
     this.id = id || new EntityID();
     this.birthday = birthday;
     this.user = user;
@@ -55,6 +48,10 @@ export class Patient {
 
     if (!props.document) {
       return left(new InvalidPatient('Document is required'));
+    }
+
+    if (!props.avatar) {
+      return left(new InvalidPatient('Avatar is required'));
     }
 
     if (!props.user) {
