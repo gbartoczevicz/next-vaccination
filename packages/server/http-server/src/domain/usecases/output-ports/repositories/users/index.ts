@@ -1,1 +1,2 @@
-export * from '@usecases/output-ports/repositories/users/users';
+export * from './users';
+export * from './fake';

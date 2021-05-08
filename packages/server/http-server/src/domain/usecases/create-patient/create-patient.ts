@@ -1,6 +1,6 @@
 import { Patient, CreatePatientErrors } from '@entities/patient';
 import { Either, left, right } from '@server/shared';
-import { DocumentAlreadyInUse } from '@usecases/errors/document-already-in-use';
+import { DocumentAlreadyInUse } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IPatientsRepository } from '@usecases/output-ports/repositories/patients';
 import { ICreatePatientDTO } from './dto';

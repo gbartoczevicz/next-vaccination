@@ -9,7 +9,7 @@ interface IPatientProps {
   birthday: Date;
   user: User;
   document: string;
-  avatar: string;
+  avatar?: string;
   ticket?: string;
 }
 
@@ -50,7 +50,8 @@ export class Patient {
       return left(new InvalidPatient('Document is required'));
     }
 
-    if (!props.avatar) {
+    // TODO: ver se a validação pode ficar realmente aqui
+    if (props.id && !props.avatar) {
       return left(new InvalidPatient('Avatar is required'));
     }
 

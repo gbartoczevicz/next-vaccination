@@ -21,6 +21,7 @@ export class CreateUserUseCase {
         password: request.password
       }
     });
+
     if (userOrError.isLeft()) {
       return left(userOrError.value);
     }
@@ -28,16 +29,19 @@ export class CreateUserUseCase {
     const user = userOrError.value;
 
     const doesAccountAlreadyExistsOrError = await this.usersRepository.findByEmail(user.email);
+
     if (doesAccountAlreadyExistsOrError.isLeft()) {
       return left(doesAccountAlreadyExistsOrError.value);
     }
 
     const doesAccountAlreadyExists = doesAccountAlreadyExistsOrError.value;
+
     if (doesAccountAlreadyExists) {
       return left(new AccountAlreadyExists(doesAccountAlreadyExists.email.email));
     }
 
     const savedUserOrError = await this.usersRepository.save(user);
+
     if (savedUserOrError.isLeft()) {
       return left(savedUserOrError.value);
     }

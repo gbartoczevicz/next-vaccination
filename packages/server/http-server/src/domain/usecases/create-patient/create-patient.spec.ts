@@ -2,7 +2,7 @@ import { Patient } from '@entities/patient';
 import { InvalidPatient } from '@entities/patient/errors';
 import { User } from '@entities/user';
 import { left, right } from '@server/shared';
-import { DocumentAlreadyInUse } from '@usecases/errors/document-already-in-use';
+import { DocumentAlreadyInUse } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakePatientsRepository } from '@usecases/output-ports/repositories/patients';
 import { CreatePatientUseCase } from './create-patient';
