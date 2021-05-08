@@ -9,6 +9,24 @@ export class FakePatientsRepository implements IPatientsRepository {
     return Promise.resolve(right(patient));
   }
 
+  async findById(id: string): Promise<Either<InfraError, Patient | null>> {
+    const fixture = Patient.create({
+      id: new EntityID(id),
+      birthday: new Date(),
+      document: '000.000.000-00',
+      user: User.create({
+        id: new EntityID(),
+        name: 'name',
+        email: 'user@email.com',
+        phone: '9999-9999',
+        password: { password: 'secret' }
+      }).value as User,
+      avatar: 'avatar.png'
+    }).value as Patient;
+
+    return Promise.resolve(right(fixture));
+  }
+
   async findByDocument(document: string): Promise<Either<InfraError, Patient | null>> {
     const fixture = Patient.create({
       birthday: new Date(),
