@@ -19,7 +19,8 @@ export class FakePatientsRepository implements IPatientsRepository {
         email: 'user@email.com',
         phone: '9999-9999',
         password: { password: 'secret' }
-      }).value as User
+      }).value as User,
+      avatar: 'avatar.png'
     }).value as Patient;
 
     return Promise.resolve(right(fixture));
