@@ -1,7 +1,6 @@
 import { Phone } from '@entities/phone';
 import { Either, EntityID, left, right } from '@server/shared';
-import { InvalidLocation } from './errors';
-import { InvalidVaccinationPoint } from './errors/invalid-vaccination-point';
+import { InvalidLocation, InvalidVaccinationPoint } from './errors';
 import { Location, ILocationProps } from './values';
 
 interface IVaccinationPointProps {

@@ -1,5 +1,4 @@
-import { InvalidLocation } from './errors';
-import { InvalidVaccinationPoint } from './errors/invalid-vaccination-point';
+import { InvalidLocation, InvalidVaccinationPoint } from './errors';
 import { VaccinationPoint } from './vaccination-point';
 import { Location } from './values';
 
