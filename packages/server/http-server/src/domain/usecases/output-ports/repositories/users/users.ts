@@ -5,5 +5,6 @@ import { Either } from '@server/shared';
 
 export interface IUsersRepository {
   save(user: User): Promise<Either<InfraError, User>>;
+  findById(id: string): Promise<Either<InfraError, User | null>>;
   findByEmail(email: UserEmail): Promise<Either<InfraError, User | null>>;
 }

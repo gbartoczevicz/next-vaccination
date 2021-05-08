@@ -11,7 +11,9 @@ interface IUserProps {
   password: IUserPasswordProps;
 }
 
-type CreateResponse = Either<InvalidUserName | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword, User>;
+export type CreateUserErrors = InvalidUserName | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword;
+
+type CreateResponse = Either<CreateUserErrors, User>;
 
 export class User {
   readonly id: EntityID;
