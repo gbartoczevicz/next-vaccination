@@ -1,9 +1,9 @@
-import { UserPhone } from '@entities/user/values';
+import { Phone } from '@entities/phone';
 import { InvalidUserPhone } from '@entities/user/errors';
 
 const makeSut = () => {
   return {
-    sut: UserPhone
+    sut: Phone
   };
 };
 
@@ -13,15 +13,15 @@ describe('Phone Unitary Tests', () => {
 
     let testable = sut.create('(99) 4002-8922');
     expect(testable.isRight()).toBeTruthy();
-    expect((<UserPhone>testable.value).phone).toEqual('9940028922');
+    expect((<Phone>testable.value).phone).toEqual('9940028922');
 
     testable = sut.create('(099) 91029-1029');
     expect(testable.isRight()).toBeTruthy();
-    expect((<UserPhone>testable.value).phone).toEqual('099910291029');
+    expect((<Phone>testable.value).phone).toEqual('099910291029');
 
     testable = sut.create('1029-1029');
     expect(testable.isRight()).toBeTruthy();
-    expect((<UserPhone>testable.value).phone).toEqual('10291029');
+    expect((<Phone>testable.value).phone).toEqual('10291029');
   });
 
   it('should return left when creating an invalid phone', () => {
