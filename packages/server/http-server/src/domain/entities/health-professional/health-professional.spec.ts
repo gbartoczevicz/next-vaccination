@@ -32,7 +32,7 @@ const makeFixture = (document = 'health_professional_document') => {
 };
 
 describe('Health Professional Unitary Tests', () => {
-  it('should create a valid health professional object', () => {
+  it('should create a valid non responsible health professional object', () => {
     const { sut } = makeSut();
 
     const fixture = makeFixture();
@@ -45,6 +45,24 @@ describe('Health Professional Unitary Tests', () => {
 
     expect(healthProfessional.document).toEqual('health_professional_document');
     expect(healthProfessional.user).toEqual(fixture.user);
+    expect(healthProfessional.responsible).toBe(false);
+    expect(healthProfessional.vaccinationPoint).toEqual(fixture.vaccinationPoint);
+  });
+
+  it('should create a valid responsible health professional object', () => {
+    const { sut } = makeSut();
+
+    const fixture = { ...makeFixture(), responsible: true };
+
+    const testable = sut.create(fixture);
+
+    expect(testable.isRight()).toBeTruthy();
+
+    const healthProfessional = testable.value as HealthProfessional;
+
+    expect(healthProfessional.document).toEqual('health_professional_document');
+    expect(healthProfessional.user).toEqual(fixture.user);
+    expect(healthProfessional.responsible).toBe(true);
     expect(healthProfessional.vaccinationPoint).toEqual(fixture.vaccinationPoint);
   });
 

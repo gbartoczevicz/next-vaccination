@@ -8,6 +8,7 @@ interface IHealthProfessionalProps {
   user: User;
   vaccinationPoint: VaccinationPoint;
   document: string;
+  responsible?: boolean;
 }
 
 type CreateHealthProfessional = Either<InvalidHealthProfessional, HealthProfessional>;
@@ -21,11 +22,14 @@ export class HealthProfessional {
 
   readonly document: string;
 
-  constructor(user: User, vaccinationPoint: VaccinationPoint, document: string, id?: EntityID) {
+  readonly responsible: boolean;
+
+  constructor(user: User, vaccinationPoint: VaccinationPoint, document: string, responsible = false, id?: EntityID) {
     this.id = id || new EntityID();
     this.user = user;
     this.vaccinationPoint = vaccinationPoint;
     this.document = document;
+    this.responsible = responsible;
   }
 
   static create(props: IHealthProfessionalProps): CreateHealthProfessional {
@@ -41,7 +45,13 @@ export class HealthProfessional {
       return left(new InvalidHealthProfessional('Vaccination Point is required'));
     }
 
-    const healthProfessional = new HealthProfessional(props.user, props.vaccinationPoint, props.document, props.id);
+    const healthProfessional = new HealthProfessional(
+      props.user,
+      props.vaccinationPoint,
+      props.document,
+      props.responsible,
+      props.id
+    );
 
     return right(healthProfessional);
   }
