@@ -1,7 +1,7 @@
 import { Either, left, right } from '@server/shared';
 import { InvalidUserPhone } from '@entities/user/errors';
 
-export class UserPhone {
+export class Phone {
   readonly phone: string;
 
   constructor(phone: string) {
@@ -18,7 +18,7 @@ export class UserPhone {
     return phone.trim().replace(' ', '').replace('(', '').replace(')', '').replace('-', '');
   }
 
-  static create(phone: string): Either<InvalidUserPhone, UserPhone> {
+  static create(phone: string): Either<InvalidUserPhone, Phone> {
     if (!phone) {
       return left(new InvalidUserPhone('Phone number is required'));
     }
@@ -29,7 +29,7 @@ export class UserPhone {
       return left(new InvalidUserPhone(`Phone number ${phone} is invalid`));
     }
 
-    const userPhone = new UserPhone(formattedPhone);
+    const userPhone = new Phone(formattedPhone);
 
     return right(userPhone);
   }

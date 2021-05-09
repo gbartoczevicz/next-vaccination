@@ -1,5 +1,6 @@
 import { Either, EntityID, left, right } from '@server/shared';
-import { UserEmail, UserPhone, UserPassword, IUserPasswordProps } from '@entities/user/values';
+import { UserEmail, UserPassword, IUserPasswordProps } from '@entities/user/values';
+import { Phone } from '@entities/phone';
 import { makePassword } from '@entities/user/values/factories/make-password';
 import { InvalidUserName, InvalidUserEmail, InvalidUserPassword, InvalidUserPhone } from '@entities/user/errors';
 
@@ -22,11 +23,11 @@ export class User {
 
   readonly email: UserEmail;
 
-  readonly phone: UserPhone;
+  readonly phone: Phone;
 
   readonly password: UserPassword;
 
-  constructor(name: string, email: UserEmail, phone: UserPhone, password: UserPassword, id?: EntityID) {
+  constructor(name: string, email: UserEmail, phone: Phone, password: UserPassword, id?: EntityID) {
     this.id = id || new EntityID();
     this.name = name;
     this.email = email;
@@ -44,7 +45,7 @@ export class User {
       return left(emailOrError.value);
     }
 
-    const phoneOrError = UserPhone.create(props.phone);
+    const phoneOrError = Phone.create(props.phone);
     if (phoneOrError.isLeft()) {
       return left(phoneOrError.value);
     }
