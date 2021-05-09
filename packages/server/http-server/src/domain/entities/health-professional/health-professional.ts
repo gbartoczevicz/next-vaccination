@@ -41,7 +41,7 @@ export class HealthProfessional {
       return left(new InvalidHealthProfessional('Vaccination Point is required'));
     }
 
-    const healthProfessional = new HealthProfessional(props.user, props.vaccinationPoint, props.document);
+    const healthProfessional = new HealthProfessional(props.user, props.vaccinationPoint, props.document, props.id);
 
     return right(healthProfessional);
   }
