@@ -2,7 +2,7 @@ import { HealthProfessional } from '@entities/health-professional';
 import { User } from '@entities/user';
 import { VaccinationPoint } from '@entities/vaccination-point';
 import { EntityID, right } from '@server/shared';
-import { FindUnique, IHealthProfessionalRepository, Save } from './health-professional';
+import { FindUnique, IHealthProfessionalsRepository, Save } from './health-professionals';
 
 const makeFixture = (document = 'health_professional_document') => ({
   document,
@@ -27,7 +27,7 @@ const makeFixture = (document = 'health_professional_document') => ({
   }).value as VaccinationPoint
 });
 
-export class FakeHealthProfessionalRepository implements IHealthProfessionalRepository {
+export class FakeHealthProfessionalsRepository implements IHealthProfessionalsRepository {
   async findByDocument(document: string): Promise<FindUnique> {
     const fixture = HealthProfessional.create(makeFixture(document)).value as HealthProfessional;
 
