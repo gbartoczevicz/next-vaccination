@@ -1,9 +1,10 @@
-import { right } from '@server/shared';
+import { EntityID, right } from '@server/shared';
 import { VaccinationPoint } from '@entities/vaccination-point';
 import { Location } from '@entities/vaccination-point/values';
 import { FindUnique, IVaccinationPointsRepository, Save } from './vaccination-points';
 
-const makeFixture = (document = 'document', latitude = 41.40338, longitude = 2.17403) => ({
+const makeFixture = (document = 'document', latitude = 41.40338, longitude = 2.17403, id?: EntityID) => ({
+  id,
   name: 'Point',
   document,
   phone: '0000-0000',
@@ -16,6 +17,13 @@ const makeFixture = (document = 'document', latitude = 41.40338, longitude = 2.1
 });
 
 export class FakeVaccinationPointsRepository implements IVaccinationPointsRepository {
+  async findById(id: string): Promise<FindUnique> {
+    const fixture = VaccinationPoint.create(makeFixture(undefined, undefined, undefined, new EntityID(id)))
+      .value as VaccinationPoint;
+
+    return Promise.resolve(right(fixture));
+  }
+
   async findByDocument(document: string): Promise<FindUnique> {
     const fixture = VaccinationPoint.create(makeFixture(document)).value as VaccinationPoint;
 

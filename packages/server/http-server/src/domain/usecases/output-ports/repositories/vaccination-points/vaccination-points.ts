@@ -7,6 +7,7 @@ export type FindUnique = Either<InfraError, VaccinationPoint | null>;
 export type Save = Either<InfraError, VaccinationPoint>;
 
 export interface IVaccinationPointsRepository {
+  findById(id: string): Promise<FindUnique>;
   findByDocument(document: string): Promise<FindUnique>;
   findByLatitudeAndLongitude(latitude: number, longitude: number): Promise<FindUnique>;
   save(vaccinationPoint: VaccinationPoint): Promise<Save>;
