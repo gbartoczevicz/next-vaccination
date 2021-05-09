@@ -4,8 +4,17 @@ import { makePassword } from '@entities/user/values/factories/make-password';
 import { InvalidBirthday, InvalidPatient } from './errors';
 import { Patient } from './patient';
 
-const makeFixture = () => {
+const makeFixture = (
+  birthday = new Date(),
+  avatar = 'avatar.png',
+  document = '000.000.000-00',
+  ticket = 'ticket.pdf'
+) => {
   return {
+    birthday,
+    avatar,
+    document,
+    ticket,
     user: User.create({
       name: 'Name',
       email: 'any_correct_email@mail.com',
@@ -21,15 +30,12 @@ describe('Patient Unitary Tests', () => {
   it('should create a valid Patient', () => {
     const { sut } = makeSut();
 
-    const { user } = makeFixture();
-
-    const birthday = new Date();
+    const { birthday, user } = makeFixture();
 
     const testable = sut.create({
+      ...makeFixture(),
       birthday,
-      user,
-      avatar: 'avatar.png',
-      document: '000.000.000-00'
+      user
     });
 
     expect(testable.isRight()).toBeTruthy();
@@ -38,6 +44,8 @@ describe('Patient Unitary Tests', () => {
 
     expect(patient.document).toEqual('000.000.000-00');
     expect(patient.birthday.date).toEqual(birthday);
+    expect(patient.avatar).toEqual('avatar.png');
+    expect(patient.ticket).toEqual('ticket.pdf');
     expect(patient.user).toEqual(user);
   });
 
@@ -46,10 +54,8 @@ describe('Patient Unitary Tests', () => {
       const { sut } = makeSut();
 
       const testable = sut.create({
-        birthday: new Date(),
-        user: null,
-        avatar: 'avatar.png',
-        document: '000.000.000-00'
+        ...makeFixture(),
+        user: null
       });
 
       expect(testable.isLeft()).toBeTruthy();
@@ -60,9 +66,7 @@ describe('Patient Unitary Tests', () => {
       const { sut } = makeSut();
 
       const testable = sut.create({
-        birthday: new Date(),
-        user: makeFixture().user,
-        avatar: 'avatar.png',
+        ...makeFixture(),
         document: null
       });
 
@@ -70,28 +74,12 @@ describe('Patient Unitary Tests', () => {
       expect(testable.value).toEqual(new InvalidPatient('Document is required'));
     });
 
-    it('should validate avatar param', () => {
-      const { sut } = makeSut();
-
-      const testable = sut.create({
-        birthday: new Date(),
-        user: makeFixture().user,
-        document: '000.000.000-00',
-        avatar: null
-      });
-
-      expect(testable.isLeft()).toBeTruthy();
-      expect(testable.value).toEqual(new InvalidPatient('Avatar is required'));
-    });
-
     it('should validate birthday param', () => {
       const { sut } = makeSut();
 
       const testable = sut.create({
-        birthday: null,
-        user: makeFixture().user,
-        avatar: 'avatar.png',
-        document: '0000-0000'
+        ...makeFixture(),
+        birthday: null
       });
 
       expect(testable.isLeft()).toBeTruthy();
