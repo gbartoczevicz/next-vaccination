@@ -50,11 +50,6 @@ export class Patient {
       return left(new InvalidPatient('Document is required'));
     }
 
-    // TODO: ver se a validação pode ficar realmente aqui
-    if (props.id && !props.avatar) {
-      return left(new InvalidPatient('Avatar is required'));
-    }
-
     if (!props.user) {
       return left(new InvalidPatient('User is required'));
     }
