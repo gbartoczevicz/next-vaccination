@@ -6,3 +6,4 @@ export * from './user-not-found';
 export * from './patient-not-found';
 export * from './location-already-in-use';
 export * from './vaccination-point-not-found';
+export * from './health-professional-not-found';
