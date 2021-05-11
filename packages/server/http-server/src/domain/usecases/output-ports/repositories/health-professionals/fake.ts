@@ -4,17 +4,24 @@ import { VaccinationPoint } from '@entities/vaccination-point';
 import { EntityID, right } from '@server/shared';
 import { FindUnique, IHealthProfessionalsRepository, Save } from './health-professionals';
 
-const makeFixture = (document = 'health_professional_document') => ({
+const makeFixture = ({
+  document = 'health_professional_document',
+  responsible = false,
+  vaccinationPointId = 'vaccination_point_id',
+  id = 'health_professional_id'
+}) => ({
+  id: new EntityID(id),
   document,
+  responsible,
   user: User.create({
     id: new EntityID(),
     name: 'name',
     email: 'user@email.com',
     phone: '9999-9999',
-    password: { password: 'secret' }
+    password: { password: '1234567890' }
   }).value as User,
   vaccinationPoint: VaccinationPoint.create({
-    id: new EntityID(),
+    id: new EntityID(vaccinationPointId),
     name: 'Vaccination Point',
     phone: '0000-0000',
     document: 'vaccination_point_document',
@@ -28,8 +35,21 @@ const makeFixture = (document = 'health_professional_document') => ({
 });
 
 export class FakeHealthProfessionalsRepository implements IHealthProfessionalsRepository {
+  async findById(id: string): Promise<FindUnique> {
+    const fixture = HealthProfessional.create(makeFixture({ id })).value as HealthProfessional;
+
+    return Promise.resolve(right(fixture));
+  }
+
   async findByDocument(document: string): Promise<FindUnique> {
-    const fixture = HealthProfessional.create(makeFixture(document)).value as HealthProfessional;
+    const fixture = HealthProfessional.create(makeFixture({ document })).value as HealthProfessional;
+
+    return Promise.resolve(right(fixture));
+  }
+
+  async findByVaccinationPointIdAndIsResponsible(vaccinationPointId: string): Promise<FindUnique> {
+    const fixture = HealthProfessional.create(makeFixture({ vaccinationPointId, responsible: true }))
+      .value as HealthProfessional;
 
     return Promise.resolve(right(fixture));
   }
