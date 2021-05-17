@@ -1,6 +1,12 @@
 import React from 'react';
 import { AppProps } from 'next/app';
 
-const App: React.FC<AppProps> = ({ Component, pageProps }) => <Component {...pageProps} />;
+import { ThemeContext } from '@/context/theme';
+
+const App: React.FC<AppProps> = ({ Component, pageProps }) => (
+  <ThemeContext>
+    <Component {...pageProps} />
+  </ThemeContext>
+);
 
 export default App;
