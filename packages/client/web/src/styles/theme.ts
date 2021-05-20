@@ -1,6 +1,11 @@
 import { extendTheme } from '@chakra-ui/react';
 
 export const Theme = extendTheme({
+  styles: {
+    global: {
+      body: { background: 'gray.50', color: 'black' }
+    }
+  },
   fonts: {
     body: '"Work Sans", sans-serif',
     heading: '"Work Sans", sans-serif',
