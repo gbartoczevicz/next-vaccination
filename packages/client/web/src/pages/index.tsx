@@ -1,12 +1,40 @@
-import React, { useState } from 'react';
-import { Flex, Box, Input, Stack, InputGroup, InputRightElement, Button, HStack, Link } from '@chakra-ui/react';
+import React, { useCallback, useRef } from 'react';
+import { Flex, Box, useToast, Stack, HStack, Link, Button } from '@chakra-ui/react';
+import { FormHandles } from '@unform/core';
+import { Form } from '@unform/web';
+import * as Yup from 'yup';
 
-import { MainFormContainer, FormSubmitButton, SplashBanner } from '@/components';
+import { MainFormContainer, FormSubmitButton, SplashBanner, Input } from '@/components';
+import { ISignInFormDataDTO } from '@/dtos/signin';
+import { getValidationErrors } from '@/utils/errors';
 
 const Home: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const formRef = useRef<FormHandles>(null);
+  const toast = useToast();
 
-  const handleShowPassword = () => setShowPassword(!showPassword);
+  const handleSubmit = useCallback(
+    async (data: ISignInFormDataDTO) => {
+      formRef.current?.setErrors({});
+
+      const schema = Yup.object().shape({
+        email: Yup.string().required('E-mail é obrigatório'),
+        password: Yup.string().required('Senha é obrigatória')
+      });
+
+      try {
+        await schema.validate(data, { abortEarly: false });
+
+        toast({ title: 'Sucesso!', status: 'success' });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current?.setErrors(errors);
+        }
+      }
+    },
+    [toast]
+  );
 
   return (
     <Flex h="100vh" w="100%">
@@ -15,35 +43,11 @@ const Home: React.FC = () => {
       </Box>
       <Flex flex="1" alignItems="center" justifyContent="center">
         <MainFormContainer title="Fazer Login">
-          <form>
+          <Form ref={formRef} onSubmit={handleSubmit}>
             <Stack spacing={4} alignItems="center">
-              <Input
-                bgColor="white"
-                color="gray.400"
-                _placeholder={{ color: 'gray.400', fontSize: '16px' }}
-                fontWeight="normal"
-                placeholder="E-mail"
-                h="72px"
-                borderRadius="lg"
-              />
-              <InputGroup>
-                <Input
-                  bgColor="white"
-                  color="gray.400"
-                  fontWeight="normal"
-                  _placeholder={{ color: 'gray.400', fontSize: '16px' }}
-                  placeholder="Senha"
-                  pr="4.5rem"
-                  type={showPassword ? 'text' : 'password'}
-                  h="72px"
-                  borderRadius="lg"
-                />
-                <InputRightElement marginY="4" width="4.5rem">
-                  <Button h="1.75rem" size="sm" onClick={handleShowPassword}>
-                    {showPassword ? 'Hide' : 'Show'}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
+              <Input name="email" placeholder="E-mail" type="text" />
+              <Input name="password" placeholder="Senha" type="password" />
+
               <HStack align="center" justify="space-between" px={6} w="100%" h="72px">
                 <Link fontWeight="medium" color="gray.400">
                   Cadastrar
@@ -52,9 +56,10 @@ const Home: React.FC = () => {
                   Esqueci a Senha
                 </Button>
               </HStack>
-              <FormSubmitButton label="Acessar" />
+
+              <FormSubmitButton label="Acessar" type="submit" />
             </Stack>
-          </form>
+          </Form>
         </MainFormContainer>
       </Flex>
     </Flex>
