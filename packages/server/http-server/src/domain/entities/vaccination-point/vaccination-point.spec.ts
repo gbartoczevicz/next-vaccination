@@ -9,8 +9,10 @@ const makeFixture = () => ({
   location: Location.create({
     address: 'Avenida Inglaterra',
     addressNumber: 20,
-    latitude: 41.40338,
-    longitude: 2.17403
+    coordinate: {
+      latitude: 41.40338,
+      longitude: 2.17403
+    }
   }).value as Location
 });
 

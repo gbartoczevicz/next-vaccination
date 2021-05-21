@@ -1,4 +1,4 @@
-import { InvalidLocation } from '../errors';
+import { InvalidCoordinate, InvalidLocation } from '../errors';
 import { Location } from './location';
 
 const makeSut = () => ({ sut: Location });
@@ -6,8 +6,10 @@ const makeSut = () => ({ sut: Location });
 const makeFixture = (address = 'Avenida Inglaterra', addressNumber = 20, latitude = 41.40338, longitude = 2.17403) => ({
   address,
   addressNumber,
-  latitude,
-  longitude
+  coordinate: {
+    latitude,
+    longitude
+  }
 });
 
 describe('Location Unitary Tests', () => {
@@ -22,8 +24,10 @@ describe('Location Unitary Tests', () => {
 
     expect(location.address).toEqual('Avenida Inglaterra');
     expect(location.addressNumber).toEqual(20);
-    expect(location.latitude).toEqual(41.40338);
-    expect(location.longitude).toEqual(2.17403);
+    expect(location.coordinate).toEqual({
+      latitude: 41.40338,
+      longitude: 2.17403
+    });
   });
 
   it('should validate address param', () => {
@@ -44,21 +48,12 @@ describe('Location Unitary Tests', () => {
     expect(testable.value).toEqual(new InvalidLocation('Address number is required'));
   });
 
-  it('should validate latitude param', () => {
+  it('should validate coordinate param', () => {
     const { sut } = makeSut();
 
     const testable = sut.create(makeFixture(undefined, undefined, null));
 
     expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new InvalidLocation('Latitude is required'));
-  });
-
-  it('should validate longitude param', () => {
-    const { sut } = makeSut();
-
-    const testable = sut.create(makeFixture(undefined, undefined, undefined, null));
-
-    expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new InvalidLocation('Longitude is required'));
+    expect(testable.value).toEqual(new InvalidCoordinate('Latitude is required'));
   });
 });

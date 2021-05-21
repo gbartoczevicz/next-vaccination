@@ -1,7 +1,7 @@
 import { Either, left, right } from '@server/shared';
 import { InvalidCoordinate } from '../errors';
 
-interface ICoordinateProps {
+export interface ICoordinateProps {
   latitude: number;
   longitude: number;
 }

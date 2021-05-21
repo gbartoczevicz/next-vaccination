@@ -1,6 +1,7 @@
 import { HealthProfessional } from '@entities/health-professional';
 import { User } from '@entities/user';
 import { VaccinationPoint } from '@entities/vaccination-point';
+import { Coordinate } from '@entities/vaccination-point/values';
 import { EntityID, right } from '@server/shared';
 import { FindUnique, IHealthProfessionalsRepository, Save } from './health-professionals';
 
@@ -28,8 +29,10 @@ const makeFixture = ({
     location: {
       address: 'vaccination point address',
       addressNumber: 25,
-      latitude: 20.0,
-      longitude: 30.0
+      coordinate: Coordinate.create({
+        latitude: 20.0,
+        longitude: 30.0
+      }).value as Coordinate
     }
   }).value as VaccinationPoint
 });

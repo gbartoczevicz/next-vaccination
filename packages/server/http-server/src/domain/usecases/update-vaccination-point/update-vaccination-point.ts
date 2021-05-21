@@ -57,11 +57,8 @@ export class UpdateVaccinationPointUseCase {
       }
     }
 
-    const { latitude, longitude } = toUpdateVaccinationPoint.location;
-
-    const latitudeAndLongitudeAlreadyInUseOrError = await this.vaccinationPointsRepository.findByLatitudeAndLongitude(
-      latitude,
-      longitude
+    const latitudeAndLongitudeAlreadyInUseOrError = await this.vaccinationPointsRepository.findByCoordinate(
+      toUpdateVaccinationPoint.location.coordinate
     );
 
     if (latitudeAndLongitudeAlreadyInUseOrError.isLeft()) {

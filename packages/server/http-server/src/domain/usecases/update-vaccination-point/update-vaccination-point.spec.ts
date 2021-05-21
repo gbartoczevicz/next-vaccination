@@ -1,6 +1,6 @@
 import { VaccinationPoint } from '@entities/vaccination-point';
 import { InvalidVaccinationPoint } from '@entities/vaccination-point/errors';
-import { ILocationProps } from '@entities/vaccination-point/values';
+import { ICoordinateProps, ILocationProps } from '@entities/vaccination-point/values';
 import { left, right } from '@server/shared';
 import { DocumentAlreadyInUse, LocationAlreadyInUse, VaccinationPointNotFound } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
@@ -31,8 +31,10 @@ const makeFixture = (
   location: {
     address: 'New Address',
     addressNumber: 10,
-    latitude,
-    longitude
+    coordinate: {
+      latitude,
+      longitude
+    } as ICoordinateProps
   } as ILocationProps
 });
 
@@ -45,7 +47,7 @@ describe('Update Vaccination Point usecase Unitary Tests', () => {
       .mockImplementation(() => Promise.resolve(right(null)));
 
     jest
-      .spyOn(fakeVaccinationPointsRepository, 'findByLatitudeAndLongitude')
+      .spyOn(fakeVaccinationPointsRepository, 'findByCoordinate')
       .mockImplementation(() => Promise.resolve(right(null)));
 
     const testable = await sut.execute(makeFixture());
@@ -130,7 +132,7 @@ describe('Update Vaccination Point usecase Unitary Tests', () => {
       expect(testable.value).toEqual(new InfraError('Unexpected Error'));
     });
 
-    it('should validate findByLatitudeAndLongitude', async () => {
+    it('should validate findByCoordinate', async () => {
       const { sut, fakeVaccinationPointsRepository } = makeSut();
 
       jest
@@ -138,7 +140,7 @@ describe('Update Vaccination Point usecase Unitary Tests', () => {
         .mockImplementation(() => Promise.resolve(right(null)));
 
       jest
-        .spyOn(fakeVaccinationPointsRepository, 'findByLatitudeAndLongitude')
+        .spyOn(fakeVaccinationPointsRepository, 'findByCoordinate')
         .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
 
       const testable = await sut.execute(makeFixture());
@@ -155,7 +157,7 @@ describe('Update Vaccination Point usecase Unitary Tests', () => {
         .mockImplementation(() => Promise.resolve(right(null)));
 
       jest
-        .spyOn(fakeVaccinationPointsRepository, 'findByLatitudeAndLongitude')
+        .spyOn(fakeVaccinationPointsRepository, 'findByCoordinate')
         .mockImplementation(() => Promise.resolve(right(null)));
 
       jest
