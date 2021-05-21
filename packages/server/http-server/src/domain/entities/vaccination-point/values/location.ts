@@ -1,11 +1,11 @@
 import { Either, left, right } from '@server/shared';
-import { InvalidLocation } from '../errors';
+import { InvalidCoordinate, InvalidLocation } from '../errors';
+import { Coordinate, ICoordinateProps } from './coordinate';
 
 export interface ILocationProps {
   address: string;
   addressNumber: number;
-  latitude: number;
-  longitude: number;
+  coordinate: ICoordinateProps;
 }
 
 export class Location {
@@ -13,19 +13,16 @@ export class Location {
 
   readonly addressNumber: number;
 
-  readonly latitude: number;
+  readonly coordinate: Coordinate;
 
-  readonly longitude: number;
-
-  constructor(address: string, addressNumber: number, latitude: number, longitude: number) {
+  constructor(address: string, addressNumber: number, coordinate: Coordinate) {
     this.address = address;
     this.addressNumber = addressNumber;
-    this.latitude = latitude;
-    this.longitude = longitude;
+    this.coordinate = coordinate;
   }
 
-  static create(props: ILocationProps): Either<InvalidLocation, Location> {
-    const { address, addressNumber, latitude, longitude } = props;
+  static create(props: ILocationProps): Either<InvalidLocation | InvalidCoordinate, Location> {
+    const { address, addressNumber, coordinate } = props;
 
     if (!address) {
       return left(new InvalidLocation('Address is required'));
@@ -35,14 +32,12 @@ export class Location {
       return left(new InvalidLocation('Address number is required'));
     }
 
-    if (!latitude) {
-      return left(new InvalidLocation('Latitude is required'));
+    const coordinateOrError = Coordinate.create(coordinate);
+
+    if (coordinateOrError.isLeft()) {
+      return left(coordinateOrError.value);
     }
 
-    if (!longitude) {
-      return left(new InvalidLocation('Longitude is required'));
-    }
-
-    return right(new Location(address, addressNumber, latitude, longitude));
+    return right(new Location(address, addressNumber, coordinateOrError.value));
   }
 }

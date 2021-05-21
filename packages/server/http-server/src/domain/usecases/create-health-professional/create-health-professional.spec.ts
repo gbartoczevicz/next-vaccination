@@ -2,6 +2,7 @@ import { HealthProfessional } from '@entities/health-professional';
 import { InvalidHealthProfessional } from '@entities/health-professional/errors';
 import { User } from '@entities/user';
 import { VaccinationPoint } from '@entities/vaccination-point';
+import { ICoordinateProps } from '@entities/vaccination-point/values';
 import { left, right } from '@server/shared';
 import { DocumentAlreadyInUse } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
@@ -32,8 +33,10 @@ const makeFixture = (document = 'health_professional_document') => ({
     location: {
       address: 'vaccination point address',
       addressNumber: 25,
-      latitude: 20.0,
-      longitude: 30.0
+      coordinate: {
+        latitude: 20.0,
+        longitude: 30.0
+      } as ICoordinateProps
     }
   }).value as VaccinationPoint
 });
