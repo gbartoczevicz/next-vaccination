@@ -9,7 +9,7 @@ export type FindUnique = Either<InfraError, VaccinationPoint | null>;
 export type Save = Either<InfraError, VaccinationPoint>;
 
 export interface IVaccinationPointsRepository {
-  findAll(): Promise<FindAll>;
+  findAllByApproximateCoordinate(coordinate: Coordinate): Promise<FindAll>;
   findById(id: string): Promise<FindUnique>;
   findByDocument(document: string): Promise<FindUnique>;
   findByCoordinate(coordinate: Coordinate): Promise<FindUnique>;

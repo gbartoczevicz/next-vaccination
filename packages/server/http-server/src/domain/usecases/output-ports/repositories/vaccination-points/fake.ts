@@ -16,8 +16,10 @@ const makeFixture = (document = 'document', latitude = 41.40338, longitude = 2.1
 });
 
 export class FakeVaccinationPointsRepository implements IVaccinationPointsRepository {
-  async findAll(): Promise<FindAll> {
-    const fixture = VaccinationPoint.create(makeFixture()).value as VaccinationPoint;
+  async findAllByApproximateCoordinate(coordinate: Coordinate): Promise<FindAll> {
+    const { latitude, longitude } = coordinate;
+
+    const fixture = VaccinationPoint.create(makeFixture(undefined, latitude, longitude)).value as VaccinationPoint;
 
     return Promise.resolve(right([fixture]));
   }
