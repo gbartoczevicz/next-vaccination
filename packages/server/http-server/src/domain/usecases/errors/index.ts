@@ -7,3 +7,6 @@ export * from './patient-not-found';
 export * from './location-already-in-use';
 export * from './vaccination-point-not-found';
 export * from './health-professional-not-found';
+export * from './not-responsible';
+export * from './does-not-belong-to-the-vaccination-point';
+export * from './availability-by-period-already-exists';
