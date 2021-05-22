@@ -9,13 +9,14 @@ const makeFixture = ({
   document = 'health_professional_document',
   responsible = false,
   vaccinationPointId = 'vaccination_point_id',
-  id = 'health_professional_id'
+  id = 'health_professional_id',
+  userId = 'any_user_id'
 }) => ({
   id: new EntityID(id),
   document,
   responsible,
   user: User.create({
-    id: new EntityID(),
+    id: new EntityID(userId),
     name: 'name',
     email: 'user@email.com',
     phone: '9999-9999',
@@ -40,6 +41,12 @@ const makeFixture = ({
 export class FakeHealthProfessionalsRepository implements IHealthProfessionalsRepository {
   async findById(id: string): Promise<FindUnique> {
     const fixture = HealthProfessional.create(makeFixture({ id })).value as HealthProfessional;
+
+    return Promise.resolve(right(fixture));
+  }
+
+  async findByUser(user: User): Promise<FindUnique> {
+    const fixture = HealthProfessional.create(makeFixture({ userId: user.id.value })).value as HealthProfessional;
 
     return Promise.resolve(right(fixture));
   }
