@@ -38,11 +38,8 @@ export class CreateVaccinationPointUseCase {
       return left(new DocumentAlreadyInUse());
     }
 
-    const { latitude, longitude } = vaccinationPoint.location;
-
-    const latitudeAndLongitudeAlreadyInUseOrError = await this.vaccinationPointsRepository.findByLatitudeAndLongitude(
-      latitude,
-      longitude
+    const latitudeAndLongitudeAlreadyInUseOrError = await this.vaccinationPointsRepository.findByCoordinate(
+      vaccinationPoint.location.coordinate
     );
 
     if (latitudeAndLongitudeAlreadyInUseOrError.isLeft()) {

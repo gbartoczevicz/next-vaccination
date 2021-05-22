@@ -19,7 +19,8 @@
     "packages/server/_shared",
     "packages/server/http-server",
     "packages/server/notifications",
-    "packages/server/tickets"
+    "packages/server/tickets",
+    "packages/client/web"
   ],
   "bugs": {
     "url": "https://github.com/gabrielbartoczevicz/next-vaccination/issues"

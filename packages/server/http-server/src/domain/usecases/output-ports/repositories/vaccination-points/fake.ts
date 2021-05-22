@@ -1,6 +1,6 @@
 import { EntityID, right } from '@server/shared';
 import { VaccinationPoint } from '@entities/vaccination-point';
-import { Location } from '@entities/vaccination-point/values';
+import { Coordinate, Location } from '@entities/vaccination-point/values';
 import { FindAll, FindUnique, IVaccinationPointsRepository, Save } from './vaccination-points';
 
 const makeFixture = (document = 'document', latitude = 41.40338, longitude = 2.17403, id?: EntityID) => ({
@@ -11,14 +11,15 @@ const makeFixture = (document = 'document', latitude = 41.40338, longitude = 2.1
   location: Location.create({
     address: 'Avenida Inglaterra',
     addressNumber: 20,
-    latitude,
-    longitude
+    coordinate: Coordinate.create({ latitude, longitude }).value as Coordinate
   }).value as Location
 });
 
 export class FakeVaccinationPointsRepository implements IVaccinationPointsRepository {
-  async findAll(): Promise<FindAll> {
-    const fixture = VaccinationPoint.create(makeFixture()).value as VaccinationPoint;
+  async findAllByApproximateCoordinate(coordinate: Coordinate): Promise<FindAll> {
+    const { latitude, longitude } = coordinate;
+
+    const fixture = VaccinationPoint.create(makeFixture(undefined, latitude, longitude)).value as VaccinationPoint;
 
     return Promise.resolve(right([fixture]));
   }
@@ -36,7 +37,9 @@ export class FakeVaccinationPointsRepository implements IVaccinationPointsReposi
     return Promise.resolve(right(fixture));
   }
 
-  async findByLatitudeAndLongitude(latitude: number, longitude: number): Promise<FindUnique> {
+  async findByCoordinate(coordinate: Coordinate): Promise<FindUnique> {
+    const { latitude, longitude } = coordinate;
+
     const fixture = VaccinationPoint.create(makeFixture(undefined, latitude, longitude)).value as VaccinationPoint;
 
     return Promise.resolve(right(fixture));
