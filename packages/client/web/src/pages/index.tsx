@@ -2,11 +2,10 @@ import React, { useCallback, useRef } from 'react';
 import { Flex, Box, useToast, Stack, HStack, Link, Button } from '@chakra-ui/react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import * as Yup from 'yup';
 
 import { MainFormContainer, FormSubmitButton, SplashBanner, Input } from '@/components';
 import { ISignInFormDataDTO } from '@/dtos/signin';
-import { getValidationErrors } from '@/utils/errors';
+import { signInValidation } from '@/validation/signin';
 
 const Home: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
@@ -16,22 +15,18 @@ const Home: React.FC = () => {
     async (data: ISignInFormDataDTO) => {
       formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        email: Yup.string().required('E-mail é obrigatório'),
-        password: Yup.string().required('Senha é obrigatória')
-      });
+      const errors = await signInValidation(data);
 
-      try {
-        await schema.validate(data, { abortEarly: false });
+      if (errors) {
+        formRef.current?.setErrors(errors);
 
-        toast({ title: 'Sucesso!', status: 'success' });
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const errors = getValidationErrors(err);
-
-          formRef.current?.setErrors(errors);
-        }
+        return;
       }
+
+      toast({
+        title: 'Sucesso total',
+        status: 'success'
+      });
     },
     [toast]
   );
