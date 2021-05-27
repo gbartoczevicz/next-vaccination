@@ -48,6 +48,6 @@ describe('Expiration Date Unitary Tests', () => {
       expect(testable.value).toEqual(new InvalidExpirationDate('Value is required'));
     });
 
-    it.todo('should validate dependency param', () => {});
+    it.todo('should validate dependency param');
   });
 });
