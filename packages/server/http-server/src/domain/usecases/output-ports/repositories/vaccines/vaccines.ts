@@ -7,5 +7,6 @@ export type Save = Either<InfraError, Vaccine>;
 
 export interface IVaccinesRepository {
   findByName(name: string): Promise<FindUnique>;
+  findById(id: string): Promise<FindUnique>;
   save(vaccine: Vaccine): Promise<Save>;
 }
