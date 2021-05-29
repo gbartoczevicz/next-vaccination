@@ -4,6 +4,16 @@ import { makePassword } from '@entities/user/values/factories/make-password';
 import { InvalidBirthday, InvalidPatient } from './errors';
 import { Patient } from './patient';
 
+const makeSut = () => ({ sut: Patient });
+
+const makeBirthday = (date: Date) => {
+  const dateAtStartOfDay = new Date(date);
+
+  dateAtStartOfDay.setHours(0, 0, 0, 0);
+
+  return dateAtStartOfDay;
+};
+
 const makeFixture = (
   birthday = new Date(),
   avatar = 'avatar.png',
@@ -11,7 +21,7 @@ const makeFixture = (
   ticket = 'ticket.pdf'
 ) => {
   return {
-    birthday,
+    birthday: makeBirthday(birthday),
     avatar,
     document,
     ticket,
@@ -23,8 +33,6 @@ const makeFixture = (
     }).value as User
   };
 };
-
-const makeSut = () => ({ sut: Patient });
 
 describe('Patient Unitary Tests', () => {
   it('should create a valid Patient', () => {
@@ -43,7 +51,7 @@ describe('Patient Unitary Tests', () => {
     const patient = testable.value as Patient;
 
     expect(patient.document).toEqual('000.000.000-00');
-    expect(patient.birthday.date).toEqual(birthday);
+    expect(patient.birthday.value).toEqual(birthday);
     expect(patient.avatar).toEqual('avatar.png');
     expect(patient.ticket).toEqual('ticket.pdf');
     expect(patient.user).toEqual(user);

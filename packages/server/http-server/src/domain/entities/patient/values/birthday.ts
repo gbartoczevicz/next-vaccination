@@ -1,29 +1,30 @@
-import { IDateParser } from '@entities/output-ports/date-parser';
 import { Either, left, right } from '@server/shared';
+import { IDateUtils } from '@entities/output-ports/date-utils';
 import { InvalidBirthday } from '../errors';
 
+interface IPatientBirthdayProps {
+  date: Date;
+  dateUtils: IDateUtils;
+}
+
 export class PatientBirthday {
-  private value: Date;
-
-  dateParser: IDateParser;
-
-  get date(): Date {
-    return this.dateParser.parseToUTCZuluTime(this.value);
-  }
+  readonly value: Date;
 
   constructor(date: Date) {
     this.value = date;
   }
 
-  intejctDependencies(dateParser: IDateParser): void {
-    this.dateParser = dateParser;
-  }
+  static create(props: IPatientBirthdayProps): Either<InvalidBirthday, PatientBirthday> {
+    const { date, dateUtils } = props;
 
-  static create(date: Date): Either<InvalidBirthday, PatientBirthday> {
     if (!date) {
       return left(new InvalidBirthday('Date is required'));
     }
 
-    return right(new PatientBirthday(date));
+    const dateAtStartOfDay = dateUtils.toStartOfDay(date);
+
+    const patientBirthday = new PatientBirthday(dateAtStartOfDay);
+
+    return right(patientBirthday);
   }
 }

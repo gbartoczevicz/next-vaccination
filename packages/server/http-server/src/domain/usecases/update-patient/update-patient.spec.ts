@@ -15,6 +15,14 @@ const makeSut = () => {
   };
 };
 
+const makeBirthday = (date: Date) => {
+  const dateAtStartOfDay = new Date(date);
+
+  dateAtStartOfDay.setHours(0, 0, 0, 0);
+
+  return dateAtStartOfDay;
+};
+
 const makeFixture = (document = '000.000.000-00', birthday = new Date()) => {
   const user = User.create({
     name: 'any_correct_name',
@@ -38,7 +46,7 @@ describe('Update Patient UseCase Unitary Tests', () => {
     const spyFakePatientsRepository = jest.spyOn(fakePatientsRepository, 'findByDocument');
     spyFakePatientsRepository.mockImplementation(() => Promise.resolve(right(null)));
 
-    const date = new Date();
+    const date = makeBirthday(new Date());
 
     const testable = await sut.execute(makeFixture(undefined, date));
 
@@ -47,7 +55,7 @@ describe('Update Patient UseCase Unitary Tests', () => {
     const patient = testable.value as Patient;
 
     expect(patient.id.value).toEqual('unique_id');
-    expect(patient.birthday.date).toEqual(date);
+    expect(patient.birthday.value).toEqual(date);
     expect(patient.document).toEqual('000.000.000-00');
   });
 
