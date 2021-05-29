@@ -10,3 +10,5 @@ export * from './health-professional-not-found';
 export * from './not-responsible';
 export * from './does-not-belong-to-the-vaccination-point';
 export * from './availability-by-period-already-exists';
+export * from './vaccine-name-already-in-use';
+export * from './vaccine-not-found';
