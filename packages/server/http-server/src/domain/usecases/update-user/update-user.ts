@@ -1,14 +1,13 @@
 import { CreateUserErrors, User } from '@entities/user';
-import { Either, EntityID, left, right } from '@server/shared';
-import { AccountAlreadyExists, PasswordDoesNotMatch, UserNotFound } from '@usecases/errors';
+import { Either, left, right } from '@server/shared';
+import { AccountAlreadyExists, PasswordDoesNotMatch } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
 import { IUpdateUserDTO } from './dto';
 
-type Response = Either<
-  CreateUserErrors | InfraError | UserNotFound | AccountAlreadyExists | PasswordDoesNotMatch,
-  User
->;
+type ResponseErrors = CreateUserErrors | InfraError | AccountAlreadyExists | PasswordDoesNotMatch;
+
+type Response = Either<ResponseErrors, User>;
 
 export class UpdateUserUseCase {
   private usersRepository: IUsersRepository;
@@ -18,14 +17,12 @@ export class UpdateUserUseCase {
   }
 
   async execute(request: IUpdateUserDTO): Promise<Response> {
-    const { id, email, name, password, phone, currentPassword } = request;
+    const { user } = request;
 
     const userToUpdateOrError = User.create({
-      id: new EntityID(id),
-      email,
-      name,
-      password: { password },
-      phone
+      ...request,
+      id: user.id,
+      password: { password: request.password }
     });
 
     if (userToUpdateOrError.isLeft()) {
@@ -33,18 +30,6 @@ export class UpdateUserUseCase {
     }
 
     const userToUpdate = userToUpdateOrError.value;
-
-    const persistedUserOrError = await this.usersRepository.findById(userToUpdate.id.value);
-
-    if (persistedUserOrError.isLeft()) {
-      return left(persistedUserOrError.value);
-    }
-
-    if (!persistedUserOrError.value) {
-      return left(new UserNotFound());
-    }
-
-    const persistedUser = persistedUserOrError.value;
 
     const userWithSameEmailOrError = await this.usersRepository.findByEmail(userToUpdate.email);
 
@@ -55,21 +40,21 @@ export class UpdateUserUseCase {
     const userWithSameEmail = userWithSameEmailOrError.value;
 
     if (userWithSameEmail && !userWithSameEmail.id.equals(userToUpdate.id)) {
-      return left(new AccountAlreadyExists(email));
+      return left(new AccountAlreadyExists(userToUpdate.email.email));
     }
 
-    const doesPasswordMatch = await persistedUser.password.compare(currentPassword);
+    const doesPasswordMatch = await user.password.compare(request.currentPassword);
 
     if (!doesPasswordMatch) {
       return left(new PasswordDoesNotMatch());
     }
 
-    const userUpdatedOrError = await this.usersRepository.save(userToUpdate);
+    const updatedUserOrError = await this.usersRepository.save(userToUpdateOrError.value);
 
-    if (userUpdatedOrError.isLeft()) {
-      return left(userUpdatedOrError.value);
+    if (updatedUserOrError.isLeft()) {
+      return left(updatedUserOrError.value);
     }
 
-    return right(userUpdatedOrError.value);
+    return right(updatedUserOrError.value);
   }
 }
