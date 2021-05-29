@@ -103,20 +103,20 @@ describe('Update User UseCase Unitary Tests', () => {
       expect(testable.isLeft()).toBeTruthy();
       expect(testable.value).toEqual(new InfraError('Unexpected Error'));
     });
-  });
 
-  it('should validate save', async () => {
-    const { sut, fakeUsersRepository } = makeSut();
+    it('should validate save', async () => {
+      const { sut, fakeUsersRepository } = makeSut();
 
-    jest.spyOn(fakeUsersRepository, 'findByEmail').mockImplementation(() => Promise.resolve(right(null)));
+      jest.spyOn(fakeUsersRepository, 'findByEmail').mockImplementation(() => Promise.resolve(right(null)));
 
-    jest
-      .spyOn(fakeUsersRepository, 'save')
-      .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
+      jest
+        .spyOn(fakeUsersRepository, 'save')
+        .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
 
-    const testable = await sut.execute(makeFixture({}));
+      const testable = await sut.execute(makeFixture({}));
 
-    expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new InfraError('Unexpected Error'));
+      expect(testable.isLeft()).toBeTruthy();
+      expect(testable.value).toEqual(new InfraError('Unexpected Error'));
+    });
   });
 });
