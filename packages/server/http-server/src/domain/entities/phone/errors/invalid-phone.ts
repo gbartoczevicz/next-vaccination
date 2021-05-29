@@ -1,4 +1,4 @@
-export class InvalidUserName extends Error {
+export class InvalidPhone extends Error {
   constructor(reason: string) {
     super(reason);
   }

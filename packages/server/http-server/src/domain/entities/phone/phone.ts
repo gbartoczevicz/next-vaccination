@@ -1,32 +1,32 @@
 import { Either, left, right } from '@server/shared';
-import { InvalidUserPhone } from '@entities/user/errors';
+import { InvalidPhone } from '@entities/phone/errors';
 
 export class Phone {
-  readonly phone: string;
+  readonly value: string;
 
-  constructor(phone: string) {
-    this.phone = phone;
+  constructor(value: string) {
+    this.value = value;
   }
 
-  private static isValid(phone: string): boolean {
+  private static isValid(value: string): boolean {
     const re = /^\d{8,12}$/;
 
-    return re.test(phone);
+    return re.test(value);
   }
 
-  private static format(phone: string): string {
-    return phone.trim().replace(' ', '').replace('(', '').replace(')', '').replace('-', '');
+  private static format(value: string): string {
+    return value.trim().replace(' ', '').replace('(', '').replace(')', '').replace('-', '');
   }
 
-  static create(phone: string): Either<InvalidUserPhone, Phone> {
-    if (!phone) {
-      return left(new InvalidUserPhone('Phone number is required'));
+  static create(value: string): Either<InvalidPhone, Phone> {
+    if (!value) {
+      return left(new InvalidPhone('Phone number is required'));
     }
 
-    const formattedPhone = this.format(phone);
+    const formattedPhone = this.format(value);
 
     if (!this.isValid(formattedPhone)) {
-      return left(new InvalidUserPhone(`Phone number ${phone} is invalid`));
+      return left(new InvalidPhone(`Phone number ${value} is invalid`));
     }
 
     const userPhone = new Phone(formattedPhone);

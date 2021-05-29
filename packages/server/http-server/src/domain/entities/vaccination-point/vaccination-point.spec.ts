@@ -29,7 +29,7 @@ describe('Vaccination Point Unitary Tests', () => {
     const vaccinationPoint = testable.value as VaccinationPoint;
 
     expect(vaccinationPoint.name).toEqual('Valid Name');
-    expect(vaccinationPoint.phone.phone).toEqual('00000000');
+    expect(vaccinationPoint.phone.value).toEqual('00000000');
     expect(vaccinationPoint.document).toEqual('document');
     expect(vaccinationPoint.location).toEqual(makeFixture().location);
   });

@@ -1,8 +1,10 @@
+import { User } from '@entities/user';
+
 export interface IUpdateUserDTO {
-  id: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  password?: string;
+  user: User;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
   currentPassword: string;
 }

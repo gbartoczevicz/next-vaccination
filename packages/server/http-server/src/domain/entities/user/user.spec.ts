@@ -1,5 +1,6 @@
+import { InvalidPhone } from '@entities/phone/errors';
 import { User } from '@entities/user';
-import { InvalidUserName, InvalidUserPhone } from '@entities/user/errors';
+import { InvalidUser } from '@entities/user/errors';
 
 const makeSut = () => {
   return {
@@ -26,7 +27,7 @@ describe('User Unitary Tests', () => {
     expect(typeof user.id.value).toEqual('string');
     expect(user.name).toEqual('any_name');
     expect(user.email.email).toEqual('any_email@mail.com');
-    expect(user.phone.phone).toEqual('99999999999');
+    expect(user.phone.value).toEqual('99999999999');
   });
 
   it('should be return left if name to be false', () => {
@@ -42,7 +43,7 @@ describe('User Unitary Tests', () => {
     });
 
     expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new InvalidUserName('Name is required'));
+    expect(testable.value).toEqual(new InvalidUser('Name is required'));
   });
 
   it('should be return left if any value object is wrong', () => {
@@ -58,6 +59,6 @@ describe('User Unitary Tests', () => {
     });
 
     expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new InvalidUserPhone('Phone number any_wrong_phone is invalid'));
+    expect(testable.value).toEqual(new InvalidPhone('Phone number any_wrong_phone is invalid'));
   });
 });

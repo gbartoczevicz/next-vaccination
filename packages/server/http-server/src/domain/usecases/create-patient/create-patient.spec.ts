@@ -16,6 +16,14 @@ const makeSut = () => {
   };
 };
 
+const makeBirthday = (date: Date) => {
+  const dateAtStartOfDay = new Date(date);
+
+  dateAtStartOfDay.setHours(0, 0, 0, 0);
+
+  return dateAtStartOfDay;
+};
+
 const makeFixture = (document = '000.000.000-00', birthday = new Date(), avatar = 'avatar.png') => {
   const user = User.create({
     name: 'any_correct_name',
@@ -36,10 +44,9 @@ describe('Create Patient Use Case Unitary Tests', () => {
   it('should create a patient', async () => {
     const { sut, fakePatientsRepository } = makeSut();
 
-    const spyFakePatientsRepository = jest.spyOn(fakePatientsRepository, 'findByDocument');
-    spyFakePatientsRepository.mockImplementation(() => Promise.resolve(right(null)));
+    jest.spyOn(fakePatientsRepository, 'findByDocument').mockImplementation(() => Promise.resolve(right(null)));
 
-    const date = new Date();
+    const date = makeBirthday(new Date());
 
     const testable = await sut.execute(makeFixture(undefined, date, undefined));
 
@@ -48,7 +55,7 @@ describe('Create Patient Use Case Unitary Tests', () => {
     const patient = testable.value as Patient;
 
     expect(patient.document).toEqual('000.000.000-00');
-    expect(patient.birthday.date).toEqual(date);
+    expect(patient.birthday.value).toEqual(date);
     expect(patient.avatar).toEqual('avatar.png');
     expect(patient.user).toBeDefined();
   });
