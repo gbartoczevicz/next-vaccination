@@ -58,7 +58,7 @@ describe('Update User UseCase Unitary Tests', () => {
     expect(user.name).toEqual('Updated User');
     expect(user.email.email).toEqual('updated_user@email.com');
     expect(user.password.password).toEqual('updated_valid_password');
-    expect(user.phone.phone).toEqual('999999999');
+    expect(user.phone.value).toEqual('999999999');
   });
 
   it('should validate incoming user object', async () => {

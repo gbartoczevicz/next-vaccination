@@ -1,4 +1,5 @@
 import { Phone } from '@entities/phone';
+import { InvalidPhone } from '@entities/phone/errors';
 import { Either, EntityID, left, right } from '@server/shared';
 import { InvalidLocation, InvalidVaccinationPoint } from './errors';
 import { Location, ILocationProps } from './values';
@@ -11,7 +12,7 @@ interface IVaccinationPointProps {
   location: ILocationProps;
 }
 
-export type CreateVaccinationPointErrors = InvalidVaccinationPoint | InvalidLocation;
+export type CreateVaccinationPointErrors = InvalidVaccinationPoint | InvalidLocation | InvalidPhone;
 
 type CreateVaccinationPoint = Either<CreateVaccinationPointErrors, VaccinationPoint>;
 

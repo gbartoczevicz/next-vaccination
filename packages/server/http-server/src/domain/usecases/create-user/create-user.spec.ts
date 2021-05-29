@@ -48,7 +48,7 @@ describe('Create User Use Case Unitary Tests', () => {
     expect(typeof user.id.value).toEqual('string');
     expect(user.name).toEqual('any_correct_name');
     expect(user.email.email).toEqual('any_correct_email@mail.com');
-    expect(user.phone.phone).toEqual('99999999999');
+    expect(user.phone.value).toEqual('99999999999');
   });
 
   it('should return left if User params is invalid', async () => {

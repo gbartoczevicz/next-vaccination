@@ -56,7 +56,7 @@ describe('Create Vaccination Point usecase Unitary Tests', () => {
 
     expect(vaccinationPoint.name).toEqual('Point');
     expect(vaccinationPoint.document).toEqual('document');
-    expect(vaccinationPoint.phone.phone).toEqual('00000000');
+    expect(vaccinationPoint.phone.value).toEqual('00000000');
     expect(vaccinationPoint.location).toEqual(makeFixture().location);
   });
 

@@ -58,7 +58,7 @@ describe('Update Vaccination Point usecase Unitary Tests', () => {
 
     expect(vaccinationPoint.id.value).toEqual('unique_id');
     expect(vaccinationPoint.name).toEqual('Updated Name');
-    expect(vaccinationPoint.phone.phone).toEqual('43999999999');
+    expect(vaccinationPoint.phone.value).toEqual('43999999999');
     expect(vaccinationPoint.document).toEqual('updated_document');
     expect(vaccinationPoint.location).toEqual(makeFixture().location);
   });
