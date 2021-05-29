@@ -1,5 +1,5 @@
 import { User } from '@entities/user';
-import { InvalidUserName } from '@entities/user/errors';
+import { InvalidUser } from '@entities/user/errors';
 import { UserPassword } from '@entities/user/values';
 import { makePassword } from '@entities/user/values/factories/make-password';
 import { EntityID, left, right } from '@server/shared';
@@ -67,7 +67,7 @@ describe('Update User UseCase Unitary Tests', () => {
     const testable = await sut.execute(makeFixture({ name: null }));
 
     expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new InvalidUserName('Name is required'));
+    expect(testable.value).toEqual(new InvalidUser('Name is required'));
   });
 
   it('should validate if incoming e-mail is already in use', async () => {

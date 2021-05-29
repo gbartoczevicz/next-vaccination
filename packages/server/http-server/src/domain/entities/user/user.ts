@@ -2,7 +2,7 @@ import { Either, EntityID, left, right } from '@server/shared';
 import { UserEmail, UserPassword, IUserPasswordProps } from '@entities/user/values';
 import { Phone } from '@entities/phone';
 import { makePassword } from '@entities/user/values/factories/make-password';
-import { InvalidUserName, InvalidUserEmail, InvalidUserPassword, InvalidUserPhone } from '@entities/user/errors';
+import { InvalidUser, InvalidUserEmail, InvalidUserPassword, InvalidUserPhone } from '@entities/user/errors';
 
 interface IUserProps {
   id?: EntityID;
@@ -12,7 +12,7 @@ interface IUserProps {
   password: IUserPasswordProps;
 }
 
-export type CreateUserErrors = InvalidUserName | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword;
+export type CreateUserErrors = InvalidUser | InvalidUserEmail | InvalidUserPhone | InvalidUserPassword;
 
 type CreateResponse = Either<CreateUserErrors, User>;
 
@@ -37,7 +37,7 @@ export class User {
 
   static create(props: IUserProps): CreateResponse {
     if (!props.name) {
-      return left(new InvalidUserName('Name is required'));
+      return left(new InvalidUser('Name is required'));
     }
 
     const emailOrError = UserEmail.create(props.email);

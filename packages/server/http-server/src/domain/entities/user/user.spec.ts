@@ -1,5 +1,5 @@
 import { User } from '@entities/user';
-import { InvalidUserName, InvalidUserPhone } from '@entities/user/errors';
+import { InvalidUser, InvalidUserPhone } from '@entities/user/errors';
 
 const makeSut = () => {
   return {
@@ -42,7 +42,7 @@ describe('User Unitary Tests', () => {
     });
 
     expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new InvalidUserName('Name is required'));
+    expect(testable.value).toEqual(new InvalidUser('Name is required'));
   });
 
   it('should be return left if any value object is wrong', () => {
