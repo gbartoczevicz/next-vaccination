@@ -60,6 +60,28 @@ describe('Create Health Professional usecase Unitary Tests', () => {
     expect(healthProfessional.document).toEqual(document);
     expect(healthProfessional.user).toEqual(user);
     expect(healthProfessional.vaccinationPoint).toEqual(vaccinationPoint);
+    expect(healthProfessional.responsible).toEqual(false);
+  });
+
+  it('should create a responsible health professional', async () => {
+    const { sut, fakeHealthProfessionalsRepository } = makeSut();
+
+    jest
+      .spyOn(fakeHealthProfessionalsRepository, 'findByDocument')
+      .mockImplementation(() => Promise.resolve(right(null)));
+
+    const { document, user, vaccinationPoint } = makeFixture();
+
+    const testable = await sut.execute({ document, user, vaccinationPoint, responsible: true });
+
+    expect(testable.isRight()).toBeTruthy();
+
+    const healthProfessional = testable.value as HealthProfessional;
+
+    expect(healthProfessional.document).toEqual(document);
+    expect(healthProfessional.user).toEqual(user);
+    expect(healthProfessional.vaccinationPoint).toEqual(vaccinationPoint);
+    expect(healthProfessional.responsible).toEqual(true);
   });
 
   it('should validate health professional object', async () => {

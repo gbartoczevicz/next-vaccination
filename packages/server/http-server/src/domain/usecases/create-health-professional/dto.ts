@@ -5,4 +5,5 @@ export interface ICreateHealthProfessionalDTO {
   user: User;
   vaccinationPoint: VaccinationPoint;
   document: string;
+  responsible?: boolean;
 }
