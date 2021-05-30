@@ -2,7 +2,7 @@ import { User } from '@entities/user';
 import { InvalidUserEmail } from '@entities/user/errors';
 import { left, right } from '@server/shared';
 import { CreateUserUseCase } from '@usecases/create-user';
-import { AccountAlreadyExists } from '@usecases/errors';
+import { EmailAlreadyInUse } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users/fake';
 
@@ -82,7 +82,7 @@ describe('Create User Use Case Unitary Tests', () => {
 
     expect(spyFakeUsersRepository).toHaveBeenCalledTimes(1);
     expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new AccountAlreadyExists(makeFixture({}).email));
+    expect(testable.value).toEqual(new EmailAlreadyInUse(makeFixture({}).email));
   });
 
   it('should return left if savedUser returns left', async () => {

@@ -3,7 +3,7 @@ import { InvalidUser } from '@entities/user/errors';
 import { UserPassword } from '@entities/user/values';
 import { makePassword } from '@entities/user/values/factories/make-password';
 import { EntityID, left, right } from '@server/shared';
-import { AccountAlreadyExists, PasswordDoesNotMatch } from '@usecases/errors';
+import { EmailAlreadyInUse, PasswordDoesNotMatch } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users';
 import { UpdateUserUseCase } from './update-user';
@@ -76,7 +76,7 @@ describe('Update User UseCase Unitary Tests', () => {
     const testable = await sut.execute(makeFixture({ email: 'already_in_use@email.com' }));
 
     expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new AccountAlreadyExists('already_in_use@email.com'));
+    expect(testable.value).toEqual(new EmailAlreadyInUse('already_in_use@email.com'));
   });
 
   it('should validate if incoming password does match', async () => {

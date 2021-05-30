@@ -1,11 +1,11 @@
 import { CreateUserErrors, User } from '@entities/user';
 import { Either, left, right } from '@server/shared';
-import { AccountAlreadyExists, PasswordDoesNotMatch } from '@usecases/errors';
+import { EmailAlreadyInUse, PasswordDoesNotMatch } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
 import { IUpdateUserDTO } from './dto';
 
-type ResponseErrors = CreateUserErrors | InfraError | AccountAlreadyExists | PasswordDoesNotMatch;
+type ResponseErrors = CreateUserErrors | InfraError | EmailAlreadyInUse | PasswordDoesNotMatch;
 
 type Response = Either<ResponseErrors, User>;
 
@@ -40,7 +40,7 @@ export class UpdateUserUseCase {
     const userWithSameEmail = userWithSameEmailOrError.value;
 
     if (userWithSameEmail && !userWithSameEmail.id.equals(userToUpdate.id)) {
-      return left(new AccountAlreadyExists(userToUpdate.email.email));
+      return left(new EmailAlreadyInUse(userToUpdate.email.email));
     }
 
     const doesPasswordMatch = await user.password.compare(request.currentPassword);

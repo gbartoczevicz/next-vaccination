@@ -51,6 +51,15 @@ export class FakeHealthProfessionalsRepository implements IHealthProfessionalsRe
     return Promise.resolve(right(fixture));
   }
 
+  async findByUserAndIsResponsible(user: User): Promise<FindUnique> {
+    const fixture = HealthProfessional.create({
+      ...makeFixture({ userId: user.id.value }),
+      responsible: true
+    }).value as HealthProfessional;
+
+    return Promise.resolve(right(fixture));
+  }
+
   async findByDocument(document: string): Promise<FindUnique> {
     const fixture = HealthProfessional.create(makeFixture({ document })).value as HealthProfessional;
 

@@ -9,6 +9,7 @@ export type Save = Either<InfraError, HealthProfessional>;
 export interface IHealthProfessionalsRepository {
   findById(id: string): Promise<FindUnique>;
   findByUser(user: User): Promise<FindUnique>;
+  findByUserAndIsResponsible(user: User): Promise<FindUnique>;
   findByDocument(document: string): Promise<FindUnique>;
   findByVaccinationPointIdAndIsResponsible(vaccinationPointId: string): Promise<FindUnique>;
   save(healthProfessional: HealthProfessional): Promise<Save>;

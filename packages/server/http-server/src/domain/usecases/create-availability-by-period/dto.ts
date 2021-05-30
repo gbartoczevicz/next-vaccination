@@ -1,6 +1,7 @@
+import { VaccinationPoint } from '@entities/vaccination-point';
+
 export interface ICreateAvailabilityByPeriodDTO {
-  vaccinationPointId: string;
-  userId: string;
+  vaccinationPoint: VaccinationPoint;
   morning: number;
   evening: number;
   dusk: number;
