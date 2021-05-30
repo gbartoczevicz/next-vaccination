@@ -1,5 +1,5 @@
 import { CreatePatientErrors, Patient } from '@entities/patient';
-import { Either, EntityID, left, right } from '@server/shared';
+import { Either, left, right } from '@server/shared';
 import { DocumentAlreadyInUse, PatientNotFound } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IPatientsRepository } from '@usecases/output-ports/repositories/patients';
@@ -15,35 +15,23 @@ export class UpdatePatientUseCase {
   }
 
   async execute(request: IUpdatePatientDTO): Promise<Request> {
-    const { id, user, document, birthday } = request;
+    const { patient } = request;
 
-    const persistedPatientOrError = await this.patientsRepository.findById(id);
-
-    if (persistedPatientOrError.isLeft()) {
-      return left(persistedPatientOrError.value);
-    }
-
-    if (!persistedPatientOrError.value) {
-      return left(new PatientNotFound());
-    }
-
-    const persistedPatient = persistedPatientOrError.value;
-
-    const toUpdatePatientOrError = Patient.create({
-      id: new EntityID(id),
-      user,
-      document,
-      birthday,
-      avatar: persistedPatient.avatar
+    const patientToUpdateOrError = Patient.create({
+      ...request,
+      id: patient.id,
+      user: patient.user,
+      avatar: patient.avatar,
+      ticket: patient.ticket
     });
 
-    if (toUpdatePatientOrError.isLeft()) {
-      return left(toUpdatePatientOrError.value);
+    if (patientToUpdateOrError.isLeft()) {
+      return left(patientToUpdateOrError.value);
     }
 
-    const toUpdatePatient = toUpdatePatientOrError.value;
+    const patientToUpdate = patientToUpdateOrError.value;
 
-    const doesDocumentAlreadyInUseOrError = await this.patientsRepository.findByDocument(document);
+    const doesDocumentAlreadyInUseOrError = await this.patientsRepository.findByDocument(patientToUpdate.document);
 
     if (doesDocumentAlreadyInUseOrError.isLeft()) {
       return left(doesDocumentAlreadyInUseOrError.value);
@@ -51,11 +39,11 @@ export class UpdatePatientUseCase {
 
     const doesDocumentAlreadyInUse = doesDocumentAlreadyInUseOrError.value;
 
-    if (doesDocumentAlreadyInUse) {
+    if (doesDocumentAlreadyInUse && !doesDocumentAlreadyInUse.id.equals(patientToUpdate.id)) {
       return left(new DocumentAlreadyInUse());
     }
 
-    const updatedPatientOrError = await this.patientsRepository.save(toUpdatePatient);
+    const updatedPatientOrError = await this.patientsRepository.save(patientToUpdate);
 
     if (updatedPatientOrError.isLeft()) {
       return left(updatedPatientOrError.value);
