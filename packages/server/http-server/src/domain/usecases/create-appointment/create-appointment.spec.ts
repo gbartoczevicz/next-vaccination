@@ -32,6 +32,7 @@ const makeFixture = () => {
     document: 'document',
     name: 'vaccination point',
     phone: '0000-0000',
+    availability: 50,
     location: {
       address: 'address',
       addressNumber: 10,

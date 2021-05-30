@@ -10,6 +10,7 @@ interface IVaccinationPointProps {
   phone: string;
   document: string;
   location: ILocationProps;
+  availability: number;
 }
 
 export type CreateVaccinationPointErrors = InvalidVaccinationPoint | InvalidLocation | InvalidPhone;
@@ -27,19 +28,30 @@ export class VaccinationPoint {
 
   readonly location: Location;
 
-  constructor(name: string, phone: Phone, document: string, location: Location, id?: EntityID) {
+  readonly availability: number;
+
+  constructor(name: string, phone: Phone, document: string, location: Location, availability: number, id?: EntityID) {
     this.id = id || new EntityID();
     this.name = name;
     this.phone = phone;
     this.document = document;
     this.location = location;
+    this.availability = availability;
   }
 
   static create(props: IVaccinationPointProps): CreateVaccinationPoint {
-    const { id, name, phone, document, location } = props;
+    const { id, name, phone, document, location, availability } = props;
 
     if (!name) {
       return left(new InvalidVaccinationPoint('Name is required'));
+    }
+
+    if (availability == null || availability === undefined) {
+      return left(new InvalidVaccinationPoint('Availability is required'));
+    }
+
+    if (availability < 0) {
+      return left(new InvalidVaccinationPoint('Availability must be greater than 0'));
     }
 
     const phoneOrError = Phone.create(phone);
@@ -62,7 +74,14 @@ export class VaccinationPoint {
       return left(locationOrError.value);
     }
 
-    const vaccinationPoint = new VaccinationPoint(name, phoneOrError.value, document, locationOrError.value, id);
+    const vaccinationPoint = new VaccinationPoint(
+      name,
+      phoneOrError.value,
+      document,
+      locationOrError.value,
+      availability,
+      id
+    );
 
     return right(vaccinationPoint);
   }

@@ -6,4 +6,5 @@ export interface IUpdateVaccinationPointDTO {
   phone: string;
   document: string;
   location: ILocationProps;
+  availability: number;
 }

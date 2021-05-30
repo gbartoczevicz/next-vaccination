@@ -21,7 +21,8 @@ const makeFixture = (
   phone = '0000-0000',
   document = 'document',
   latitude = 41.40338,
-  longitude = 2.17403
+  longitude = 2.17403,
+  availability = 50
 ) => ({
   name,
   document,
@@ -33,7 +34,8 @@ const makeFixture = (
       latitude,
       longitude
     } as ICoordinateProps
-  } as ILocationProps
+  } as ILocationProps,
+  availability
 });
 
 describe('Create Vaccination Point usecase Unitary Tests', () => {
@@ -58,6 +60,7 @@ describe('Create Vaccination Point usecase Unitary Tests', () => {
     expect(vaccinationPoint.document).toEqual('document');
     expect(vaccinationPoint.phone.value).toEqual('00000000');
     expect(vaccinationPoint.location).toEqual(makeFixture().location);
+    expect(vaccinationPoint.availability).toEqual(50);
   });
 
   it('should validate vaccination point object', async () => {

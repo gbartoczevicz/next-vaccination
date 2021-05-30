@@ -29,7 +29,8 @@ const makeFixture = () => {
         latitude: 10,
         longitude: 20
       }
-    }
+    },
+    availability: 20
   }).value as VaccinationPoint;
 
   return {
