@@ -1,8 +1,7 @@
-import { User } from '@entities/user';
+import { Patient } from '@entities/patient';
 
 export interface IUpdatePatientDTO {
-  id: string;
-  user: User;
+  patient: Patient;
   birthday: Date;
   document: string;
 }

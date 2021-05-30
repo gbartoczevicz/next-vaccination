@@ -1,7 +1,7 @@
 import { Patient } from '@entities/patient';
 import { User } from '@entities/user';
-import { left, right } from '@server/shared';
-import { DocumentAlreadyInUse, PatientNotFound } from '@usecases/errors';
+import { EntityID, left, right } from '@server/shared';
+import { DocumentAlreadyInUse } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakePatientsRepository } from '@usecases/output-ports/repositories/patients';
 import { UpdatePatientUseCase } from './update-patient';
@@ -23,18 +23,27 @@ const makeBirthday = (date: Date) => {
   return dateAtStartOfDay;
 };
 
-const makeFixture = (document = '000.000.000-00', birthday = new Date()) => {
+const makeFixture = ({ document = 'updated_document', birthday = new Date() }) => {
   const user = User.create({
+    id: new EntityID('to_keep_user_id'),
     name: 'any_correct_name',
     email: 'any_correct_email@mail.com',
     phone: '(99) 99999-9999',
     password: { password: 'any_correct_password' }
   }).value as User;
 
-  return {
-    id: 'unique_id',
-    document,
+  const patient = Patient.create({
+    id: new EntityID('to_keep_patient_id'),
     user,
+    document: 'old_document',
+    birthday: new Date(),
+    avatar: 'avatar_to_keep.png',
+    ticket: 'ticket_to_keep.pdf'
+  }).value as Patient;
+
+  return {
+    patient,
+    document,
     birthday
   };
 };
@@ -43,66 +52,49 @@ describe('Update Patient UseCase Unitary Tests', () => {
   it('should update patient', async () => {
     const { sut, fakePatientsRepository } = makeSut();
 
-    const spyFakePatientsRepository = jest.spyOn(fakePatientsRepository, 'findByDocument');
-    spyFakePatientsRepository.mockImplementation(() => Promise.resolve(right(null)));
+    jest.spyOn(fakePatientsRepository, 'findByDocument').mockImplementation(() => Promise.resolve(right(null)));
 
-    const date = makeBirthday(new Date());
+    const birthday = makeBirthday(new Date());
 
-    const testable = await sut.execute(makeFixture(undefined, date));
+    const testable = await sut.execute(makeFixture({ birthday }));
 
     expect(testable.isRight()).toBeTruthy();
 
     const patient = testable.value as Patient;
 
-    expect(patient.id.value).toEqual('unique_id');
-    expect(patient.birthday.value).toEqual(date);
-    expect(patient.document).toEqual('000.000.000-00');
-  });
-
-  it('should check if patient exists', async () => {
-    const { sut, fakePatientsRepository } = makeSut();
-
-    const spyFakePatientsRepository = jest.spyOn(fakePatientsRepository, 'findById');
-    spyFakePatientsRepository.mockImplementation(() => Promise.resolve(right(null)));
-
-    const testable = await sut.execute(makeFixture());
-
-    expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new PatientNotFound());
+    expect(patient.id.value).toEqual('to_keep_patient_id');
+    expect(patient.document).toEqual('updated_document');
+    expect(patient.avatar).toEqual('avatar_to_keep.png');
+    expect(patient.ticket).toEqual('ticket_to_keep.pdf');
+    expect(patient.birthday.value).toEqual(birthday);
+    expect(patient.user.id.value).toEqual('to_keep_user_id');
   });
 
   it("should check if the patient's document is already in use", async () => {
-    const { sut } = makeSut();
+    const { sut, fakePatientsRepository } = makeSut();
 
-    const testable = await sut.execute(makeFixture());
+    jest.spyOn(fakePatientsRepository, 'findByDocument').mockImplementation(() => {
+      const fixture = { id: new EntityID() } as Patient;
+
+      return Promise.resolve(right(fixture));
+    });
+
+    const testable = await sut.execute(makeFixture({}));
 
     expect(testable.isLeft()).toBeTruthy();
     expect(testable.value).toEqual(new DocumentAlreadyInUse());
   });
 
-  describe('validate infra errors', () => {
-    it('should validate findById', async () => {
-      const { sut, fakePatientsRepository } = makeSut();
+  it('should validate findByDocument Infra Error', async () => {
+    const { sut, fakePatientsRepository } = makeSut();
 
-      const spyFakePatientsRepository = jest.spyOn(fakePatientsRepository, 'findById');
-      spyFakePatientsRepository.mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
+    jest
+      .spyOn(fakePatientsRepository, 'findByDocument')
+      .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
 
-      const testable = await sut.execute(makeFixture());
+    const testable = await sut.execute(makeFixture({}));
 
-      expect(testable.isLeft()).toBeTruthy();
-      expect(testable.value).toEqual(new InfraError('Unexpected Error'));
-    });
-
-    it('should validate findByDocument', async () => {
-      const { sut, fakePatientsRepository } = makeSut();
-
-      const spyFakePatientsRepository = jest.spyOn(fakePatientsRepository, 'findByDocument');
-      spyFakePatientsRepository.mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
-
-      const testable = await sut.execute(makeFixture());
-
-      expect(testable.isLeft()).toBeTruthy();
-      expect(testable.value).toEqual(new InfraError('Unexpected Error'));
-    });
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new InfraError('Unexpected Error'));
   });
 });
