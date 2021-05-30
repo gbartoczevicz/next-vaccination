@@ -1,11 +1,11 @@
 import { ICreateUserDTO } from '@usecases/create-user';
-import { User } from '@entities/user';
+import { CreateUserErrors, User } from '@entities/user';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
-import { AccountAlreadyExists, UserValidation } from '@usecases/create-user/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { Either, left, right } from '@server/shared';
+import { EmailAlreadyInUse } from '@usecases/errors';
 
-type Response = Either<AccountAlreadyExists | InfraError | UserValidation, User>;
+type Response = Either<CreateUserErrors | EmailAlreadyInUse | InfraError, User>;
 
 export class CreateUserUseCase {
   private usersRepository: IUsersRepository;
@@ -28,16 +28,16 @@ export class CreateUserUseCase {
 
     const user = userOrError.value;
 
-    const doesAccountAlreadyExistsOrError = await this.usersRepository.findByEmail(user.email);
+    const doesEmailAlreadyInUseOrError = await this.usersRepository.findByEmail(user.email);
 
-    if (doesAccountAlreadyExistsOrError.isLeft()) {
-      return left(doesAccountAlreadyExistsOrError.value);
+    if (doesEmailAlreadyInUseOrError.isLeft()) {
+      return left(doesEmailAlreadyInUseOrError.value);
     }
 
-    const doesAccountAlreadyExists = doesAccountAlreadyExistsOrError.value;
+    const doesEmailAlreadyInUse = doesEmailAlreadyInUseOrError.value;
 
-    if (doesAccountAlreadyExists) {
-      return left(new AccountAlreadyExists(doesAccountAlreadyExists.email.email));
+    if (doesEmailAlreadyInUse) {
+      return left(new EmailAlreadyInUse(doesEmailAlreadyInUse.email.email));
     }
 
     const savedUserOrError = await this.usersRepository.save(user);

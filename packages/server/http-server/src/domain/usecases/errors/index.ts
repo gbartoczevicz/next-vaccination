@@ -1,5 +1,4 @@
-export * from './account-already-exists';
-export * from './user-validation';
+export * from './email-already-in-use';
 export * from './document-already-in-use';
 export * from './password-does-not-match';
 export * from './user-not-found';
@@ -7,8 +6,6 @@ export * from './patient-not-found';
 export * from './location-already-in-use';
 export * from './vaccination-point-not-found';
 export * from './health-professional-not-found';
-export * from './not-responsible';
-export * from './does-not-belong-to-the-vaccination-point';
 export * from './availability-by-period-already-exists';
 export * from './vaccine-name-already-in-use';
 export * from './vaccine-not-found';
