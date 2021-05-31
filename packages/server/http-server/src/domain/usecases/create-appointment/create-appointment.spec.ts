@@ -3,7 +3,8 @@ import { InvalidAppointment } from '@entities/appointment/errors';
 import { Patient } from '@entities/patient';
 import { User } from '@entities/user';
 import { VaccinationPoint } from '@entities/vaccination-point';
-import { EntityID, left } from '@server/shared';
+import { EntityID, left, right } from '@server/shared';
+import { VaccinationPointWithoutAvailability } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakeAppointmentsRepository } from '@usecases/output-ports/repositories/appointments';
 import { CreateAppointmentUseCase } from './create-appointment';
@@ -32,7 +33,7 @@ const makeFixture = () => {
     document: 'document',
     name: 'vaccination point',
     phone: '0000-0000',
-    availability: 50,
+    availability: 10,
     location: {
       address: 'address',
       addressNumber: 10,
@@ -68,6 +69,19 @@ describe('Create Appointments UseCase Unitary Tests', () => {
     expect(appointment.vaccinationPoint).toEqual(fixture.vaccinationPoint);
   });
 
+  it("should validate if vaccination point has more appointments in the day than it's availability", async () => {
+    const { sut, fakeAppointmentsRespository } = makeSut();
+
+    jest
+      .spyOn(fakeAppointmentsRespository, 'findAllByVaccinationPointAndDate')
+      .mockImplementation(() => Promise.resolve(right(new Array(11))));
+
+    const testable = await sut.execute(makeFixture());
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new VaccinationPointWithoutAvailability());
+  });
+
   it('should validate appointment object', async () => {
     const { sut } = makeSut();
 
@@ -81,6 +95,19 @@ describe('Create Appointments UseCase Unitary Tests', () => {
   });
 
   describe('Infra Error validation', () => {
+    it("should validate Appointments Repository's findAllByVaccinationPointAndDate", async () => {
+      const { sut, fakeAppointmentsRespository } = makeSut();
+
+      jest
+        .spyOn(fakeAppointmentsRespository, 'findAllByVaccinationPointAndDate')
+        .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
+
+      const testable = await sut.execute(makeFixture());
+
+      expect(testable.isLeft()).toBeTruthy();
+      expect(testable.value).toEqual(new InfraError('Unexpected Error'));
+    });
+
     it("should validate Appointments Repository's save", async () => {
       const { sut, fakeAppointmentsRespository } = makeSut();
 

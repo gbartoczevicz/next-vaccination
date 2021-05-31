@@ -1,12 +1,20 @@
 import { Appointment } from '@entities/appointment';
 import { InvalidAppointment } from '@entities/appointment/errors';
 import { Either, left, right } from '@server/shared';
+import { VaccinationPointWithoutAvailability } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IAppointmentsRepository } from '@usecases/output-ports/repositories/appointments';
 import { ICreateAppointmentDTO } from './dto';
 
-type Response = Either<InfraError | InvalidAppointment, Appointment>;
+type ResponseErrors = InfraError | InvalidAppointment | VaccinationPointWithoutAvailability;
 
+type Response = Either<ResponseErrors, Appointment>;
+
+/**
+ * @todo Check vaccination point's vaccine batches'
+ * stock and it's expiration date before creating
+ * a new appointment
+ */
 export class CreateAppointmentUseCase {
   private appointmentsRepository: IAppointmentsRepository;
 
@@ -22,6 +30,21 @@ export class CreateAppointmentUseCase {
     }
 
     const appointment = appointmentOrError.value;
+
+    const appointmentsAlreadyCreatedOrError = await this.appointmentsRepository.findAllByVaccinationPointAndDate(
+      appointment.vaccinationPoint,
+      appointment.date
+    );
+
+    if (appointmentsAlreadyCreatedOrError.isLeft()) {
+      return left(appointmentsAlreadyCreatedOrError.value);
+    }
+
+    const appointmentsAlreadyCreated = appointmentsAlreadyCreatedOrError.value;
+
+    if (appointmentsAlreadyCreated.length > appointment.vaccinationPoint.availability) {
+      return left(new VaccinationPointWithoutAvailability());
+    }
 
     const appointmentCreatedOrError = await this.appointmentsRepository.save(appointment);
 
