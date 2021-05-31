@@ -31,18 +31,18 @@ export class CreateAppointmentUseCase {
 
     const appointment = appointmentOrError.value;
 
-    const appointmentsAlreadyCreatedOrError = await this.appointmentsRepository.findAllByVaccinationPointAndDate(
+    const appointmentsAlreadyCreatedTodayOrError = await this.appointmentsRepository.findAllByVaccinationPointAndDate(
       appointment.vaccinationPoint,
       appointment.date
     );
 
-    if (appointmentsAlreadyCreatedOrError.isLeft()) {
-      return left(appointmentsAlreadyCreatedOrError.value);
+    if (appointmentsAlreadyCreatedTodayOrError.isLeft()) {
+      return left(appointmentsAlreadyCreatedTodayOrError.value);
     }
 
-    const appointmentsAlreadyCreated = appointmentsAlreadyCreatedOrError.value;
+    const appointmentsAlreadyCreatedToday = appointmentsAlreadyCreatedTodayOrError.value;
 
-    if (appointmentsAlreadyCreated.length > appointment.vaccinationPoint.availability) {
+    if (appointmentsAlreadyCreatedToday.length > appointment.vaccinationPoint.availability) {
       return left(new VaccinationPointWithoutAvailability());
     }
 
