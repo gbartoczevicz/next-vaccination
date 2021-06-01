@@ -27,7 +27,8 @@ const makeFixture = ({
           latitude: 41.40338,
           longitude: 2.17403
         }
-      }).value as Location
+      }).value as Location,
+      availability: 20
     }).value as VaccinationPoint,
     vaccine: {
       id: new EntityID(vaccineId),

@@ -45,7 +45,8 @@ const makeFixture = ({ vaccineId = 'vaccine_id', expirationDate = new Date(), st
           latitude: 20.0,
           longitude: 30.0
         }).value as Coordinate
-      }
+      },
+      availability: 20
     }).value as VaccinationPoint
   }).value as HealthProfessional,
   vaccineId,

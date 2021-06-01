@@ -12,7 +12,8 @@ const makeFixture = (document = 'document', latitude = 41.40338, longitude = 2.1
     address: 'Avenida Inglaterra',
     addressNumber: 20,
     coordinate: Coordinate.create({ latitude, longitude }).value as Coordinate
-  }).value as Location
+  }).value as Location,
+  availability: 20
 });
 
 export class FakeVaccinationPointsRepository implements IVaccinationPointsRepository {

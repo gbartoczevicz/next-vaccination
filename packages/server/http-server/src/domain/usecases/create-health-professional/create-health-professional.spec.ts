@@ -37,7 +37,8 @@ const makeFixture = (document = 'health_professional_document') => ({
         latitude: 20.0,
         longitude: 30.0
       } as ICoordinateProps
-    }
+    },
+    availability: 20
   }).value as VaccinationPoint
 });
 

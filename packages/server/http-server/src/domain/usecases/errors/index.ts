@@ -10,3 +10,6 @@ export * from './availability-by-period-already-exists';
 export * from './vaccine-name-already-in-use';
 export * from './vaccine-not-found';
 export * from './responsible-not-found';
+export * from './vaccination-point-without-availability';
+export * from './without-vaccine-batches-within-expiration-date';
+export * from './has-not-available-vaccine-batches';

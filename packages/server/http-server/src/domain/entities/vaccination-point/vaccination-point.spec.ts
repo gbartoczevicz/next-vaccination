@@ -6,6 +6,7 @@ const makeFixture = () => ({
   name: 'Valid Name',
   phone: '0000-0000',
   document: 'document',
+  availability: 50,
   location: Location.create({
     address: 'Avenida Inglaterra',
     addressNumber: 20,
@@ -22,7 +23,12 @@ describe('Vaccination Point Unitary Tests', () => {
   it('should create a valid vaccination point object', () => {
     const { sut } = makeSut();
 
-    const testable = sut.create(makeFixture());
+    const { location, ...fixture } = makeFixture();
+
+    const testable = sut.create({
+      ...fixture,
+      location
+    });
 
     expect(testable.isRight()).toBeTruthy();
 
@@ -31,7 +37,8 @@ describe('Vaccination Point Unitary Tests', () => {
     expect(vaccinationPoint.name).toEqual('Valid Name');
     expect(vaccinationPoint.phone.value).toEqual('00000000');
     expect(vaccinationPoint.document).toEqual('document');
-    expect(vaccinationPoint.location).toEqual(makeFixture().location);
+    expect(vaccinationPoint.location).toEqual(location);
+    expect(vaccinationPoint.availability).toEqual(50);
   });
 
   it('should validate name param', () => {
@@ -80,5 +87,17 @@ describe('Vaccination Point Unitary Tests', () => {
 
     expect(testable.isLeft()).toBeTruthy();
     expect(testable.value).toEqual(new InvalidLocation('Location is required'));
+  });
+
+  it('should validate availability param', () => {
+    const { sut } = makeSut();
+
+    const testable = sut.create({
+      ...makeFixture(),
+      availability: null
+    });
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new InvalidLocation('Availability is required'));
   });
 });

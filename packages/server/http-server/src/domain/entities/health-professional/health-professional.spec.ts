@@ -28,7 +28,8 @@ const makeFixture = (document = 'health_professional_document') => {
           latitude: 41.40338,
           longitude: 2.17403
         }
-      }).value as Location
+      }).value as Location,
+      availability: 20
     }).value as VaccinationPoint
   };
 };

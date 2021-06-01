@@ -1,4 +1,4 @@
-export class InvalidAvailabilityByPeriod extends Error {
+export class InvalidAppointment extends Error {
   constructor(reason: string) {
     super(reason);
   }
