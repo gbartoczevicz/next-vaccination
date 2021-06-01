@@ -24,7 +24,8 @@ export class FakeAppointmentsRepository implements IAppointmentsRepository {
       vaccinationPoint: vaccineBatch.vaccinationPoint,
       date: new Date(),
       patient: { id: new EntityID() } as Patient,
-      vaccinatedAt: new Date()
+      vaccinatedAt: new Date(),
+      vaccineBatch
     }).value as Appointment;
 
     return Promise.resolve(right([fixture]));

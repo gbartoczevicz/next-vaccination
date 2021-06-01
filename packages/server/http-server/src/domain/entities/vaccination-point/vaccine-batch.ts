@@ -1,4 +1,4 @@
-import { Either, left, right } from '@server/shared';
+import { Either, EntityID, left, right } from '@server/shared';
 import { InvalidExpirationDate, InvalidVaccineBatch } from './errors';
 import { VaccinationPoint } from './vaccination-point';
 import { Vaccine } from './vaccine';
@@ -6,6 +6,7 @@ import { ExpirationDate } from './values';
 import { makeExpirationDate } from './values/factories/make-expiration-date';
 
 export interface IVaccineBatchProps {
+  id?: EntityID;
   vaccine: Vaccine;
   vaccinationPoint: VaccinationPoint;
   expirationDate: Date;
@@ -13,6 +14,8 @@ export interface IVaccineBatchProps {
 }
 
 export class VaccineBatch {
+  readonly id?: EntityID;
+
   readonly vaccine: Vaccine;
 
   readonly vaccinationPoint: VaccinationPoint;
@@ -21,7 +24,14 @@ export class VaccineBatch {
 
   readonly stock: number;
 
-  constructor(vaccine: Vaccine, vaccinationPoint: VaccinationPoint, expirationDate: ExpirationDate, stock: number) {
+  constructor(
+    vaccine: Vaccine,
+    vaccinationPoint: VaccinationPoint,
+    expirationDate: ExpirationDate,
+    stock: number,
+    id?: EntityID
+  ) {
+    this.id = id || new EntityID();
     this.vaccine = vaccine;
     this.vaccinationPoint = vaccinationPoint;
     this.expirationDate = expirationDate;
@@ -57,7 +67,7 @@ export class VaccineBatch {
       return left(new InvalidVaccineBatch('Stock must be greater than 0'));
     }
 
-    const vaccineBatch = new VaccineBatch(vaccine, vaccinationPoint, expirationDateOrError.value, stock);
+    const vaccineBatch = new VaccineBatch(vaccine, vaccinationPoint, expirationDateOrError.value, stock, props.id);
 
     return right(vaccineBatch);
   }
