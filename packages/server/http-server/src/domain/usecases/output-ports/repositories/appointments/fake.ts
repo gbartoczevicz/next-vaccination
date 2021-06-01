@@ -1,6 +1,6 @@
 import { Appointment } from '@entities/appointment';
 import { Patient } from '@entities/patient';
-import { VaccinationPoint } from '@entities/vaccination-point';
+import { VaccinationPoint, VaccineBatch } from '@entities/vaccination-point';
 import { EntityID, right } from '@server/shared';
 import { FindAll, IAppointmentsRepository, Save } from './appointments';
 
@@ -14,6 +14,17 @@ export class FakeAppointmentsRepository implements IAppointmentsRepository {
       vaccinationPoint,
       date,
       patient: { id: new EntityID() } as Patient
+    }).value as Appointment;
+
+    return Promise.resolve(right([fixture]));
+  }
+
+  async findAllByVaccineBatch(vaccineBatch: VaccineBatch): Promise<FindAll> {
+    const fixture = Appointment.create({
+      vaccinationPoint: vaccineBatch.vaccinationPoint,
+      date: new Date(),
+      patient: { id: new EntityID() } as Patient,
+      vaccinatedAt: new Date()
     }).value as Appointment;
 
     return Promise.resolve(right([fixture]));
