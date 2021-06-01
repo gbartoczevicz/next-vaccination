@@ -1,13 +1,13 @@
 /* eslint-disable max-len */
 import { Appointment } from '@entities/appointment';
 import { InvalidAppointment } from '@entities/appointment/errors';
-import { VaccineBatch } from '@entities/vaccination-point';
 import { Either, left, right } from '@server/shared';
 import {
   HasNotAvailableVaccineBatches,
   VaccinationPointWithoutAvailability,
   WithoutVaccineBatchesWithinExpirationDate
 } from '@usecases/errors';
+import { GetAppointmentsThatUseSameVaccineBatchesUseCase } from '@usecases/get-appointments-that-use-same-vaccine-batches';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IAppointmentsRepository } from '@usecases/output-ports/repositories/appointments';
 import { IVaccineBatchesRepository } from '@usecases/output-ports/repositories/vaccine-batches';
@@ -27,9 +27,16 @@ export class CreateAppointmentUseCase {
 
   private vaccineBatchesRepository: IVaccineBatchesRepository;
 
-  constructor(appointmentsRepository: IAppointmentsRepository, vaccineBatchesRepository: IVaccineBatchesRepository) {
+  private getAppointmentsThatUseSameVaccineBatchesUseCase: GetAppointmentsThatUseSameVaccineBatchesUseCase;
+
+  constructor(
+    appointmentsRepository: IAppointmentsRepository,
+    vaccineBatchesRepository: IVaccineBatchesRepository,
+    getAppointmentsThatUseSameVaccineBatchesUseCase: GetAppointmentsThatUseSameVaccineBatchesUseCase
+  ) {
     this.appointmentsRepository = appointmentsRepository;
     this.vaccineBatchesRepository = vaccineBatchesRepository;
+    this.getAppointmentsThatUseSameVaccineBatchesUseCase = getAppointmentsThatUseSameVaccineBatchesUseCase;
   }
 
   async execute(request: ICreateAppointmentDTO): Promise<Response> {
@@ -71,18 +78,18 @@ export class CreateAppointmentUseCase {
       return left(new WithoutVaccineBatchesWithinExpirationDate());
     }
 
-    const appointmentsThatUseSameBatch = await this.findAllAppointmentsThatUseSameBatch(
-      vaccinationPointBatchesWithinExpirationDate
-    );
+    const appointmentsThatUseSameBatchOrError = await this.getAppointmentsThatUseSameVaccineBatchesUseCase.execute({
+      vaccineBatches: vaccinationPointBatchesWithinExpirationDate
+    });
 
-    const hadInfraError = appointmentsThatUseSameBatch.find(({ appointments }) => appointments.isLeft());
-
-    if (hadInfraError) {
-      return left(hadInfraError.appointments.value as InfraError);
+    if (appointmentsThatUseSameBatchOrError.isLeft()) {
+      return left(appointmentsThatUseSameBatchOrError.value);
     }
 
+    const appointmentsThatUseSameBatch = appointmentsThatUseSameBatchOrError.value;
+
     const hasNotAvailableVaccineBatch = appointmentsThatUseSameBatch.some(
-      ({ batch, appointments }) => batch.stock <= (appointments.value as Appointment[]).length
+      ({ vaccineBatch, appointments }) => vaccineBatch.stock <= appointments.length
     );
 
     if (hasNotAvailableVaccineBatch) {
@@ -96,22 +103,5 @@ export class CreateAppointmentUseCase {
     }
 
     return right(appointmentCreatedOrError.value);
-  }
-
-  private async findAllAppointmentsThatUseSameBatch(vaccineBatches: VaccineBatch[]) {
-    const fetch = async () => {
-      return Promise.all(
-        vaccineBatches.map(async (batch) => {
-          const appointments = await this.appointmentsRepository.findAllByVaccineBatch(batch);
-
-          return {
-            batch,
-            appointments
-          };
-        })
-      );
-    };
-
-    return fetch();
   }
 }
