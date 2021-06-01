@@ -22,11 +22,6 @@ type ResponseErrors =
 
 type Response = Either<ResponseErrors, Appointment>;
 
-/**
- * @todo Check vaccination point's vaccine batches'
- * stock and it's expiration date before creating
- * a new appointment
- */
 export class CreateAppointmentUseCase {
   private appointmentsRepository: IAppointmentsRepository;
 
@@ -46,18 +41,18 @@ export class CreateAppointmentUseCase {
 
     const appointment = appointmentOrError.value;
 
-    const appointmentsAlreadyCreatedTodayOrError = await this.appointmentsRepository.findAllByVaccinationPointAndDate(
+    const appointmentsAlreadyCreatedOnDateOrError = await this.appointmentsRepository.findAllByVaccinationPointAndDate(
       appointment.vaccinationPoint,
       appointment.date
     );
 
-    if (appointmentsAlreadyCreatedTodayOrError.isLeft()) {
-      return left(appointmentsAlreadyCreatedTodayOrError.value);
+    if (appointmentsAlreadyCreatedOnDateOrError.isLeft()) {
+      return left(appointmentsAlreadyCreatedOnDateOrError.value);
     }
 
-    const appointmentsAlreadyCreatedToday = appointmentsAlreadyCreatedTodayOrError.value;
+    const appointmentsAlreadyCreatedOnDate = appointmentsAlreadyCreatedOnDateOrError.value;
 
-    if (appointmentsAlreadyCreatedToday.length >= appointment.vaccinationPoint.availability) {
+    if (appointmentsAlreadyCreatedOnDate.length >= appointment.vaccinationPoint.availability) {
       return left(new VaccinationPointWithoutAvailability());
     }
 
