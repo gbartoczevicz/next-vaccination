@@ -4,17 +4,24 @@ import { Patient } from '@entities/patient';
 import { User } from '@entities/user';
 import { VaccinationPoint } from '@entities/vaccination-point';
 import { EntityID, left, right } from '@server/shared';
-import { VaccinationPointWithoutAvailability } from '@usecases/errors';
+import {
+  HasNotAvailableVaccineBatches,
+  VaccinationPointWithoutAvailability,
+  WithoutVaccineBatchesWithinExpirationDate
+} from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakeAppointmentsRepository } from '@usecases/output-ports/repositories/appointments';
+import { FakeVaccineBatchesRepository } from '@usecases/output-ports/repositories/vaccine-batches';
 import { CreateAppointmentUseCase } from './create-appointment';
 
 const makeSut = () => {
   const fakeAppointmentsRespository = new FakeAppointmentsRepository();
+  const fakeVaccineBatchesRepository = new FakeVaccineBatchesRepository();
 
   return {
-    sut: new CreateAppointmentUseCase(fakeAppointmentsRespository),
-    fakeAppointmentsRespository
+    sut: new CreateAppointmentUseCase(fakeAppointmentsRespository, fakeVaccineBatchesRepository),
+    fakeAppointmentsRespository,
+    fakeVaccineBatchesRepository
   };
 };
 
@@ -92,6 +99,32 @@ describe('Create Appointments UseCase Unitary Tests', () => {
 
     expect(testable.isLeft()).toBeTruthy();
     expect(testable.value).toEqual(new InvalidAppointment('Date is required'));
+  });
+
+  it('should validate if vaccination point has batches that are at expiration date', async () => {
+    const { sut, fakeVaccineBatchesRepository } = makeSut();
+
+    jest
+      .spyOn(fakeVaccineBatchesRepository, 'findAllByVaccinationPointAndExpirationDateAfterThan')
+      .mockImplementation(() => Promise.resolve(right([])));
+
+    const testable = await sut.execute(makeFixture());
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new WithoutVaccineBatchesWithinExpirationDate());
+  });
+
+  it('should validate if vaccination point has available vaccine batches', async () => {
+    const { sut, fakeAppointmentsRespository } = makeSut();
+
+    jest
+      .spyOn(fakeAppointmentsRespository, 'findAllByVaccineBatch')
+      .mockImplementation(() => Promise.resolve(right(new Array(99))));
+
+    const testable = await sut.execute(makeFixture());
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new HasNotAvailableVaccineBatches());
   });
 
   describe('Infra Error validation', () => {
