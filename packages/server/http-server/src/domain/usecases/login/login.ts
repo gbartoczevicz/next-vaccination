@@ -18,8 +18,9 @@ export class LoginUseCase {
     const { user, password } = request;
     const requestedAccount = await this.usersRepository.findByEmailAndPassword(user, password);
 
-    if (requestedAccount.isLeft() || !requestedAccount.value) {
-      const handledError = !requestedAccount.value ? new AccountNotFinded() : requestedAccount.value;
+    const accountNotFinded = !requestedAccount.value;
+    if (requestedAccount.isLeft() || accountNotFinded) {
+      const handledError = !requestedAccount.value ? new AccountNotFinded() : (requestedAccount.value as InfraError);
       return left(handledError);
     }
 
