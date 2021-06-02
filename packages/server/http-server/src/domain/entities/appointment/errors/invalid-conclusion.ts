@@ -1,4 +1,4 @@
-export class InvalidConclusion extends Error {
+export class InvalidCancellation extends Error {
   constructor(reason: string) {
     super(reason);
   }
