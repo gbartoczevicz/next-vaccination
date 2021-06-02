@@ -1,11 +1,11 @@
 import { User } from '@entities/user';
 import { Either, left, right } from '@server/shared';
-import { AccountNotFinded } from '@usecases/errors/account-not-finded';
+import { UserNotFound } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
 import { ILoginDTO } from './dto';
 
-type Response = Either<AccountNotFinded | InfraError, User>;
+type Response = Either<UserNotFound | InfraError, User>;
 
 export class LoginUseCase {
   private readonly usersRepository: IUsersRepository;
@@ -20,7 +20,7 @@ export class LoginUseCase {
 
     const accountNotFinded = !requestedAccount.value;
     if (requestedAccount.isLeft() || accountNotFinded) {
-      const handledError = !requestedAccount.value ? new AccountNotFinded() : (requestedAccount.value as InfraError);
+      const handledError = !requestedAccount.value ? new UserNotFound() : (requestedAccount.value as InfraError);
       return left(handledError);
     }
 
