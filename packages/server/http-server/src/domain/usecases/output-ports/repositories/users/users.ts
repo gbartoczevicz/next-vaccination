@@ -7,5 +7,4 @@ export interface IUsersRepository {
   save(user: User): Promise<Either<InfraError, User>>;
   findById(id: string): Promise<Either<InfraError, User | null>>;
   findByEmail(email: UserEmail): Promise<Either<InfraError, User | null>>;
-  findByEmailAndPassword(email: string, password: string): Promise<Either<InfraError, User | null>>;
 }

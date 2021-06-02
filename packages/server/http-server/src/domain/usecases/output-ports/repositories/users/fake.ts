@@ -32,16 +32,4 @@ export class FakeUsersRepository implements IUsersRepository {
     });
     return Promise.resolve(right(<User>fixture.value));
   }
-
-  async findByEmailAndPassword(email: string, password: string): Promise<Either<InfraError, User | null>> {
-    const fixture = User.create({
-      name: 'any_name',
-      email,
-      phone: '(99) 99999-9999',
-      password: {
-        password
-      }
-    });
-    return Promise.resolve(right(<User>fixture.value));
-  }
 }
