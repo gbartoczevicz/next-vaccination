@@ -1,6 +1,5 @@
 import { User } from '@entities/user';
 import { EntityID } from '@server/shared';
-import { Appointment } from './appointment';
 import { Cancellation } from './cancellation';
 import { InvalidCancellation } from './errors';
 
@@ -15,8 +14,7 @@ describe('Cancellation Unitary Tests', () => {
     const testable = sut.create({
       reason: 'Cancellation Reason',
       createdAt,
-      cancelatedBy: { id: new EntityID('cancelated_by') } as User,
-      appointment: { id: new EntityID('appointment_cancelated') } as Appointment
+      cancelatedBy: { id: new EntityID('cancelated_by') } as User
     });
 
     expect(testable.isRight()).toBeTruthy();
@@ -27,7 +25,6 @@ describe('Cancellation Unitary Tests', () => {
     expect(cancellation.reason).toEqual('Cancellation Reason');
     expect(cancellation.createdAt).toEqual(createdAt);
     expect(cancellation.cancelatedBy.id.value).toEqual('cancelated_by');
-    expect(cancellation.appointment.id.value).toEqual('appointment_cancelated');
   });
 
   it('should validate reason', () => {
@@ -36,8 +33,7 @@ describe('Cancellation Unitary Tests', () => {
     const testable = sut.create({
       reason: null,
       createdAt: new Date(),
-      cancelatedBy: { id: new EntityID('cancelated_by') } as User,
-      appointment: { id: new EntityID('appointment_cancelated') } as Appointment
+      cancelatedBy: { id: new EntityID('cancelated_by') } as User
     });
 
     expect(testable.isLeft()).toBeTruthy();
@@ -50,8 +46,7 @@ describe('Cancellation Unitary Tests', () => {
     const testable = sut.create({
       reason: 'Cancellation Reason',
       createdAt: null,
-      cancelatedBy: { id: new EntityID('cancelated_by') } as User,
-      appointment: { id: new EntityID('appointment_cancelated') } as Appointment
+      cancelatedBy: { id: new EntityID('cancelated_by') } as User
     });
 
     expect(testable.isLeft()).toBeTruthy();
@@ -64,25 +59,10 @@ describe('Cancellation Unitary Tests', () => {
     const testable = sut.create({
       reason: 'Cancellation Reason',
       createdAt: new Date(),
-      cancelatedBy: null,
-      appointment: { id: new EntityID('appointment_cancelated') } as Appointment
+      cancelatedBy: null
     });
 
     expect(testable.isLeft()).toBeTruthy();
     expect(testable.value).toEqual(new InvalidCancellation('Cancelated By is required'));
-  });
-
-  it('should validate appointment', () => {
-    const { sut } = makeSut();
-
-    const testable = sut.create({
-      reason: 'Cancellation Reason',
-      createdAt: new Date(),
-      cancelatedBy: { id: new EntityID('cancelated_by') } as User,
-      appointment: null
-    });
-
-    expect(testable.isLeft()).toBeTruthy();
-    expect(testable.value).toEqual(new InvalidCancellation('Appointment is required'));
   });
 });
