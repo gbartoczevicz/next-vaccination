@@ -1,5 +1,6 @@
 import { User } from '@entities/user';
-import { Either } from '@server/shared';
+import { Either, left } from '@server/shared';
+import { AccountNotFinded } from '@usecases/errors/account-not-finded';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
 import { ILoginDTO } from './dto';
@@ -16,5 +17,10 @@ export class LoginUseCase {
   async execute(request: ILoginDTO): Promise<Response> {
     const { user, password } = request;
     const requestedAccount = await this.usersRepository.findByEmailAndPassword(user, password);
+
+    if (requestedAccount.isLeft() || !requestedAccount.value) {
+      const handledError = !requestedAccount.value ? new AccountNotFinded() : requestedAccount.value;
+      return left(handledError);
+    }
   }
 }
