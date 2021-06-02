@@ -1,28 +1,31 @@
-import { WrongProperty } from '@usecases/errors/wrong-property';
 import { LoginUseCase } from '@usecases/login/login';
+import { FakeUsersRepository } from '@usecases/output-ports/repositories/users';
+
+const makeFakeUsersRepository = () => {
+  return new FakeUsersRepository();
+};
 
 const makeSut = () => {
-  const sut = new LoginUseCase();
+  const makedFakeUsersRepository = makeFakeUsersRepository();
+  const sut = new LoginUseCase(makedFakeUsersRepository);
 
   return {
-    sut
+    sut,
+    makedFakeUsersRepository
   };
 };
 
 describe('Login UseCase Unitary Tests', () => {
-  test('should returns left if contains invalid requested property', async () => {
-    const { sut } = makeSut();
+  test('should call email and password infrastructure query correctly', async () => {
+    const { sut, makedFakeUsersRepository } = makeSut();
 
-    const testableWithEmptyUser = await sut.execute({ user: '', password: 'any_pass' });
-    expect(testableWithEmptyUser.isLeft()).toBeTruthy();
-    expect(testableWithEmptyUser.value).toEqual(new WrongProperty('user'));
+    const spyFindByEmailAndPassword = jest.spyOn(makedFakeUsersRepository, 'findByEmailAndPassword');
+    await sut.execute({
+      user: 'any_user',
+      password: 'any_password'
+    });
 
-    const testableWithEmptyPassword = await sut.execute({ user: 'any_user', password: '' });
-    expect(testableWithEmptyPassword.isLeft()).toBeTruthy();
-    expect(testableWithEmptyPassword.value).toEqual(new WrongProperty('password'));
-
-    const testableWithAllEmpties = await sut.execute({ user: '', password: '' });
-    expect(testableWithAllEmpties.isLeft()).toBeTruthy();
-    expect(testableWithAllEmpties.value).toEqual(new WrongProperty('user and password'));
+    expect(spyFindByEmailAndPassword).toHaveBeenCalledTimes(1);
+    expect(spyFindByEmailAndPassword).toHaveBeenCalledWith('any_user', 'any_password');
   });
 });
