@@ -42,7 +42,9 @@ describe('Get Appointments That Use Same Vaccine Batches Unitary Tests', () => {
 
     expect(appointmentsAndVaccineBatch.vaccineBatch.id.value).toEqual(fixture.id.value);
     expect(appointmentsAndVaccineBatch.appointments.length).toEqual(1);
-    expect(appointmentsAndVaccineBatch.appointments[0].vaccineBatch.id.value).toEqual(fixture.id.value);
+
+    const { conclusion } = appointmentsAndVaccineBatch.appointments[0];
+    expect(conclusion.vaccineBatch.id.value).toEqual(fixture.id.value);
   });
 
   it('should validate infra error', async () => {

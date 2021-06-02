@@ -1,4 +1,5 @@
 import { Appointment } from '@entities/appointment';
+import { Conclusion } from '@entities/appointment/conclusion';
 import { Patient } from '@entities/patient';
 import { VaccinationPoint, VaccineBatch } from '@entities/vaccination-point';
 import { EntityID, right } from '@server/shared';
@@ -24,8 +25,7 @@ export class FakeAppointmentsRepository implements IAppointmentsRepository {
       vaccinationPoint: vaccineBatch.vaccinationPoint,
       date: new Date(),
       patient: { id: new EntityID() } as Patient,
-      vaccinatedAt: new Date(),
-      vaccineBatch
+      conclusion: { vaccineBatch } as Conclusion
     }).value as Appointment;
 
     return Promise.resolve(right([fixture]));
