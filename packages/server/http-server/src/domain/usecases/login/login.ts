@@ -8,13 +8,13 @@ type Response = Either<InfraError, User>;
 
 export class LoginUseCase {
   async execute(request: ILoginDTO): Promise<Response> {
-    const hasEmptyValue = Object.entries(request).filter((it) => {
+    const hasWrongValueInRequest = Object.entries(request).filter((it) => {
       const propValue = it[1];
       return [null, undefined, '', false].includes(propValue);
     });
 
-    if (hasEmptyValue.length) {
-      const isolateWrongProps = hasEmptyValue.map((it) => it[0]);
+    if (hasWrongValueInRequest.length) {
+      const isolateWrongProps = hasWrongValueInRequest.map((it) => it[0]);
       const wrongProps = isolateWrongProps.join(' and ');
       return left(new WrongProperty(wrongProps));
     }
