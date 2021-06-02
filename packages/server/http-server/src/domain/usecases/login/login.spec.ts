@@ -1,5 +1,7 @@
 import { LoginUseCase } from '@usecases/login/login';
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users';
+import { InfraError } from '@usecases/output-ports/errors';
+import { left } from '@server/shared';
 
 const makeFakeUsersRepository = () => {
   return new FakeUsersRepository();
@@ -27,5 +29,21 @@ describe('Login UseCase Unitary Tests', () => {
 
     expect(spyFindByEmailAndPassword).toHaveBeenCalledTimes(1);
     expect(spyFindByEmailAndPassword).toHaveBeenCalledWith('any_user', 'any_password');
+  });
+
+  test('should returns left if findByEmailAndPassword result is wrong', async () => {
+    const { sut, makedFakeUsersRepository } = makeSut();
+
+    jest
+      .spyOn(makedFakeUsersRepository, 'findByEmailAndPassword')
+      .mockImplementation(() => Promise.resolve(left(new InfraError('any_reason'))));
+
+    const testable = await sut.execute({
+      user: 'any_user',
+      password: 'any_password'
+    });
+
+    expect(testable.isLeft).toBeTruthy();
+    expect(testable.value).toEqual(new InfraError('any_reason'));
   });
 });
