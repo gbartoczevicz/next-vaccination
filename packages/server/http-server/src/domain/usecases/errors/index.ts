@@ -13,3 +13,5 @@ export * from './responsible-not-found';
 export * from './vaccination-point-without-availability';
 export * from './without-vaccine-batches-within-expiration-date';
 export * from './has-not-available-vaccine-batches';
+export * from './appointment-already-cancelled';
+export * from './appointment-already-concluded';
