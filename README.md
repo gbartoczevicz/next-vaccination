@@ -83,6 +83,7 @@ Requisitos
 Regras de negócio
 
 - [ ] Ao vacinar o paciênte o estoque terá que ser subtraído por 1
+- [ ] Notificar o paciente e ao ponto ao dar baixa no agendamento
 
 ***
 
