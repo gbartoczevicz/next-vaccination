@@ -1,15 +1,16 @@
 import { User } from '@entities/user';
 import { UserEmail } from '@entities/user/values';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
-import { Either, EntityID, right } from '@server/shared';
-import { InfraError } from '@usecases/output-ports/errors';
+import { EntityID, right } from '@server/shared';
+import { Phone } from '@entities/phone';
+import { FindUnique, Save } from './users';
 
 export class FakeUsersRepository implements IUsersRepository {
-  async save(user: User): Promise<Either<InfraError, User>> {
+  async save(user: User): Promise<Save> {
     return Promise.resolve(right(user));
   }
 
-  async findById(id: string): Promise<Either<InfraError, User | null>> {
+  async findById(id: string): Promise<FindUnique> {
     const fixture = User.create({
       id: new EntityID(id),
       name: 'Name',
@@ -21,11 +22,23 @@ export class FakeUsersRepository implements IUsersRepository {
     return Promise.resolve(right(fixture));
   }
 
-  async findByEmail(email: UserEmail): Promise<Either<InfraError, User | null>> {
+  async findByEmail(email: UserEmail): Promise<FindUnique> {
     const fixture = User.create({
       name: 'any_name',
       email: email.email,
       phone: '(99) 99999-9999',
+      password: {
+        password: 'any_password'
+      }
+    });
+    return Promise.resolve(right(<User>fixture.value));
+  }
+
+  async findByPhone(phone: Phone): Promise<FindUnique> {
+    const fixture = User.create({
+      name: 'any_name',
+      email: 'valid_email@email.com',
+      phone: phone.value,
       password: {
         password: 'any_password'
       }
