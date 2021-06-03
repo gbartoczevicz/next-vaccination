@@ -51,7 +51,7 @@ export class VaccinationPoint {
     }
 
     if (availability < 0) {
-      return left(new InvalidVaccinationPoint('Availability must be greater than 0'));
+      return left(new InvalidVaccinationPoint('Availability must be greater or equal than 0'));
     }
 
     const phoneOrError = Phone.create(phone);
