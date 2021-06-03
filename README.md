@@ -57,9 +57,9 @@ Requisitos
 - [x] Cadastrar ponto de vacinação
 - [x] Atualizar ponto de vacinação
 - [x] Cancelar agendamentos
-- [ ] Criar disponibilidade de agendamentos
-- [ ] Atualizar disponibilidade de agendamentos
-- [ ] Manter estoque de vacina
+- [x] Criar disponibilidade de agendamentos
+- [x] Atualizar disponibilidade de agendamentos
+- [x] Manter estoque de vacina
 - [ ] Enviar e-mail para os profissionais da saúde se cadastrarem no sistema pelo celular
 - [ ] Consultar histórico de agendamentos no ponto de vacinação
 
