@@ -1,7 +1,6 @@
 import { InvalidVaccinationPoint } from '@entities/vaccination-point/errors';
-import { ICoordinateProps, ILocationProps } from '@entities/vaccination-point/values';
 import { left, right } from '@server/shared';
-import { DocumentAlreadyInUse, LocationAlreadyInUse } from '@usecases/errors';
+import { DocumentAlreadyInUse, LocationAlreadyInUse, PhoneAlreadyInUse } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakeVaccinationPointsRepository } from '@usecases/output-ports/repositories/vaccination-points';
 import { VaccinationPoint } from '@entities/vaccination-point';
@@ -33,10 +32,12 @@ const makeFixture = (
     coordinate: {
       latitude,
       longitude
-    } as ICoordinateProps
-  } as ILocationProps,
+    }
+  },
   availability
 });
+
+const makeInfraError = () => new InfraError('Unexpected Error');
 
 describe('Create Vaccination Point usecase Unitary Tests', () => {
   it('should create a vaccination point', async () => {
@@ -49,6 +50,8 @@ describe('Create Vaccination Point usecase Unitary Tests', () => {
     jest
       .spyOn(fakeVaccinationPointsRepository, 'findByCoordinate')
       .mockImplementation(() => Promise.resolve(right(null)));
+
+    jest.spyOn(fakeVaccinationPointsRepository, 'findByPhone').mockImplementation(() => Promise.resolve(right(null)));
 
     const testable = await sut.execute(makeFixture());
 
@@ -94,18 +97,35 @@ describe('Create Vaccination Point usecase Unitary Tests', () => {
     expect(testable.value).toEqual(new LocationAlreadyInUse());
   });
 
+  it('should check if phone is already in use', async () => {
+    const { sut, fakeVaccinationPointsRepository } = makeSut();
+
+    jest
+      .spyOn(fakeVaccinationPointsRepository, 'findByDocument')
+      .mockImplementation(() => Promise.resolve(right(null)));
+
+    jest
+      .spyOn(fakeVaccinationPointsRepository, 'findByCoordinate')
+      .mockImplementation(() => Promise.resolve(right(null)));
+
+    const testable = await sut.execute(makeFixture());
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new PhoneAlreadyInUse());
+  });
+
   describe('validate infra errors', () => {
     it('should validate findByDocument', async () => {
       const { sut, fakeVaccinationPointsRepository } = makeSut();
 
       jest
         .spyOn(fakeVaccinationPointsRepository, 'findByDocument')
-        .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
+        .mockImplementation(() => Promise.resolve(left(makeInfraError())));
 
       const testable = await sut.execute(makeFixture());
 
       expect(testable.isLeft()).toBeTruthy();
-      expect(testable.value).toEqual(new InfraError('Unexpected Error'));
+      expect(testable.value).toEqual(makeInfraError());
     });
 
     it('should validate findByCoordinate', async () => {
@@ -117,12 +137,32 @@ describe('Create Vaccination Point usecase Unitary Tests', () => {
 
       jest
         .spyOn(fakeVaccinationPointsRepository, 'findByCoordinate')
-        .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
+        .mockImplementation(() => Promise.resolve(left(makeInfraError())));
 
       const testable = await sut.execute(makeFixture());
 
       expect(testable.isLeft()).toBeTruthy();
-      expect(testable.value).toEqual(new InfraError('Unexpected Error'));
+      expect(testable.value).toEqual(makeInfraError());
+    });
+
+    it('should validate findByPhone', async () => {
+      const { sut, fakeVaccinationPointsRepository } = makeSut();
+
+      jest
+        .spyOn(fakeVaccinationPointsRepository, 'findByDocument')
+        .mockImplementation(() => Promise.resolve(right(null)));
+      jest
+        .spyOn(fakeVaccinationPointsRepository, 'findByCoordinate')
+        .mockImplementation(() => Promise.resolve(right(null)));
+
+      jest
+        .spyOn(fakeVaccinationPointsRepository, 'findByPhone')
+        .mockImplementation(() => Promise.resolve(left(makeInfraError())));
+
+      const testable = await sut.execute(makeFixture());
+
+      expect(testable.isLeft()).toBeTruthy();
+      expect(testable.value).toEqual(makeInfraError());
     });
 
     it('should validate save', async () => {
@@ -136,14 +176,16 @@ describe('Create Vaccination Point usecase Unitary Tests', () => {
         .spyOn(fakeVaccinationPointsRepository, 'findByCoordinate')
         .mockImplementation(() => Promise.resolve(right(null)));
 
+      jest.spyOn(fakeVaccinationPointsRepository, 'findByPhone').mockImplementation(() => Promise.resolve(right(null)));
+
       jest
         .spyOn(fakeVaccinationPointsRepository, 'save')
-        .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
+        .mockImplementation(() => Promise.resolve(left(makeInfraError())));
 
       const testable = await sut.execute(makeFixture());
 
       expect(testable.isLeft()).toBeTruthy();
-      expect(testable.value).toEqual(new InfraError('Unexpected Error'));
+      expect(testable.value).toEqual(makeInfraError());
     });
   });
 });
