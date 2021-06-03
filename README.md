@@ -21,6 +21,7 @@ Regras de negócio
 
 - [ ] Não deve ser possível cadastrar um e-mail, CPF e Whatsapp já usados
 - [x] Nome, nascimento, e-mail, CPF, Whatsapp são obrigatórios
+
 ### Pacientes
 
 O usuário que deseja se vacinar usará o app mobile
@@ -37,9 +38,11 @@ Requisitos
 Regras de negócio
 
 - [x] Não deve ser possível criar um agendamento num horário não disponível
+- [x] Não deve ser possível criar um agendamento com estoque não disponível
+- [x] Não deve ser possível realizar um agendamento sem possuir um ticket
 - [ ] Não deve ser possível cancelar o agendamento X horas antes da data
 - [ ] Não deve ser possível realizar mais de um agendamento por data
-- [x] Não deve ser possível realizar um agendamento sem possuir um ticket
+- [ ] Notificar ponto de vacinação ao cancelar o agendamento
 
 ### Hospital
 
