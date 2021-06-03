@@ -19,7 +19,7 @@ Requisitos
 
 Regras de negócio
 
-- [ ] Não deve ser possível cadastrar um e-mail, CPF e Whatsapp já usados
+- [x] Não deve ser possível cadastrar um e-mail, CPF e Whatsapp já usados
 - [x] Nome, nascimento, e-mail, CPF, Whatsapp são obrigatórios
 
 ### Pacientes
@@ -65,10 +65,10 @@ Requisitos
 
 Regras de negócio
 
-- [ ] Não deve ser possível cadastrar um __document__ já usado
+- [x] Não deve ser possível cadastrar um __document__ já usado
 - [x] __document__ do responsável é obrigatório
 - [x] Nome, endereço, telefone de contato e __document__ do ponto de vacinação são obrigatórios 
-- [ ] Não deve ser possível cadastrar um telefone e __document__ de pontos de vacinação já usados
+- [x] Não deve ser possível cadastrar um telefone e __document__ de pontos de vacinação já usados
 - [ ] Ao cancelar um agendamento, o paciente deverá ser notificado
 - [ ] Notificar todos os profissionais da saúde quando os estoques estiverem baixos
 
