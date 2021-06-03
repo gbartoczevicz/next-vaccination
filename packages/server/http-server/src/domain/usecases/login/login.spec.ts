@@ -2,58 +2,57 @@ import { LoginUseCase } from '@usecases/login/login';
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users';
 import { InfraError } from '@usecases/output-ports/errors';
 import { left } from '@server/shared';
-import { User } from '@entities/user';
-
-const makeUser = (email: string, password: string) => {
-  const user = User.create({
-    name: 'any_name',
-    email,
-    phone: '(99) 99999-9999',
-    password: {
-      password
-    }
-  });
-
-  return user.value;
-};
-
-const makeFakeUsersRepository = () => {
-  return new FakeUsersRepository();
-};
+import { InvalidUserEmail } from '@entities/user/errors';
+import { FakeEncrypter } from '@entities/output-ports/encrypter';
+import { UserEmail } from '@entities/user/values';
+import { PasswordDoesNotMatch } from '@usecases/errors';
 
 const makeSut = () => {
-  const makedFakeUsersRepository = makeFakeUsersRepository();
-  const sut = new LoginUseCase(makedFakeUsersRepository);
+  const makedFakeUsersRepository = new FakeUsersRepository();
+  const makedFakeEncrypter = new FakeEncrypter();
+  const sut = new LoginUseCase(makedFakeUsersRepository, makedFakeEncrypter);
 
   return {
     sut,
-    makedFakeUsersRepository
+    makedFakeUsersRepository,
+    makedFakeEncrypter
   };
 };
 
 describe('Login UseCase Unitary Tests', () => {
-  test('should call email and password infrastructure query correctly', async () => {
-    const { sut, makedFakeUsersRepository } = makeSut();
+  test('should returns left if UserEmail value object is wrong', async () => {
+    const { sut } = makeSut();
 
-    const spyFindByEmailAndPassword = jest.spyOn(makedFakeUsersRepository, 'findByEmailAndPassword');
-    await sut.execute({
-      user: 'any_user',
+    const testable = await sut.execute({
+      user: 'wrong_mail',
       password: 'any_password'
     });
 
-    expect(spyFindByEmailAndPassword).toHaveBeenCalledTimes(1);
-    expect(spyFindByEmailAndPassword).toHaveBeenCalledWith('any_user', 'any_password');
+    expect(testable.value).toEqual(new InvalidUserEmail('E-mail wrong_mail is invalid'));
   });
 
-  test('should returns left if findByEmailAndPassword result is wrong', async () => {
+  test('should calls correctly findByEmail correctly', async () => {
+    const { sut, makedFakeUsersRepository } = makeSut();
+
+    const spyFindByEmail = jest.spyOn(makedFakeUsersRepository, 'findByEmail');
+    await sut.execute({
+      user: 'any_mail@mail.com',
+      password: 'any_password'
+    });
+
+    expect(spyFindByEmail).toHaveBeenCalledTimes(1);
+    expect(spyFindByEmail).toHaveBeenCalledWith(UserEmail.create('any_mail@mail.com').value);
+  });
+
+  test('should returns left if findByEmail result is wrong', async () => {
     const { sut, makedFakeUsersRepository } = makeSut();
 
     jest
-      .spyOn(makedFakeUsersRepository, 'findByEmailAndPassword')
+      .spyOn(makedFakeUsersRepository, 'findByEmail')
       .mockImplementation(() => Promise.resolve(left(new InfraError('any_reason'))));
 
     const testable = await sut.execute({
-      user: 'any_user',
+      user: 'any_mail@mail.com',
       password: 'any_password'
     });
 
@@ -61,15 +60,29 @@ describe('Login UseCase Unitary Tests', () => {
     expect(testable.value).toEqual(new InfraError('any_reason'));
   });
 
-  test('should return right with User entitiy if result has been succeded', async () => {
-    const { sut } = makeSut();
+  test('should calls correctly encrypter.compare correctly', async () => {
+    const { sut, makedFakeEncrypter } = makeSut();
 
-    const testable = await sut.execute({
-      user: 'any_user',
+    const spyEncrypterCompare = jest.spyOn(makedFakeEncrypter, 'compare');
+    await sut.execute({
+      user: 'any_mail@mail.com',
       password: 'any_password'
     });
 
-    expect(testable.isRight()).toBeTruthy();
-    expect(testable.value).toEqual(makeUser('any_user', 'any_password'));
+    expect(spyEncrypterCompare).toHaveBeenCalledTimes(1);
+    expect(spyEncrypterCompare).toHaveBeenCalledWith('any_password', 'any_password');
+  });
+
+  test('should returns left if encrypter.compare result is wrong', async () => {
+    const { sut, makedFakeEncrypter } = makeSut();
+
+    jest.spyOn(makedFakeEncrypter, 'compare').mockImplementation(() => Promise.resolve(false));
+    const testable = await sut.execute({
+      user: 'any_mail@mail.com',
+      password: 'wrong_password'
+    });
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new PasswordDoesNotMatch());
   });
 });
