@@ -1,11 +1,11 @@
 import { CreateUserErrors, User } from '@entities/user';
 import { Either, left, right } from '@server/shared';
-import { EmailAlreadyInUse, PasswordDoesNotMatch } from '@usecases/errors';
+import { EmailAlreadyInUse, PasswordDoesNotMatch, PhoneAlreadyInUse } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
 import { IUpdateUserDTO } from './dto';
 
-type ResponseErrors = CreateUserErrors | InfraError | EmailAlreadyInUse | PasswordDoesNotMatch;
+type ResponseErrors = CreateUserErrors | InfraError | EmailAlreadyInUse | PhoneAlreadyInUse | PasswordDoesNotMatch;
 
 type Response = Either<ResponseErrors, User>;
 
@@ -41,6 +41,18 @@ export class UpdateUserUseCase {
 
     if (userWithSameEmail && !userWithSameEmail.id.equals(userToUpdate.id)) {
       return left(new EmailAlreadyInUse(userToUpdate.email.email));
+    }
+
+    const userWithSamePhoneOrError = await this.usersRepository.findByPhone(userToUpdate.phone);
+
+    if (userWithSamePhoneOrError.isLeft()) {
+      return left(userWithSamePhoneOrError.value);
+    }
+
+    const userWithSamePhone = userWithSamePhoneOrError.value;
+
+    if (userWithSamePhone && !userWithSamePhone.id.equals(userToUpdate.id)) {
+      return left(new PhoneAlreadyInUse());
     }
 
     const doesPasswordMatch = await user.password.compare(request.currentPassword);
