@@ -4,6 +4,7 @@ import { InvalidAppointment } from '@entities/appointment/errors';
 import { Either, left, right } from '@server/shared';
 import {
   HasNotAvailableVaccineBatches,
+  PatientDoesNotHaveTicket,
   VaccinationPointWithoutAvailability,
   WithoutVaccineBatchesWithinExpirationDate
 } from '@usecases/errors';
@@ -15,6 +16,7 @@ import { ICreateAppointmentDTO } from './dto';
 
 type ResponseErrors =
   | InfraError
+  | PatientDoesNotHaveTicket
   | InvalidAppointment
   | VaccinationPointWithoutAvailability
   | WithoutVaccineBatchesWithinExpirationDate
@@ -47,6 +49,10 @@ export class CreateAppointmentUseCase {
     }
 
     const appointment = appointmentOrError.value;
+
+    if (!appointment.patient.ticket) {
+      return left(new PatientDoesNotHaveTicket());
+    }
 
     const appointmentsAlreadyCreatedOnDateOrError = await this.appointmentsRepository.findAllByVaccinationPointAndDate(
       appointment.vaccinationPoint,
