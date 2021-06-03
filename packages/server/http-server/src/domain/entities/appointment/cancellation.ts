@@ -1,3 +1,4 @@
+import { User } from '@entities/user';
 import { Either, EntityID, left, right } from '@server/shared';
 import { InvalidCancellation } from './errors';
 
@@ -5,6 +6,7 @@ interface ICancellationProps {
   id?: EntityID;
   reason: string;
   createdAt: Date;
+  cancelatedBy: User;
 }
 
 export class Cancellation {
@@ -14,10 +16,13 @@ export class Cancellation {
 
   readonly createdAt: Date;
 
-  constructor(reason: string, createdAt: Date, id?: EntityID) {
+  readonly cancelatedBy: User;
+
+  constructor(reason: string, createdAt: Date, cancelatedBy: User, id?: EntityID) {
     this.id = id || new EntityID();
     this.reason = reason;
     this.createdAt = createdAt;
+    this.cancelatedBy = cancelatedBy;
   }
 
   static create(props: ICancellationProps): Either<InvalidCancellation, Cancellation> {
@@ -29,9 +34,13 @@ export class Cancellation {
       return left(new InvalidCancellation('Created at is required'));
     }
 
-    const { id, reason, createdAt } = props;
+    if (!props.cancelatedBy) {
+      return left(new InvalidCancellation('Cancelated By is required'));
+    }
 
-    const cancellation = new Cancellation(reason, createdAt, id);
+    const { id, reason, createdAt, cancelatedBy } = props;
+
+    const cancellation = new Cancellation(reason, createdAt, cancelatedBy, id);
 
     return right(cancellation);
   }

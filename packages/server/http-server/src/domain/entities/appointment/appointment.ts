@@ -1,35 +1,29 @@
-import { HealthProfessional } from '@entities/health-professional';
 import { Patient } from '@entities/patient';
-import { VaccinationPoint, VaccineBatch } from '@entities/vaccination-point';
+import { VaccinationPoint } from '@entities/vaccination-point';
 import { Either, EntityID, left, right } from '@server/shared';
 import { Cancellation } from './cancellation';
+import { Conclusion } from './conclusion';
 import { InvalidAppointment } from './errors';
 
 interface IAppointmentProps {
   id?: EntityID;
   patient: Patient;
   vaccinationPoint: VaccinationPoint;
-  vaccinatedBy?: HealthProfessional;
-  vaccineBatch?: VaccineBatch;
   date: Date;
-  vaccinatedAt?: Date;
+  conclusion?: Conclusion;
   cancellation?: Cancellation;
 }
 
 export class Appointment {
-  readonly id?: EntityID;
+  readonly id: EntityID;
 
   readonly patient: Patient;
 
-  readonly vaccinationPoint: VaccinationPoint;
-
-  readonly vaccinatedBy?: HealthProfessional;
-
-  readonly vaccineBatch?: VaccineBatch;
-
   readonly date: Date;
 
-  readonly vaccinatedAt?: Date;
+  readonly vaccinationPoint: VaccinationPoint;
+
+  readonly conclusion?: Conclusion;
 
   readonly cancellation?: Cancellation;
 
@@ -37,24 +31,20 @@ export class Appointment {
     patient: Patient,
     vaccinationPoint: VaccinationPoint,
     date: Date,
-    vaccinatedBy?: HealthProfessional,
-    vaccineBatch?: VaccineBatch,
-    vaccinatedAt?: Date,
+    conclusion?: Conclusion,
     cancellation?: Cancellation,
     id?: EntityID
   ) {
     this.id = id || new EntityID();
     this.patient = patient;
     this.vaccinationPoint = vaccinationPoint;
-    this.vaccinatedBy = vaccinatedBy;
-    this.vaccineBatch = vaccineBatch;
     this.date = date;
-    this.vaccinatedAt = vaccinatedAt;
+    this.conclusion = conclusion;
     this.cancellation = cancellation;
   }
 
   static create(props: IAppointmentProps): Either<InvalidAppointment, Appointment> {
-    const { id, patient, vaccinationPoint, vaccinatedBy, vaccineBatch, date, vaccinatedAt, cancellation } = props;
+    const { id, patient, vaccinationPoint, date, cancellation, conclusion } = props;
 
     if (!patient) {
       return left(new InvalidAppointment('Patient is required'));
@@ -68,16 +58,7 @@ export class Appointment {
       return left(new InvalidAppointment('Date is required'));
     }
 
-    const appointment = new Appointment(
-      patient,
-      vaccinationPoint,
-      date,
-      vaccinatedBy,
-      vaccineBatch,
-      vaccinatedAt,
-      cancellation,
-      id
-    );
+    const appointment = new Appointment(patient, vaccinationPoint, date, conclusion, cancellation, id);
 
     return right(appointment);
   }
