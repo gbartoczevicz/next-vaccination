@@ -1,11 +1,12 @@
 import { Kafka } from 'kafkajs';
+import { IKafkaProducer } from '../contracts';
 
 interface IProducerProps {
   client: Kafka;
   topic: string;
 }
 
-export class Producer {
+export class Producer implements IKafkaProducer {
   private client: Kafka;
 
   private topic: string;
