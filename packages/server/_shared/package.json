@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "license": "MIT",
   "dependencies": {
+    "kafkajs": "^1.15.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
