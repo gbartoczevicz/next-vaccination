@@ -1,0 +1,31 @@
+name: 🎫 Tickets Microservice CI Workflow 🎫
+
+on:
+  push:
+    paths:
+      - "packages/server/tickets/**"
+  pull_request:
+
+jobs:
+  test-routine:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 15.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup timezone
+        uses: zcong1993/setup-timezone@master
+        with:
+          timezone: America/Sao_Paulo
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+        env:
+          NODE_ENV: test
+      - run: yarn
+      - run: yarn lint:fix
+      - run: yarn tickets:test:ci
