@@ -43,7 +43,7 @@ describe('Patient Unitary Tests', () => {
       });
 
       expect(testable.isLeft()).toBeTruthy();
-      expect(testable.value).toEqual(new InvalidPatient('Avatar is required prato feito'));
+      expect(testable.value).toEqual(new InvalidPatient('Avatar is required'));
     });
   });
 });
