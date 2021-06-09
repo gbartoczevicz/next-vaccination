@@ -1,1 +1,2 @@
-export * from '@usecases/output-ports/errors/infra';
+export * from './infra';
+export * from './fake';
