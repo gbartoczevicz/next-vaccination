@@ -65,8 +65,6 @@ networks:
 volumes:
   postgresql_data:
     driver: local
-  mongodb_data:
-    driver: local
   zookeeper_data:
     driver: local
   kafka_data:
