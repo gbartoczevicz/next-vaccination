@@ -1,7 +1,7 @@
 import { Patient } from '@entities/patient';
 import { makeUser } from '@entities/user/fake';
 import { EntityID, right } from '@server/shared';
-import { FindUnique, IPatientsRepository } from './patients';
+import { FindUnique, IPatientsRepository, Save } from './patients';
 
 export class FakePatientsRepository implements IPatientsRepository {
   async findById(id: string): Promise<FindUnique> {
@@ -12,5 +12,9 @@ export class FakePatientsRepository implements IPatientsRepository {
     }).value as Patient;
 
     return Promise.resolve(right(fixture));
+  }
+
+  async save(patient: Patient): Promise<Save> {
+    return Promise.resolve(right(patient));
   }
 }
