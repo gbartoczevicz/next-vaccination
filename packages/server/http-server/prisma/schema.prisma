@@ -49,7 +49,8 @@ model VaccinationPoint {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  Location Location?
+  Location           Location?
+  HealthProfessional HealthProfessional[]
 
   @@map("vaccination_points")
 }
@@ -76,6 +77,9 @@ model HealthProfessional {
 
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @map("user_id") @db.VarChar(50)
+
+  vaccinationPoint   VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
+  vaccinationPointId String           @map("vaccination_point_id") @db.VarChar(50)
 
   @@map("health_professionals")
 }
