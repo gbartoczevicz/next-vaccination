@@ -21,6 +21,7 @@ model User {
 
   patient            Patient?
   HealthProfessional HealthProfessional?
+  Cancellation       Cancellation[]
 
   @@map("users")
 }
@@ -37,6 +38,8 @@ model Patient {
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @map("user_id") @db.VarChar(50)
 
+  Appointment Appointment[]
+
   @@map("patients")
 }
 
@@ -52,6 +55,7 @@ model VaccinationPoint {
   Location           Location?
   HealthProfessional HealthProfessional[]
   VaccineBatch       VaccineBatch[]
+  Appointment        Appointment[]
 
   @@map("vaccination_points")
 }
@@ -82,6 +86,8 @@ model HealthProfessional {
   vaccinationPoint   VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
   vaccinationPointId String           @map("vaccination_point_id") @db.VarChar(50)
 
+  Conclusion Conclusion[]
+
   @@map("health_professionals")
 }
 
@@ -108,5 +114,55 @@ model VaccineBatch {
   vaccinationPoint   VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
   vaccinationPointId String           @map("vaccination_point_id") @db.VarChar(50)
 
+  Conclusion Conclusion[]
+
   @@map("vaccine_batches")
+}
+
+model Appointment {
+  id        String   @id @db.VarChar(50)
+  date      DateTime @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  vaccinationPoint   VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
+  vaccinationPointId String           @map("vaccination_point_id") @db.VarChar(50)
+
+  patient   Patient @relation(fields: [patientId], references: [id])
+  patientId String  @map("patient_id") @db.VarChar(50)
+
+  Conclusion   Conclusion?
+  Cancellation Cancellation?
+
+  @@map("appointments")
+}
+
+model Conclusion {
+  id           String   @id @db.VarChar(50)
+  vaccinatedAt DateTime @default(now()) @map("vaccinated_at")
+
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  appointmentId String      @map("appointment_id") @db.VarChar(50)
+
+  vaccinatedBy   HealthProfessional @relation(fields: [vaccinatedById], references: [id])
+  vaccinatedById String             @map("vaccinated_by_id") @db.VarChar(50)
+
+  vaccineBatch   VaccineBatch @relation(fields: [vaccineBatchId], references: [id])
+  vaccineBatchId String       @map("vaccine_batch_id") @db.VarChar(50)
+
+  @@map("conclusions")
+}
+
+model Cancellation {
+  id         String   @id @db.VarChar(50)
+  reason     String   @db.Text
+  canceledAt DateTime @default(now()) @map("canceled_at")
+
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  appointmentId String      @map("appointment_id") @db.VarChar(50)
+
+  cancelatedBy   User   @relation(fields: [cancelatedById], references: [id])
+  cancelatedById String @unique @map("cancelated_by_id") @db.VarChar(50)
+
+  @@map("cancellations")
 }
