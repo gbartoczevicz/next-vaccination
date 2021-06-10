@@ -83,3 +83,26 @@ model HealthProfessional {
 
   @@map("health_professionals")
 }
+
+model Vaccine {
+  id          String @id @db.VarChar(50)
+  name        String @unique @db.VarChar(50)
+  description String @db.Text
+
+  VaccineBatch VaccineBatch[]
+
+  @@map("vaccines")
+}
+
+model VaccineBatch {
+  id             String   @id @db.VarChar(50)
+  expirationDate DateTime @map("expiration_date") @db.Date
+  stock          Int      @db.Integer
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  vaccine   Vaccine @relation(fields: [vaccineId], references: [id])
+  vaccineId String  @map("vaccine_id") @db.VarChar(50)
+
+  @@map("vaccine_batches")
+}
