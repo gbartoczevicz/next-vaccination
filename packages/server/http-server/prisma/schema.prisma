@@ -40,11 +40,13 @@ model Patient {
 }
 
 model VaccinationPoint {
-  id           String @id @db.VarChar(50)
-  name         String @db.VarChar(255)
-  phone        String @unique @db.VarChar(12)
-  document     String @unique @db.VarChar(50)
-  availability Int    @db.Integer
+  id           String   @id @db.VarChar(50)
+  name         String   @db.VarChar(255)
+  phone        String   @unique @db.VarChar(12)
+  document     String   @unique @db.VarChar(50)
+  availability Int      @db.Integer
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   Location Location?
 
