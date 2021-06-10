@@ -51,6 +51,7 @@ model VaccinationPoint {
 
   Location           Location?
   HealthProfessional HealthProfessional[]
+  VaccineBatch       VaccineBatch[]
 
   @@map("vaccination_points")
 }
@@ -103,6 +104,9 @@ model VaccineBatch {
 
   vaccine   Vaccine @relation(fields: [vaccineId], references: [id])
   vaccineId String  @map("vaccine_id") @db.VarChar(50)
+
+  vaccinationPoint   VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
+  vaccinationPointId String           @map("vaccination_point_id") @db.VarChar(50)
 
   @@map("vaccine_batches")
 }
