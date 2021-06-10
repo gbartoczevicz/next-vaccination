@@ -19,5 +19,47 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  patient Patient?
+
   @@map("users")
+}
+
+model Patient {
+  id        String   @id @db.VarChar(50)
+  birthday  DateTime @db.Date
+  document  String   @unique @db.VarChar(11)
+  avatar    String?  @db.VarChar(50)
+  ticket    String?  @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @map("user_id") @db.VarChar(50)
+
+  @@map("patients")
+}
+
+model VaccinationPoint {
+  id           String @id @db.VarChar(50)
+  name         String @db.VarChar(255)
+  phone        String @unique @db.VarChar(12)
+  document     String @unique @db.VarChar(50)
+  availability Int    @db.Integer
+
+  Location Location?
+
+  @@map("vaccination_points")
+}
+
+model Location {
+  latitude      Float  @db.Real
+  longitude     Float  @db.Real
+  address       String @db.VarChar(500)
+  addressNumber Int    @map("address_number") @db.Integer
+
+  vaccinationPoint   VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
+  vaccinationPointId String           @map("vaccination_point_id") @db.VarChar(50)
+
+  @@unique([latitude, longitude], name: "vaccination_points_coordinates")
+  @@map("locations")
 }
