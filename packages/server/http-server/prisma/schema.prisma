@@ -19,7 +19,8 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  patient Patient?
+  patient            Patient?
+  HealthProfessional HealthProfessional?
 
   @@map("users")
 }
@@ -64,4 +65,17 @@ model Location {
 
   @@unique([latitude, longitude], name: "vaccination_points_coordinates")
   @@map("locations")
+}
+
+model HealthProfessional {
+  id          String   @id @db.VarChar(50)
+  document    String   @unique @db.VarChar(50)
+  responsible Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @map("user_id") @db.VarChar(50)
+
+  @@map("health_professionals")
 }
