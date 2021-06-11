@@ -13,7 +13,7 @@ import { MdHome as Inicio, MdPeople as Contato, MdPerson as Perfil, MdAddBox as 
 import Link from 'next/link'
 
 const styleLink = {
-  color: "black",
+  color: "#617480",
   variant: "link",
   size: "lg",
   fontSize: "24px",
@@ -23,8 +23,8 @@ const styleLink = {
   }
 }
 
-const Navigation: React.FC = () => (
-  <Stack direction={'column'} align={'center'} marginTop="10rem" spacing="24px">
+export const Navigation: React.FC = () => (
+  <Stack spacing="35px">
     <Box>
       <Tooltip label="Inicio" aria-label="A tooltip">
         <Button {...styleLink}>
@@ -35,9 +35,9 @@ const Navigation: React.FC = () => (
       </Tooltip>
     </Box>
     <Box>
-      <Tooltip label="Contatos" aria-label="A tooltip">
+      <Tooltip label="Pacientes" aria-label="A tooltip">
         <Button {...styleLink}>
-          <Link href="/contats">
+          <Link href="/pacient">
             <Contato />
           </Link>
         </Button>
@@ -73,4 +73,3 @@ const Navigation: React.FC = () => (
   </Stack>
 );
 
-export default Navigation;

@@ -10,8 +10,7 @@ import {
     Avatar
 } from '@chakra-ui/react';
 
-import Container from '@/components/container';
-import { CardPatient } from '@/components/card-patient';
+import { CardPatient, Container } from '@/components';
 
 import { MdFavorite as Heart } from 'react-icons/md';
 
@@ -21,7 +20,6 @@ const groupButtonStyle = {
     fontSize: '20px',
     border: 'none',
     fontWeight: 'normal',
-    backGroundColor: "#617480",
     _hover: {
         background: "white",
         color: "#6C63FF",
@@ -111,10 +109,10 @@ const DashBoard: React.FC = () => {
                     <Box>
                         <Text fontSize="23">Manhã</Text>
                         <Box alignItems="center">
-                            <CardPatient status="Concluded" avatar="https://i.pinimg.com/originals/d2/28/30/d22830a0d66c660e96b750fcbdcec0eb.gif"
+                            <CardPatient status="Concluded" avatar=""
                                 name="Mateus" phone="(043) 40028922" taxNumber="999.999.999-99" createdTime="8:00" confirmedTime="8:02" />
 
-                            <CardPatient status="Concluded" avatar="https://i.pinimg.com/originals/d2/28/30/d22830a0d66c660e96b750fcbdcec0eb.gif"
+                            <CardPatient status="Concluded" avatar=""
                                 name="Pedro" phone="(043) 40028922" taxNumber="999.999.999-99" createdTime="8:00" confirmedTime="8:02" />
                         </Box>
 
@@ -123,14 +121,14 @@ const DashBoard: React.FC = () => {
                     <Box>
                         <Text fontSize="23">Tarde</Text>
                         <Box alignItems="center">
-                            <CardPatient status="Cancelled" avatar="https://i.pinimg.com/originals/d2/28/30/d22830a0d66c660e96b750fcbdcec0eb.gif"
+                            <CardPatient status="Cancelled" avatar=""
                                 name="Gabriel" phone="(043) 40028922" taxNumber="999.999.999-99" createdTime="8:00" confirmedTime="8:02" />
                         </Box>
                     </Box>
                     <Box>
                         <Text fontSize="23">Noite</Text>
                         <Box alignItems="center">
-                            <CardPatient status="Cancelled" avatar="https://i.pinimg.com/originals/d2/28/30/d22830a0d66c660e96b750fcbdcec0eb.gif"
+                            <CardPatient status="Cancelled" avatar=""
                                 name="Guilherme" phone="(043) 40028922" taxNumber="999.999.999-99" createdTime="8:00" confirmedTime="8:02" />
                         </Box>
                     </Box>
