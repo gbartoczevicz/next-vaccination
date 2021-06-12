@@ -5,12 +5,12 @@ import { InfraError } from '@usecases/output-ports/errors';
 import { FindUnique, IUsersRepository, Save } from '@usecases/output-ports/repositories/users';
 import { User } from '@entities/user';
 import { Phone } from '@entities/phone';
-import { UserPersistence } from '@external/mappers/users';
+import { UsersPersistence } from '@external/mappers/users';
 
 export class PrismaUserRepo implements IUsersRepository {
-  private mapper: IMapper<User, UserPersistence>;
+  private mapper: IMapper<User, UsersPersistence>;
 
-  constructor(mapper: IMapper<User, UserPersistence>) {
+  constructor(mapper: IMapper<User, UsersPersistence>) {
     this.mapper = mapper;
   }
 
@@ -75,7 +75,7 @@ export class PrismaUserRepo implements IUsersRepository {
   }
 
   async save(user: User): Promise<Save> {
-    const toSaveRawUser = <UserPersistence>this.mapper.toPersistence(user);
+    const toSaveRawUser = <UsersPersistence>this.mapper.toPersistence(user);
 
     try {
       const rawUser = await client.user.upsert({

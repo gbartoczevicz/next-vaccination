@@ -2,13 +2,17 @@ import { User as Persistence } from '@prisma/client';
 import { User } from '@entities/user';
 import { EntityID, IMapper } from '@server/shared';
 
-export type UserPersistence = Omit<Persistence, 'createdAt' | 'updatedAt'>;
+export type UsersPersistence = Omit<Persistence, 'createdAt' | 'updatedAt'>;
 
-export class UsersMapper implements IMapper<User, UserPersistence> {
-  toDomain(persistence: UserPersistence): User {
+export class UsersMapper implements IMapper<User, UsersPersistence> {
+  get className(): string {
+    return this.constructor.name;
+  }
+
+  toDomain(persistence: UsersPersistence): User {
     const { id, name, email, password, phone } = persistence;
 
-    const toDomainUserOrError = User.create({
+    const domainOrError = User.create({
       id: new EntityID(id),
       name,
       email,
@@ -16,15 +20,19 @@ export class UsersMapper implements IMapper<User, UserPersistence> {
       phone
     });
 
-    return toDomainUserOrError.value as User;
+    if (domainOrError.isLeft()) {
+      console.error(`[${this.className}]`, domainOrError.value);
+    }
+
+    return domainOrError.value as User;
   }
 
-  async toPersistence(user: User): Promise<UserPersistence> {
-    const { id, name, email, password, phone } = user;
+  async toPersistence(domain: User): Promise<UsersPersistence> {
+    const { id, name, email, password, phone } = domain;
 
     const encryptedPassword = await password.encrypt();
 
-    const toPersistenceUser: UserPersistence = {
+    const persistence: UsersPersistence = {
       id: id.value,
       name,
       email: email.email,
@@ -32,6 +40,6 @@ export class UsersMapper implements IMapper<User, UserPersistence> {
       phone: phone.value
     };
 
-    return toPersistenceUser;
+    return persistence;
   }
 }

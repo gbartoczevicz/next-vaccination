@@ -2,20 +2,20 @@ import { Patient } from '@entities/patient';
 import { User } from '@entities/user';
 import { Patient as Persistence } from '@prisma/client';
 import { EntityID, IMapper } from '@server/shared';
-import { UserPersistence } from './users';
+import { UsersPersistence } from './users';
 
 export type PatientPersistence = Omit<Persistence, 'createdAt' | 'updatedAt'> & {
-  user: UserPersistence;
+  user: UsersPersistence;
 };
 
 export class PatientsMapper implements IMapper<Patient, PatientPersistence> {
-  private usersMapper: IMapper<User, UserPersistence>;
+  private usersMapper: IMapper<User, UsersPersistence>;
 
   get className(): string {
     return this.constructor.name;
   }
 
-  constructor(usersMapper: IMapper<User, UserPersistence>) {
+  constructor(usersMapper: IMapper<User, UsersPersistence>) {
     this.usersMapper = usersMapper;
   }
 
@@ -45,7 +45,7 @@ export class PatientsMapper implements IMapper<Patient, PatientPersistence> {
       avatar,
       ticket,
       userId: user.id.value,
-      user: <UserPersistence>this.usersMapper.toPersistence(user)
+      user: <UsersPersistence>this.usersMapper.toPersistence(user)
     };
 
     return rawPatient;
