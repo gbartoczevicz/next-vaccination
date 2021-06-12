@@ -38,7 +38,7 @@ export class PatientsMapper implements IMapper<Patient, PatientPersistence> {
   toPersistence(domain: Patient): PatientPersistence {
     const { id, document, birthday, avatar, ticket, user } = domain;
 
-    const rawPatient: PatientPersistence = {
+    const persistence: PatientPersistence = {
       id: id.value,
       document,
       birthday: birthday.value,
@@ -48,6 +48,6 @@ export class PatientsMapper implements IMapper<Patient, PatientPersistence> {
       user: <UsersPersistence>this.usersMapper.toPersistence(user)
     };
 
-    return rawPatient;
+    return persistence;
   }
 }
