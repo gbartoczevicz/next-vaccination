@@ -17,3 +17,14 @@ export interface IVaccinationPointsRepository {
   findByCoordinate(coordinate: Coordinate): Promise<FindUnique>;
   save(vaccinationPoint: VaccinationPoint): Promise<Save>;
 }
+
+export const makeHaversineFormulaQuery = (coordinate: Coordinate) =>
+  `
+  3959 
+  * ACOS(COS(RADIANS(37)) 
+  * COS(RADIANS(${coordinate.latitude})) 
+  * COS(RADIANS(${coordinate.longitude}) 
+  - RADIANS(-122)) 
+  + SIN(RADIANS(37))
+  * SIN(RADIANS(${coordinate.latitude})))
+  `;
