@@ -1,10 +1,9 @@
-import { Appointment } from '@entities/appointment';
 import { Conclusion } from '@entities/appointment/conclusion';
 import { InvalidAppointment, InvalidConclusion } from '@entities/appointment/errors';
 import { Either, left, right } from '@server/shared';
 import { AppointmentIsAlreadyCancelled, AppointmentIsAlreadyConcluded } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
-import { IAppointmentsRepository } from '@usecases/output-ports/repositories/appointments';
+import { ICancellationsRepository } from '@usecases/output-ports/repositories/cancellations';
 import { IConclusionsRepository } from '@usecases/output-ports/repositories/conclusions';
 import { IConcludeAppointmentDTO } from './dto';
 
@@ -15,30 +14,45 @@ type ResponseErrors =
   | InvalidConclusion
   | InvalidAppointment;
 
-type Response = Either<ResponseErrors, Appointment>;
+type Response = Either<ResponseErrors, Conclusion>;
 
 export class ConcludeAppointmentUseCase {
-  private appointmentsRepository: IAppointmentsRepository;
-
   private conclusionsRepository: IConclusionsRepository;
 
-  constructor(appointmentsRepository: IAppointmentsRepository, conclusionsRepository: IConclusionsRepository) {
-    this.appointmentsRepository = appointmentsRepository;
+  private cancellationsRepository: ICancellationsRepository;
+
+  constructor(conclusionsRepository: IConclusionsRepository, cancellationsRepository: ICancellationsRepository) {
     this.conclusionsRepository = conclusionsRepository;
+    this.cancellationsRepository = cancellationsRepository;
   }
 
   async execute(request: IConcludeAppointmentDTO): Promise<Response> {
     const { appointment, ...toCreateConclusionProps } = request;
 
-    if (appointment.cancellation) {
-      return left(new AppointmentIsAlreadyCancelled());
+    const appointmentAlreadyConcludedOrError = await this.conclusionsRepository.findByAppointment(appointment);
+
+    if (appointmentAlreadyConcludedOrError.isLeft()) {
+      return left(appointmentAlreadyConcludedOrError.value);
     }
 
-    if (appointment.conclusion) {
+    if (appointmentAlreadyConcludedOrError.value) {
       return left(new AppointmentIsAlreadyConcluded());
     }
 
-    const conclusionToCreateOrError = Conclusion.create(toCreateConclusionProps);
+    const appointmentAlreadyCancelledOrError = await this.cancellationsRepository.findByAppointment(appointment);
+
+    if (appointmentAlreadyCancelledOrError.isLeft()) {
+      return left(appointmentAlreadyCancelledOrError.value);
+    }
+
+    if (appointmentAlreadyCancelledOrError.value) {
+      return left(new AppointmentIsAlreadyCancelled());
+    }
+
+    const conclusionToCreateOrError = Conclusion.create({
+      appointment,
+      ...toCreateConclusionProps
+    });
 
     if (conclusionToCreateOrError.isLeft()) {
       return left(conclusionToCreateOrError.value);
@@ -50,21 +64,6 @@ export class ConcludeAppointmentUseCase {
       return left(savedConclusionOrError.value);
     }
 
-    const appointmentToUpdateOrError = Appointment.create({
-      ...appointment,
-      conclusion: savedConclusionOrError.value
-    });
-
-    if (appointmentToUpdateOrError.isLeft()) {
-      return left(appointmentToUpdateOrError.value);
-    }
-
-    const updatedAppointmentOrError = await this.appointmentsRepository.save(appointmentToUpdateOrError.value);
-
-    if (updatedAppointmentOrError.isLeft()) {
-      return left(updatedAppointmentOrError.value);
-    }
-
-    return right(updatedAppointmentOrError.value);
+    return right(savedConclusionOrError.value);
   }
 }
