@@ -3,7 +3,7 @@ import { Conclusion } from '@entities/appointment/conclusion';
 import { HealthProfessional } from '@entities/health-professional';
 import { VaccineBatch } from '@entities/vaccination-point';
 import { EntityID, right } from '@server/shared';
-import { FindUnique, IConclusionsRepository, Save } from './conclusions';
+import { FindAll, FindUnique, IConclusionsRepository, Save } from './conclusions';
 
 export class FakeConclusionsRepository implements IConclusionsRepository {
   async save(conclusion: Conclusion): Promise<Save> {
@@ -20,5 +20,17 @@ export class FakeConclusionsRepository implements IConclusionsRepository {
     });
 
     return Promise.resolve(right(fixture.value as Conclusion));
+  }
+
+  async findAllByVaccineBatch(vaccineBatch: VaccineBatch): Promise<FindAll> {
+    const fixture = Conclusion.create({
+      id: new EntityID(),
+      appointment: {} as Appointment,
+      vaccinatedAt: new Date(),
+      vaccinatedBy: {} as HealthProfessional,
+      vaccineBatch
+    });
+
+    return Promise.resolve(right([fixture.value as Conclusion]));
   }
 }
