@@ -154,9 +154,9 @@ model Conclusion {
 }
 
 model Cancellation {
-  id         String   @id @db.VarChar(50)
-  reason     String   @db.Text
-  canceledAt DateTime @default(now()) @map("canceled_at")
+  id        String   @id @db.VarChar(50)
+  reason    String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
 
   appointment   Appointment @relation(fields: [appointmentId], references: [id])
   appointmentId String      @map("appointment_id") @db.VarChar(50)
