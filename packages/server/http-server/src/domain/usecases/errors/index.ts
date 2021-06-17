@@ -15,3 +15,5 @@ export * from './without-vaccine-batches-within-expiration-date';
 export * from './has-not-available-vaccine-batches';
 export * from './appointment-already-cancelled';
 export * from './appointment-already-concluded';
+export * from './phone-already-in-use';
+export * from './does-not-have-ticket';

@@ -3,9 +3,9 @@ import { CreateUserErrors, User } from '@entities/user';
 import { IUsersRepository } from '@usecases/output-ports/repositories/users';
 import { InfraError } from '@usecases/output-ports/errors';
 import { Either, left, right } from '@server/shared';
-import { EmailAlreadyInUse } from '@usecases/errors';
+import { EmailAlreadyInUse, PhoneAlreadyInUse } from '@usecases/errors';
 
-type Response = Either<CreateUserErrors | EmailAlreadyInUse | InfraError, User>;
+type Response = Either<CreateUserErrors | EmailAlreadyInUse | PhoneAlreadyInUse | InfraError, User>;
 
 export class CreateUserUseCase {
   private usersRepository: IUsersRepository;
@@ -38,6 +38,16 @@ export class CreateUserUseCase {
 
     if (doesEmailAlreadyInUse) {
       return left(new EmailAlreadyInUse(doesEmailAlreadyInUse.email.email));
+    }
+
+    const doesPhoneAlreadyInUseOrError = await this.usersRepository.findByPhone(user.phone);
+
+    if (doesPhoneAlreadyInUseOrError.isLeft()) {
+      return left(doesPhoneAlreadyInUseOrError.value);
+    }
+
+    if (doesPhoneAlreadyInUseOrError.value) {
+      return left(new PhoneAlreadyInUse());
     }
 
     const savedUserOrError = await this.usersRepository.save(user);

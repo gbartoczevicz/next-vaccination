@@ -1,8 +1,8 @@
-import { HealthProfessional } from '@entities/health-professional';
+import { VaccinationPoint, Vaccine } from '@entities/vaccination-point';
 
 export interface ICreateVaccineBatchDTO {
-  healthProfessional: HealthProfessional;
-  vaccineId: string;
+  vaccinationPoint: VaccinationPoint;
+  vaccine: Vaccine;
   expirationDate: Date;
   stock: number;
 }

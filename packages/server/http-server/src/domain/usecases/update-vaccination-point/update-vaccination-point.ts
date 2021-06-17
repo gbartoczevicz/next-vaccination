@@ -1,14 +1,24 @@
 import { CreateVaccinationPointErrors, VaccinationPoint } from '@entities/vaccination-point';
-import { Either, EntityID, left, right } from '@server/shared';
-import { DocumentAlreadyInUse, LocationAlreadyInUse, VaccinationPointNotFound } from '@usecases/errors';
+import { Either, left, right } from '@server/shared';
+import {
+  DocumentAlreadyInUse,
+  LocationAlreadyInUse,
+  PhoneAlreadyInUse,
+  VaccinationPointNotFound
+} from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { IVaccinationPointsRepository } from '@usecases/output-ports/repositories/vaccination-points';
 import { IUpdateVaccinationPointDTO } from './dto';
 
-type Response = Either<
-  InfraError | CreateVaccinationPointErrors | VaccinationPointNotFound | DocumentAlreadyInUse | LocationAlreadyInUse,
-  VaccinationPoint
->;
+type ResponseErrors =
+  | InfraError
+  | CreateVaccinationPointErrors
+  | VaccinationPointNotFound
+  | DocumentAlreadyInUse
+  | LocationAlreadyInUse
+  | PhoneAlreadyInUse;
+
+type Response = Either<ResponseErrors, VaccinationPoint>;
 
 export class UpdateVaccinationPointUseCase {
   private vaccinationPointsRepository: IVaccinationPointsRepository;
@@ -18,9 +28,12 @@ export class UpdateVaccinationPointUseCase {
   }
 
   async execute(request: IUpdateVaccinationPointDTO): Promise<Response> {
+    const { vaccinationPoint, ...toUpdateProps } = request;
+
     const toUpdateVaccinationPointOrError = VaccinationPoint.create({
-      ...request,
-      id: new EntityID(request.id)
+      ...toUpdateProps,
+      id: vaccinationPoint.id,
+      availability: vaccinationPoint.availability
     });
 
     if (toUpdateVaccinationPointOrError.isLeft()) {
@@ -28,18 +41,6 @@ export class UpdateVaccinationPointUseCase {
     }
 
     const toUpdateVaccinationPoint = toUpdateVaccinationPointOrError.value;
-
-    const doesVaccinationPointExistsOrError = await this.vaccinationPointsRepository.findById(
-      toUpdateVaccinationPoint.id.value
-    );
-
-    if (doesVaccinationPointExistsOrError.isLeft()) {
-      return left(doesVaccinationPointExistsOrError.value);
-    }
-
-    if (!doesVaccinationPointExistsOrError.value) {
-      return left(new VaccinationPointNotFound());
-    }
 
     const documentAlreadyInUseOrError = await this.vaccinationPointsRepository.findByDocument(
       toUpdateVaccinationPoint.document
@@ -70,6 +71,22 @@ export class UpdateVaccinationPointUseCase {
 
       if (!latitudeAndLongitudeAlreadyInUse.id.equals(toUpdateVaccinationPoint.id)) {
         return left(new LocationAlreadyInUse());
+      }
+    }
+
+    const doesPhoneAlreadyInUseOrError = await this.vaccinationPointsRepository.findByPhone(
+      toUpdateVaccinationPoint.phone
+    );
+
+    if (doesPhoneAlreadyInUseOrError.isLeft()) {
+      return left(doesPhoneAlreadyInUseOrError.value);
+    }
+
+    if (doesPhoneAlreadyInUseOrError.value) {
+      const doesPhoneAlreadyInUse = doesPhoneAlreadyInUseOrError.value;
+
+      if (!doesPhoneAlreadyInUse.id.equals(toUpdateVaccinationPoint.id)) {
+        return left(new PhoneAlreadyInUse());
       }
     }
 

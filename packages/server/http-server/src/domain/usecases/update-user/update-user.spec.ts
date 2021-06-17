@@ -3,7 +3,7 @@ import { InvalidUser } from '@entities/user/errors';
 import { UserPassword } from '@entities/user/values';
 import { makePassword } from '@entities/user/values/factories/make-password';
 import { EntityID, left, right } from '@server/shared';
-import { EmailAlreadyInUse, PasswordDoesNotMatch } from '@usecases/errors';
+import { EmailAlreadyInUse, PasswordDoesNotMatch, PhoneAlreadyInUse } from '@usecases/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users';
 import { UpdateUserUseCase } from './update-user';
@@ -47,6 +47,7 @@ describe('Update User UseCase Unitary Tests', () => {
     const { sut, fakeUsersRepository } = makeSut();
 
     jest.spyOn(fakeUsersRepository, 'findByEmail').mockImplementation(() => Promise.resolve(right(null)));
+    jest.spyOn(fakeUsersRepository, 'findByPhone').mockImplementation(() => Promise.resolve(right(null)));
 
     const testable = await sut.execute(makeFixture({}));
 
@@ -79,10 +80,22 @@ describe('Update User UseCase Unitary Tests', () => {
     expect(testable.value).toEqual(new EmailAlreadyInUse('already_in_use@email.com'));
   });
 
+  it('should validate if incoming phone is already in use', async () => {
+    const { sut, fakeUsersRepository } = makeSut();
+
+    jest.spyOn(fakeUsersRepository, 'findByEmail').mockImplementation(() => Promise.resolve(right(null)));
+
+    const testable = await sut.execute(makeFixture({}));
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new PhoneAlreadyInUse());
+  });
+
   it('should validate if incoming password does match', async () => {
     const { sut, fakeUsersRepository } = makeSut();
 
     jest.spyOn(fakeUsersRepository, 'findByEmail').mockImplementation(() => Promise.resolve(right(null)));
+    jest.spyOn(fakeUsersRepository, 'findByPhone').mockImplementation(() => Promise.resolve(right(null)));
 
     const testable = await sut.execute(makeFixture({ currentPassword: 'to_trigger_error' }));
 
@@ -104,10 +117,25 @@ describe('Update User UseCase Unitary Tests', () => {
       expect(testable.value).toEqual(new InfraError('Unexpected Error'));
     });
 
+    it('should validate findByPhone', async () => {
+      const { sut, fakeUsersRepository } = makeSut();
+
+      jest.spyOn(fakeUsersRepository, 'findByEmail').mockImplementation(() => Promise.resolve(right(null)));
+      jest
+        .spyOn(fakeUsersRepository, 'findByPhone')
+        .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
+
+      const testable = await sut.execute(makeFixture({}));
+
+      expect(testable.isLeft()).toBeTruthy();
+      expect(testable.value).toEqual(new InfraError('Unexpected Error'));
+    });
+
     it('should validate save', async () => {
       const { sut, fakeUsersRepository } = makeSut();
 
       jest.spyOn(fakeUsersRepository, 'findByEmail').mockImplementation(() => Promise.resolve(right(null)));
+      jest.spyOn(fakeUsersRepository, 'findByPhone').mockImplementation(() => Promise.resolve(right(null)));
 
       jest
         .spyOn(fakeUsersRepository, 'save')

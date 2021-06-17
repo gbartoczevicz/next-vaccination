@@ -7,6 +7,7 @@ import { VaccinationPoint, VaccineBatch } from '@entities/vaccination-point';
 import { EntityID, left, right } from '@server/shared';
 import {
   HasNotAvailableVaccineBatches,
+  PatientDoesNotHaveTicket,
   VaccinationPointWithoutAvailability,
   WithoutVaccineBatchesWithinExpirationDate
 } from '@usecases/errors';
@@ -38,14 +39,14 @@ const makeSut = () => {
   };
 };
 
-const makeFixture = () => {
+const makeFixture = (ticket = 'ticket_to_keep.pdf') => {
   const patient = Patient.create({
     id: new EntityID('patient_id'),
     user: { id: new EntityID('user_patient_id') } as User,
     document: 'old_document',
     birthday: new Date(),
     avatar: 'avatar_to_keep.png',
-    ticket: 'ticket_to_keep.pdf'
+    ticket
   }).value as Patient;
 
   const vaccinationPoint = VaccinationPoint.create({
@@ -112,6 +113,15 @@ describe('Create Appointments UseCase Unitary Tests', () => {
 
     expect(testable.isLeft()).toBeTruthy();
     expect(testable.value).toEqual(new InvalidAppointment('Date is required'));
+  });
+
+  it("should validate if the appointment's patient have ticket", async () => {
+    const { sut } = makeSut();
+
+    const testable = await sut.execute(makeFixture(null));
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new PatientDoesNotHaveTicket());
   });
 
   it('should validate if vaccination point has batches that are at expiration date', async () => {
