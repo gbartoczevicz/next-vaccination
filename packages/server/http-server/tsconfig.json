@@ -12,7 +12,7 @@
       "@modules/*": ["./src/modules/*"],
       "@entities/*": ["./src/domain/entities/*"],
       "@usecases/*": ["./src/domain/usecases/*"],
-      "@adapters/*": ["./src/domain/adapters/*"],
+      "@adapters/*": ["./src/adapters/*"],
       "@external/*": ["./src/external/*"]
     }
   },
