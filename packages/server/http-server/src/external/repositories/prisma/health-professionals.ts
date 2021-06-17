@@ -19,31 +19,23 @@ export class PrismaHealthProfessionalsRepo implements IHealthProfessionalsReposi
 
   async findByDocument(document: string): Promise<FindUnique> {
     try {
-      const rawHealthProfessional = await client.healthProfessional.findUnique({
+      const rawResult = await client.healthProfessional.findUnique({
         where: { document },
         include: {
           user: true,
           vaccinationPoint: {
             include: {
-              Location: true
+              location: true
             }
           }
         }
       });
 
-      if (!rawHealthProfessional) {
+      if (!rawResult) {
         return right(null);
       }
 
-      const { vaccinationPoint, ...props } = rawHealthProfessional;
-
-      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain({
-        ...props,
-        vaccinationPoint: {
-          ...vaccinationPoint,
-          location: vaccinationPoint.Location
-        }
-      });
+      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain(rawResult);
 
       return right(domain);
     } catch (err) {
@@ -53,31 +45,23 @@ export class PrismaHealthProfessionalsRepo implements IHealthProfessionalsReposi
 
   async findById(id: string): Promise<FindUnique> {
     try {
-      const rawHealthProfessional = await client.healthProfessional.findUnique({
+      const rawResult = await client.healthProfessional.findUnique({
         where: { id },
         include: {
           user: true,
           vaccinationPoint: {
             include: {
-              Location: true
+              location: true
             }
           }
         }
       });
 
-      if (!rawHealthProfessional) {
+      if (!rawResult) {
         return right(null);
       }
 
-      const { vaccinationPoint, ...props } = rawHealthProfessional;
-
-      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain({
-        ...props,
-        vaccinationPoint: {
-          ...vaccinationPoint,
-          location: vaccinationPoint.Location
-        }
-      });
+      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain(rawResult);
 
       return right(domain);
     } catch (err) {
@@ -87,31 +71,23 @@ export class PrismaHealthProfessionalsRepo implements IHealthProfessionalsReposi
 
   async findByUser(user: User): Promise<FindUnique> {
     try {
-      const rawHealthProfessional = await client.healthProfessional.findUnique({
+      const rawResult = await client.healthProfessional.findUnique({
         where: { userId: user.id.value },
         include: {
           user: true,
           vaccinationPoint: {
             include: {
-              Location: true
+              location: true
             }
           }
         }
       });
 
-      if (!rawHealthProfessional) {
+      if (!rawResult) {
         return right(null);
       }
 
-      const { vaccinationPoint, ...props } = rawHealthProfessional;
-
-      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain({
-        ...props,
-        vaccinationPoint: {
-          ...vaccinationPoint,
-          location: vaccinationPoint.Location
-        }
-      });
+      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain(rawResult);
 
       return right(domain);
     } catch (err) {
@@ -121,31 +97,23 @@ export class PrismaHealthProfessionalsRepo implements IHealthProfessionalsReposi
 
   async findByUserAndIsResponsible(user: User): Promise<FindUnique> {
     try {
-      const rawHealthProfessional = await client.healthProfessional.findFirst({
+      const rawResult = await client.healthProfessional.findFirst({
         where: { userId: user.id.value, responsible: true },
         include: {
           user: true,
           vaccinationPoint: {
             include: {
-              Location: true
+              location: true
             }
           }
         }
       });
 
-      if (!rawHealthProfessional) {
+      if (!rawResult) {
         return right(null);
       }
 
-      const { vaccinationPoint, ...props } = rawHealthProfessional;
-
-      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain({
-        ...props,
-        vaccinationPoint: {
-          ...vaccinationPoint,
-          location: vaccinationPoint.Location
-        }
-      });
+      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain(rawResult);
 
       return right(domain);
     } catch (err) {
@@ -155,31 +123,23 @@ export class PrismaHealthProfessionalsRepo implements IHealthProfessionalsReposi
 
   async findByVaccinationPointIdAndIsResponsible(vaccinationPointId: string): Promise<FindUnique> {
     try {
-      const rawHealthProfessional = await client.healthProfessional.findFirst({
+      const rawResult = await client.healthProfessional.findFirst({
         where: { vaccinationPointId, responsible: true },
         include: {
           user: true,
           vaccinationPoint: {
             include: {
-              Location: true
+              location: true
             }
           }
         }
       });
 
-      if (!rawHealthProfessional) {
+      if (!rawResult) {
         return right(null);
       }
 
-      const { vaccinationPoint: rawVaccinationPoint, ...props } = rawHealthProfessional;
-
-      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain({
-        ...props,
-        vaccinationPoint: {
-          ...rawVaccinationPoint,
-          location: rawVaccinationPoint.Location
-        }
-      });
+      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain(rawResult);
 
       return right(domain);
     } catch (err) {
@@ -193,7 +153,7 @@ export class PrismaHealthProfessionalsRepo implements IHealthProfessionalsReposi
         this.healthProfessionalsMapper.toPersistence(healthProfessional)
       );
 
-      const rawHealthProfessional = await client.healthProfessional.upsert({
+      const rawResult = await client.healthProfessional.upsert({
         where: {
           id: persistence.id
         },
@@ -215,25 +175,17 @@ export class PrismaHealthProfessionalsRepo implements IHealthProfessionalsReposi
           user: true,
           vaccinationPoint: {
             include: {
-              Location: true
+              location: true
             }
           }
         }
       });
 
-      if (!rawHealthProfessional) {
+      if (!rawResult) {
         return right(null);
       }
 
-      const { vaccinationPoint: rawVaccinationPoint, ...props } = rawHealthProfessional;
-
-      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain({
-        ...props,
-        vaccinationPoint: {
-          ...rawVaccinationPoint,
-          location: rawVaccinationPoint.Location
-        }
-      });
+      const domain = <HealthProfessional>this.healthProfessionalsMapper.toDomain(rawResult);
 
       return right(domain);
     } catch (err) {

@@ -36,7 +36,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
               },
               vaccinationPoint: {
                 include: {
-                  Location: true
+                  location: true
                 }
               }
             }
@@ -46,7 +46,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
               user: true,
               vaccinationPoint: {
                 include: {
-                  Location: true
+                  location: true
                 }
               }
             }
@@ -56,7 +56,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
               vaccine: true,
               vaccinationPoint: {
                 include: {
-                  Location: true
+                  location: true
                 }
               }
             }
@@ -64,30 +64,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
         }
       });
 
-      const savedDomain = <Conclusion>this.conclusionsMapper.toDomain({
-        ...rawResult,
-        appointment: {
-          ...rawResult.appointment,
-          vaccinationPoint: {
-            ...rawResult.vaccineBatch.vaccinationPoint,
-            location: rawResult.vaccineBatch.vaccinationPoint.Location
-          }
-        },
-        vaccineBatch: {
-          ...rawResult.vaccineBatch,
-          vaccinationPoint: {
-            ...rawResult.vaccineBatch.vaccinationPoint,
-            location: rawResult.vaccineBatch.vaccinationPoint.Location
-          }
-        },
-        vaccinatedBy: {
-          ...rawResult.vaccinatedBy,
-          vaccinationPoint: {
-            ...rawResult.vaccinatedBy.vaccinationPoint,
-            location: rawResult.vaccinatedBy.vaccinationPoint.Location
-          }
-        }
-      });
+      const savedDomain = <Conclusion>this.conclusionsMapper.toDomain(rawResult);
 
       return right(savedDomain);
     } catch (err) {
@@ -111,7 +88,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
               },
               vaccinationPoint: {
                 include: {
-                  Location: true
+                  location: true
                 }
               }
             }
@@ -121,7 +98,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
               user: true,
               vaccinationPoint: {
                 include: {
-                  Location: true
+                  location: true
                 }
               }
             }
@@ -131,7 +108,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
               vaccine: true,
               vaccinationPoint: {
                 include: {
-                  Location: true
+                  location: true
                 }
               }
             }
@@ -139,32 +116,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
         }
       });
 
-      const conclusions = rawResult.map(
-        (result) => <Conclusion>this.conclusionsMapper.toDomain({
-            ...result,
-            appointment: {
-              ...result.appointment,
-              vaccinationPoint: {
-                ...result.vaccineBatch.vaccinationPoint,
-                location: result.vaccineBatch.vaccinationPoint.Location
-              }
-            },
-            vaccineBatch: {
-              ...result.vaccineBatch,
-              vaccinationPoint: {
-                ...result.vaccineBatch.vaccinationPoint,
-                location: result.vaccineBatch.vaccinationPoint.Location
-              }
-            },
-            vaccinatedBy: {
-              ...result.vaccinatedBy,
-              vaccinationPoint: {
-                ...result.vaccinatedBy.vaccinationPoint,
-                location: result.vaccinatedBy.vaccinationPoint.Location
-              }
-            }
-          })
-      );
+      const conclusions = rawResult.map((result) => <Conclusion>this.conclusionsMapper.toDomain(result));
 
       return right(conclusions);
     } catch (err) {
@@ -188,7 +140,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
               },
               vaccinationPoint: {
                 include: {
-                  Location: true
+                  location: true
                 }
               }
             }
@@ -198,7 +150,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
               user: true,
               vaccinationPoint: {
                 include: {
-                  Location: true
+                  location: true
                 }
               }
             }
@@ -208,7 +160,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
               vaccine: true,
               vaccinationPoint: {
                 include: {
-                  Location: true
+                  location: true
                 }
               }
             }
@@ -220,30 +172,7 @@ export class PrismaConclusionsRepo implements IConclusionsRepository {
         return right(null);
       }
 
-      const conclusions = <Conclusion>this.conclusionsMapper.toDomain({
-        ...rawResult,
-        appointment: {
-          ...rawResult.appointment,
-          vaccinationPoint: {
-            ...rawResult.vaccineBatch.vaccinationPoint,
-            location: rawResult.vaccineBatch.vaccinationPoint.Location
-          }
-        },
-        vaccineBatch: {
-          ...rawResult.vaccineBatch,
-          vaccinationPoint: {
-            ...rawResult.vaccineBatch.vaccinationPoint,
-            location: rawResult.vaccineBatch.vaccinationPoint.Location
-          }
-        },
-        vaccinatedBy: {
-          ...rawResult.vaccinatedBy,
-          vaccinationPoint: {
-            ...rawResult.vaccinatedBy.vaccinationPoint,
-            location: rawResult.vaccinatedBy.vaccinationPoint.Location
-          }
-        }
-      });
+      const conclusions = <Conclusion>this.conclusionsMapper.toDomain(rawResult);
 
       return right(conclusions);
     } catch (err) {

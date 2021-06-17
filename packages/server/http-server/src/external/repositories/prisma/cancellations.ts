@@ -27,23 +27,14 @@ export class PrismaCancellationsRepo implements ICancellationsRepository {
           appointment: {
             include: {
               patient: { include: { user: true } },
-              vaccinationPoint: { include: { Location: true } }
+              vaccinationPoint: { include: { location: true } }
             }
           },
           cancelatedBy: true
         }
       });
 
-      const domain = <Cancellation>this.cancellationsMapper.toDomain({
-        ...resultRaw,
-        appointment: {
-          ...resultRaw.appointment,
-          vaccinationPoint: {
-            ...resultRaw.appointment.vaccinationPoint,
-            location: resultRaw.appointment.vaccinationPoint.Location
-          }
-        }
-      });
+      const domain = <Cancellation>this.cancellationsMapper.toDomain(resultRaw);
 
       return right(domain);
     } catch (err) {
@@ -59,7 +50,7 @@ export class PrismaCancellationsRepo implements ICancellationsRepository {
           appointment: {
             include: {
               patient: { include: { user: true } },
-              vaccinationPoint: { include: { Location: true } }
+              vaccinationPoint: { include: { location: true } }
             }
           },
           cancelatedBy: true
@@ -70,16 +61,7 @@ export class PrismaCancellationsRepo implements ICancellationsRepository {
         return right(null);
       }
 
-      const domain = <Cancellation>this.cancellationsMapper.toDomain({
-        ...resultRaw,
-        appointment: {
-          ...resultRaw.appointment,
-          vaccinationPoint: {
-            ...resultRaw.appointment.vaccinationPoint,
-            location: resultRaw.appointment.vaccinationPoint.Location
-          }
-        }
-      });
+      const domain = <Cancellation>this.cancellationsMapper.toDomain(resultRaw);
 
       return right(domain);
     } catch (err) {

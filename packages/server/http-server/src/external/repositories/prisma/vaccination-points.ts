@@ -76,7 +76,7 @@ export class PrismaVaccinationPointsRepo implements IVaccinationPointsRepository
           document
         },
         include: {
-          Location: true
+          location: true
         }
       });
 
@@ -84,10 +84,7 @@ export class PrismaVaccinationPointsRepo implements IVaccinationPointsRepository
         return right(null);
       }
 
-      const vaccinationPoint = <VaccinationPoint>this.vaccintaionPointsMapper.toDomain({
-        ...rawResult,
-        location: rawResult.Location
-      });
+      const vaccinationPoint = <VaccinationPoint>this.vaccintaionPointsMapper.toDomain(rawResult);
 
       return right(vaccinationPoint);
     } catch (err) {
@@ -102,7 +99,7 @@ export class PrismaVaccinationPointsRepo implements IVaccinationPointsRepository
           id
         },
         include: {
-          Location: true
+          location: true
         }
       });
 
@@ -110,10 +107,7 @@ export class PrismaVaccinationPointsRepo implements IVaccinationPointsRepository
         return right(null);
       }
 
-      const vaccinationPoint = <VaccinationPoint>this.vaccintaionPointsMapper.toDomain({
-        ...rawResult,
-        location: rawResult.Location
-      });
+      const vaccinationPoint = <VaccinationPoint>this.vaccintaionPointsMapper.toDomain(rawResult);
 
       return right(vaccinationPoint);
     } catch (err) {
@@ -128,7 +122,7 @@ export class PrismaVaccinationPointsRepo implements IVaccinationPointsRepository
           phone: phone.value
         },
         include: {
-          Location: true
+          location: true
         }
       });
 
@@ -136,10 +130,7 @@ export class PrismaVaccinationPointsRepo implements IVaccinationPointsRepository
         return right(null);
       }
 
-      const vaccinationPoint = <VaccinationPoint>this.vaccintaionPointsMapper.toDomain({
-        ...rawResult,
-        location: rawResult.Location
-      });
+      const vaccinationPoint = <VaccinationPoint>this.vaccintaionPointsMapper.toDomain(rawResult);
 
       return right(vaccinationPoint);
     } catch (err) {
@@ -151,21 +142,28 @@ export class PrismaVaccinationPointsRepo implements IVaccinationPointsRepository
     try {
       const persistence = <VaccinationPointsPersistence>this.vaccintaionPointsMapper.toPersistence(vaccinationPoint);
 
-      const rawSavedVaccinationPoint = await client.vaccinationPoint.upsert({
+      const rawResult = await client.vaccinationPoint.upsert({
         where: {
           id: persistence.id
         },
-        create: persistence,
-        update: persistence,
+        create: {
+          ...persistence,
+          location: {
+            create: persistence.location
+          }
+        },
+        update: {
+          ...persistence,
+          location: {
+            update: persistence.location
+          }
+        },
         include: {
-          Location: true
+          location: true
         }
       });
 
-      const savedDomain = <VaccinationPoint>this.vaccintaionPointsMapper.toDomain({
-        ...rawSavedVaccinationPoint,
-        location: rawSavedVaccinationPoint.Location
-      });
+      const savedDomain = <VaccinationPoint>this.vaccintaionPointsMapper.toDomain(rawResult);
 
       return right(savedDomain);
     } catch (err) {

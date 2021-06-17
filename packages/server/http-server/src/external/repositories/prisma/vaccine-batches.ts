@@ -16,7 +16,7 @@ export class PrismaVaccineBatchesRepo implements IVaccineBatchesRepository {
     try {
       const rawToSave = <VaccineBatchesPersistence>this.vaccineBatchesMapper.toPersistence(vaccineBatch);
 
-      const rawSaved = await client.vaccineBatch.upsert({
+      const rawResult = await client.vaccineBatch.upsert({
         where: {
           id: rawToSave.id
         },
@@ -36,21 +36,13 @@ export class PrismaVaccineBatchesRepo implements IVaccineBatchesRepository {
         },
         include: {
           vaccinationPoint: {
-            include: { Location: true }
+            include: { location: true }
           },
           vaccine: true
         }
       });
 
-      const { vaccinationPoint, ...props } = rawSaved;
-
-      const domain = <VaccineBatch>this.vaccineBatchesMapper.toDomain({
-        ...props,
-        vaccinationPoint: {
-          ...vaccinationPoint,
-          location: vaccinationPoint.Location
-        }
-      });
+      const domain = <VaccineBatch>this.vaccineBatchesMapper.toDomain(rawResult);
 
       return right(domain);
     } catch (err) {
@@ -71,17 +63,12 @@ export class PrismaVaccineBatchesRepo implements IVaccineBatchesRepository {
           }
         },
         include: {
-          vaccinationPoint: { include: { Location: true } },
+          vaccinationPoint: { include: { location: true } },
           vaccine: true
         }
       });
 
-      const vaccineBathes = rawResult.map(
-        (r) => <VaccineBatch>this.vaccineBatchesMapper.toDomain({
-            ...r,
-            vaccinationPoint: { ...r.vaccinationPoint, location: r.vaccinationPoint.Location }
-          })
-      );
+      const vaccineBathes = rawResult.map((r) => <VaccineBatch>this.vaccineBatchesMapper.toDomain(r));
 
       return right(vaccineBathes);
     } catch (err) {

@@ -18,8 +18,7 @@ export class VaccinationPointsMapper implements IMapper<VaccinationPoint, Vaccin
       ...props,
       id: new EntityID(id),
       location: {
-        address: location.address,
-        addressNumber: location.addressNumber,
+        ...location,
         coordinate: {
           latitude: location.latitude,
           longitude: location.longitude
@@ -44,8 +43,7 @@ export class VaccinationPointsMapper implements IMapper<VaccinationPoint, Vaccin
       phone: phone.value,
       availability,
       location: {
-        address: location.address,
-        addressNumber: location.addressNumber,
+        ...location,
         latitude: location.coordinate.latitude,
         longitude: location.coordinate.longitude,
         vaccinationPointId: id.value

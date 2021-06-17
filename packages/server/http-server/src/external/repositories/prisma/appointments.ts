@@ -41,19 +41,13 @@ export class PrismaAppointmentsRepo implements IAppointmentsRepository {
           },
           vaccinationPoint: {
             include: {
-              Location: true
+              location: true
             }
           }
         }
       });
 
-      const savedDomain = <Appointment>this.appointmentsMapper.toDomain({
-        ...savedRaw,
-        vaccinationPoint: {
-          ...savedRaw.vaccinationPoint,
-          location: savedRaw.vaccinationPoint.Location
-        }
-      });
+      const savedDomain = <Appointment>this.appointmentsMapper.toDomain(savedRaw);
 
       return right(savedDomain);
     } catch (err) {
@@ -76,21 +70,13 @@ export class PrismaAppointmentsRepo implements IAppointmentsRepository {
           },
           vaccinationPoint: {
             include: {
-              Location: true
+              location: true
             }
           }
         }
       });
 
-      const appointmentsDomin = rawResult.map(
-        (result) => <Appointment>this.appointmentsMapper.toDomain({
-            ...result,
-            vaccinationPoint: {
-              ...result.vaccinationPoint,
-              location: result.vaccinationPoint.Location
-            }
-          })
-      );
+      const appointmentsDomin = rawResult.map((result) => <Appointment>this.appointmentsMapper.toDomain(result));
 
       return right(appointmentsDomin);
     } catch (err) {

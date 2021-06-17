@@ -10,14 +10,12 @@ export class UsersMapper implements IMapper<User, UsersPersistence> {
   }
 
   toDomain(persistence: UsersPersistence): User {
-    const { id, name, email, password, phone } = persistence;
+    const { id, password, ...props } = persistence;
 
     const domainOrError = User.create({
+      ...props,
       id: new EntityID(id),
-      name,
-      email,
-      password: { password, hashed: true },
-      phone
+      password: { password, hashed: true }
     });
 
     if (domainOrError.isLeft()) {

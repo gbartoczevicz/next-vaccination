@@ -29,13 +29,13 @@ export class AppointmentsMapper implements IMapper<Appointment, AppointmentsPers
   }
 
   toDomain(persistence: AppointmentsPersistence): Appointment {
-    const { id, patient, vaccinationPoint, ...domainProps } = persistence;
+    const { id, patient, vaccinationPoint, ...props } = persistence;
 
     const domainOrError = Appointment.create({
+      ...props,
       id: new EntityID(id),
       patient: <Patient>this.patientsMapper.toDomain(patient),
-      vaccinationPoint: <VaccinationPoint>this.vaccinationPointsMapper.toDomain(vaccinationPoint),
-      ...domainProps
+      vaccinationPoint: <VaccinationPoint>this.vaccinationPointsMapper.toDomain(vaccinationPoint)
     });
 
     if (domainOrError.isLeft()) {
