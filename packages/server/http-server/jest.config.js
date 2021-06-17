@@ -14,6 +14,7 @@ module.exports = {
   moduleNameMapper: {
     '@entities/(.*)': '<rootDir>/src/domain/entities/$1',
     '@usecases/(.*)': '<rootDir>/src/domain/usecases/$1',
-    '@external/(.*)': '<rootDir>/src/external/$1'
+    '@external/(.*)': '<rootDir>/src/external/$1',
+    '@adapters/(.*)': '<rootDir>/src/adapters/$1'
   }
 };

@@ -12,6 +12,7 @@
       "@modules/*": ["./src/modules/*"],
       "@entities/*": ["./src/domain/entities/*"],
       "@usecases/*": ["./src/domain/usecases/*"],
+      "@adapters/*": ["./src/domain/adapters/*"],
       "@external/*": ["./src/external/*"]
     }
   },
