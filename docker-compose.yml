@@ -20,23 +20,6 @@ services:
           memory: 2048M
           cpus: "1.0"
 
-  notifications_database:
-    image: "bitnami/mongodb"
-    restart: always
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGODB_USERNAME=root
-      - MONGODB_PASSWORD=secret
-      - MONGODB_DATABASE=notifications
-    volumes:
-      - "mongodb_data:/bitnami/mongodb"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: "0.5"
-
   # Kafka & Zookeeper
 
   zookeeper:
@@ -81,8 +64,6 @@ networks:
 
 volumes:
   postgresql_data:
-    driver: local
-  mongodb_data:
     driver: local
   zookeeper_data:
     driver: local

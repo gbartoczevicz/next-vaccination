@@ -17,6 +17,7 @@ import {
 } from '@usecases/get-appointments-that-use-same-vaccine-batches';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakeAppointmentsRepository } from '@usecases/output-ports/repositories/appointments';
+import { FakeConclusionsRepository } from '@usecases/output-ports/repositories/conclusions';
 import { FakeVaccineBatchesRepository } from '@usecases/output-ports/repositories/vaccine-batches';
 import { CreateAppointmentUseCase } from './create-appointment';
 
@@ -24,7 +25,7 @@ const makeSut = () => {
   const fakeAppointmentsRespository = new FakeAppointmentsRepository();
   const fakeVaccineBatchesRepository = new FakeVaccineBatchesRepository();
   const getAppointmentsThatUseSameVaccineBatchesUseCase = new GetAppointmentsThatUseSameVaccineBatchesUseCase(
-    new FakeAppointmentsRepository()
+    new FakeConclusionsRepository()
   );
 
   return {

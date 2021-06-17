@@ -1,41 +1,41 @@
-import { Appointment } from '@entities/appointment';
+import { Conclusion } from '@entities/appointment/conclusion';
 import { Either, left, right } from '@server/shared';
 import { InfraError } from '@usecases/output-ports/errors';
-import { IAppointmentsRepository } from '@usecases/output-ports/repositories/appointments';
+import { IConclusionsRepository } from '@usecases/output-ports/repositories/conclusions';
 import { IAppointmentsWithVaccineBatchDTO, IGetAppointmentsThatUseSameVaccineBatchesDTO } from './dto';
 
 type Response = Either<InfraError, Array<IAppointmentsWithVaccineBatchDTO>>;
 
 export class GetAppointmentsThatUseSameVaccineBatchesUseCase {
-  private appointmentsRepository: IAppointmentsRepository;
+  private conclustionsRepository: IConclusionsRepository;
 
-  constructor(appointmentsRepository: IAppointmentsRepository) {
-    this.appointmentsRepository = appointmentsRepository;
+  constructor(conclustionsRepository: IConclusionsRepository) {
+    this.conclustionsRepository = conclustionsRepository;
   }
 
   async execute(request: IGetAppointmentsThatUseSameVaccineBatchesDTO): Promise<Response> {
     const { vaccineBatches } = request;
 
-    const appointmentsOrError = await Promise.all(
+    const conclusionsOrError = await Promise.all(
       vaccineBatches.map(async (batch) => {
-        const appointments = await this.appointmentsRepository.findAllByVaccineBatch(batch);
+        const conclusions = await this.conclustionsRepository.findAllByVaccineBatch(batch);
 
         return {
           batch,
-          appointments
+          conclusions
         };
       })
     );
 
-    const hasInfraErrors = appointmentsOrError.find(({ appointments }) => appointments.isLeft());
+    const hasInfraErrors = conclusionsOrError.find(({ conclusions }) => conclusions.isLeft());
 
     if (hasInfraErrors) {
-      return left(hasInfraErrors.appointments.value as InfraError);
+      return left(hasInfraErrors.conclusions.value as InfraError);
     }
 
-    const appointments = appointmentsOrError.map(({ batch, appointments: a }) => ({
+    const appointments = conclusionsOrError.map(({ batch, conclusions }) => ({
       vaccineBatch: batch,
-      appointments: a.value as Appointment[]
+      appointments: (<Conclusion[]>conclusions.value).map((conclusion) => conclusion.appointment)
     }));
 
     return right(appointments);

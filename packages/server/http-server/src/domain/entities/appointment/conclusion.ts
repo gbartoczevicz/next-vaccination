@@ -1,6 +1,7 @@
 import { HealthProfessional } from '@entities/health-professional';
 import { VaccineBatch } from '@entities/vaccination-point';
 import { Either, EntityID, left, right } from '@server/shared';
+import { Appointment } from './appointment';
 import { InvalidConclusion } from './errors';
 
 interface IConclusionProps {
@@ -8,6 +9,7 @@ interface IConclusionProps {
   vaccinatedBy: HealthProfessional;
   vaccineBatch: VaccineBatch;
   vaccinatedAt: Date;
+  appointment: Appointment;
 }
 
 export class Conclusion {
@@ -19,11 +21,20 @@ export class Conclusion {
 
   readonly vaccinatedAt: Date;
 
-  constructor(vaccinatedAt: Date, vaccinatedBy: HealthProfessional, vaccineBatch: VaccineBatch, id?: EntityID) {
+  readonly appointment: Appointment;
+
+  constructor(
+    vaccinatedAt: Date,
+    vaccinatedBy: HealthProfessional,
+    vaccineBatch: VaccineBatch,
+    appointment: Appointment,
+    id?: EntityID
+  ) {
     this.id = id || new EntityID();
     this.vaccinatedAt = vaccinatedAt;
     this.vaccinatedBy = vaccinatedBy;
     this.vaccineBatch = vaccineBatch;
+    this.appointment = appointment;
   }
 
   static create(props: IConclusionProps): Either<InvalidConclusion, Conclusion> {
@@ -39,9 +50,13 @@ export class Conclusion {
       return left(new InvalidConclusion('Vaccine Batch is required'));
     }
 
-    const { vaccinatedAt, vaccinatedBy, vaccineBatch, id } = props;
+    if (!props.appointment) {
+      return left(new InvalidConclusion('Appointment is required'));
+    }
 
-    const conclusion = new Conclusion(vaccinatedAt, vaccinatedBy, vaccineBatch, id);
+    const { vaccinatedAt, vaccinatedBy, vaccineBatch, appointment, id } = props;
+
+    const conclusion = new Conclusion(vaccinatedAt, vaccinatedBy, vaccineBatch, appointment, id);
 
     return right(conclusion);
   }
