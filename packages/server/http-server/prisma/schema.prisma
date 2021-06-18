@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @db.VarChar(50)
+  name      String   @db.VarChar(255)
+  email     String   @unique @db.VarChar(50)
+  phone     String   @unique @db.VarChar(12)
+  password  String   @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  patient            Patient?
+  healthProfessional HealthProfessional?
+  cancellations      Cancellation[]
+
+  @@map("users")
+}
+
+model Patient {
+  id        String   @id @db.VarChar(50)
+  birthday  DateTime @db.Date
+  document  String   @unique @db.VarChar(11)
+  avatar    String?  @db.VarChar(50)
+  ticket    String?  @db.VarChar(50)
+  userId    String   @unique @map("user_id") @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user         User          @relation(fields: [userId], references: [id])
+  appointments Appointment[]
+
+  @@map("patients")
+}
+
+model VaccinationPoint {
+  id           String   @id @db.VarChar(50)
+  name         String   @db.VarChar(255)
+  phone        String   @unique @db.VarChar(12)
+  document     String   @unique @db.VarChar(50)
+  availability Int      @db.Integer
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  location            Location?
+  healthProfessionals HealthProfessional[]
+  vaccineBatches      VaccineBatch[]
+  appointments        Appointment[]
+
+  @@map("vaccination_points")
+}
+
+model Location {
+  latitude           Float  @db.Real
+  longitude          Float  @db.Real
+  address            String @db.VarChar(500)
+  addressNumber      Int    @map("address_number") @db.Integer
+  vaccinationPointId String @map("vaccination_point_id") @db.VarChar(50)
+
+  vaccinationPoint VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
+
+  @@unique([latitude, longitude], name: "vaccination_points_coordinates")
+  @@map("locations")
+}
+
+model HealthProfessional {
+  id                 String   @id @db.VarChar(50)
+  document           String   @unique @db.VarChar(50)
+  responsible        Boolean  @default(false)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+  userId             String   @unique @map("user_id") @db.VarChar(50)
+  vaccinationPointId String   @map("vaccination_point_id") @db.VarChar(50)
+
+  user             User             @relation(fields: [userId], references: [id])
+  vaccinationPoint VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
+  conclusions      Conclusion[]
+
+  @@map("health_professionals")
+}
+
+model Vaccine {
+  id          String @id @db.VarChar(50)
+  name        String @unique @db.VarChar(50)
+  description String @db.Text
+
+  vaccineBatches VaccineBatch[]
+
+  @@map("vaccines")
+}
+
+model VaccineBatch {
+  id                 String   @id @db.VarChar(50)
+  expirationDate     DateTime @map("expiration_date") @db.Date
+  stock              Int      @db.Integer
+  vaccineId          String   @map("vaccine_id") @db.VarChar(50)
+  vaccinationPointId String   @map("vaccination_point_id") @db.VarChar(50)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  vaccine          Vaccine          @relation(fields: [vaccineId], references: [id])
+  vaccinationPoint VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
+  conclusions      Conclusion[]
+
+  @@map("vaccine_batches")
+}
+
+model Appointment {
+  id                 String   @id @db.VarChar(50)
+  date               DateTime @db.Date
+  patientId          String   @map("patient_id") @db.VarChar(50)
+  vaccinationPointId String   @map("vaccination_point_id") @db.VarChar(50)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  vaccinationPoint VaccinationPoint @relation(fields: [vaccinationPointId], references: [id])
+  patient          Patient          @relation(fields: [patientId], references: [id])
+  conclusion       Conclusion?
+  cancellation     Cancellation?
+
+  @@map("appointments")
+}
+
+model Conclusion {
+  id             String   @id @db.VarChar(50)
+  appointmentId  String   @map("appointment_id") @db.VarChar(50)
+  vaccinatedById String   @map("vaccinated_by_id") @db.VarChar(50)
+  vaccineBatchId String   @map("vaccine_batch_id") @db.VarChar(50)
+  vaccinatedAt   DateTime @default(now()) @map("vaccinated_at")
+
+  appointment  Appointment        @relation(fields: [appointmentId], references: [id])
+  vaccinatedBy HealthProfessional @relation(fields: [vaccinatedById], references: [id])
+  vaccineBatch VaccineBatch       @relation(fields: [vaccineBatchId], references: [id])
+
+  @@map("conclusions")
+}
+
+model Cancellation {
+  id             String   @id @db.VarChar(50)
+  reason         String   @db.Text
+  appointmentId  String   @map("appointment_id") @db.VarChar(50)
+  cancelatedById String   @unique @map("cancelated_by_id") @db.VarChar(50)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  appointment  Appointment @relation(fields: [appointmentId], references: [id])
+  cancelatedBy User        @relation(fields: [cancelatedById], references: [id])
+
+  @@map("cancellations")
+}

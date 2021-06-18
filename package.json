@@ -23,6 +23,10 @@
     "packages/server/tickets",
     "packages/client/web"
   ],
+  "nohoist": [
+    "**/@prisma",
+    "**/.prisma"
+  ],
   "bugs": {
     "url": "https://github.com/gabrielbartoczevicz/next-vaccination/issues"
   },

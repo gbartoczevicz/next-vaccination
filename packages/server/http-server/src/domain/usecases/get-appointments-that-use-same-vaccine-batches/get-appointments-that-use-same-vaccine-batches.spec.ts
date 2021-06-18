@@ -1,16 +1,16 @@
 import { VaccinationPoint, Vaccine, VaccineBatch } from '@entities/vaccination-point';
 import { EntityID, left } from '@server/shared';
 import { InfraError } from '@usecases/output-ports/errors';
-import { FakeAppointmentsRepository } from '@usecases/output-ports/repositories/appointments';
+import { FakeConclusionsRepository } from '@usecases/output-ports/repositories/conclusions';
 import { IAppointmentsWithVaccineBatchDTO } from './dto';
 import { GetAppointmentsThatUseSameVaccineBatchesUseCase } from './get-appointments-that-use-same-vaccine-batches';
 
 const makeSut = () => {
-  const fakeAppointmentsRepository = new FakeAppointmentsRepository();
+  const fakeConclusionsRepository = new FakeConclusionsRepository();
 
   return {
-    sut: new GetAppointmentsThatUseSameVaccineBatchesUseCase(fakeAppointmentsRepository),
-    fakeAppointmentsRepository
+    sut: new GetAppointmentsThatUseSameVaccineBatchesUseCase(fakeConclusionsRepository),
+    fakeConclusionsRepository
   };
 };
 
@@ -42,16 +42,13 @@ describe('Get Appointments That Use Same Vaccine Batches Unitary Tests', () => {
 
     expect(appointmentsAndVaccineBatch.vaccineBatch.id.value).toEqual(fixture.id.value);
     expect(appointmentsAndVaccineBatch.appointments.length).toEqual(1);
-
-    const { conclusion } = appointmentsAndVaccineBatch.appointments[0];
-    expect(conclusion.vaccineBatch.id.value).toEqual(fixture.id.value);
   });
 
   it('should validate infra error', async () => {
-    const { sut, fakeAppointmentsRepository } = makeSut();
+    const { sut, fakeConclusionsRepository } = makeSut();
 
     jest
-      .spyOn(fakeAppointmentsRepository, 'findAllByVaccineBatch')
+      .spyOn(fakeConclusionsRepository, 'findAllByVaccineBatch')
       .mockImplementation(() => Promise.resolve(left(new InfraError('Unexpected Error'))));
 
     const testable = await sut.execute({ vaccineBatches: [makeFixture()] });

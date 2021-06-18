@@ -1,8 +1,6 @@
 import { Patient } from '@entities/patient';
 import { VaccinationPoint } from '@entities/vaccination-point';
 import { Either, EntityID, left, right } from '@server/shared';
-import { Cancellation } from './cancellation';
-import { Conclusion } from './conclusion';
 import { InvalidAppointment } from './errors';
 
 interface IAppointmentProps {
@@ -10,8 +8,6 @@ interface IAppointmentProps {
   patient: Patient;
   vaccinationPoint: VaccinationPoint;
   date: Date;
-  conclusion?: Conclusion;
-  cancellation?: Cancellation;
 }
 
 export class Appointment {
@@ -23,28 +19,15 @@ export class Appointment {
 
   readonly vaccinationPoint: VaccinationPoint;
 
-  readonly conclusion?: Conclusion;
-
-  readonly cancellation?: Cancellation;
-
-  constructor(
-    patient: Patient,
-    vaccinationPoint: VaccinationPoint,
-    date: Date,
-    conclusion?: Conclusion,
-    cancellation?: Cancellation,
-    id?: EntityID
-  ) {
+  constructor(patient: Patient, vaccinationPoint: VaccinationPoint, date: Date, id?: EntityID) {
     this.id = id || new EntityID();
     this.patient = patient;
     this.vaccinationPoint = vaccinationPoint;
     this.date = date;
-    this.conclusion = conclusion;
-    this.cancellation = cancellation;
   }
 
   static create(props: IAppointmentProps): Either<InvalidAppointment, Appointment> {
-    const { id, patient, vaccinationPoint, date, cancellation, conclusion } = props;
+    const { id, patient, vaccinationPoint, date } = props;
 
     if (!patient) {
       return left(new InvalidAppointment('Patient is required'));
@@ -58,7 +41,7 @@ export class Appointment {
       return left(new InvalidAppointment('Date is required'));
     }
 
-    const appointment = new Appointment(patient, vaccinationPoint, date, conclusion, cancellation, id);
+    const appointment = new Appointment(patient, vaccinationPoint, date, id);
 
     return right(appointment);
   }

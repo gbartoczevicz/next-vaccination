@@ -1,21 +1,25 @@
 import { User } from '@entities/user';
 import { EntityID } from '@server/shared';
+import { Appointment } from './appointment';
 import { Cancellation } from './cancellation';
 import { InvalidCancellation } from './errors';
 
 const makeSut = () => ({ sut: Cancellation });
 
+const makeFixture = () => ({
+  reason: 'Cancellation Reason',
+  createdAt: new Date(),
+  cancelatedBy: { id: new EntityID('cancelated_by') } as User,
+  appointment: { id: new EntityID('appointment_id') } as Appointment
+});
+
 describe('Cancellation Unitary Tests', () => {
   it('should create a valid cancellation entity', () => {
     const { sut } = makeSut();
 
-    const createdAt = new Date();
+    const { createdAt, ...fixture } = makeFixture();
 
-    const testable = sut.create({
-      reason: 'Cancellation Reason',
-      createdAt,
-      cancelatedBy: { id: new EntityID('cancelated_by') } as User
-    });
+    const testable = sut.create({ createdAt, ...fixture });
 
     expect(testable.isRight()).toBeTruthy();
 
@@ -25,15 +29,15 @@ describe('Cancellation Unitary Tests', () => {
     expect(cancellation.reason).toEqual('Cancellation Reason');
     expect(cancellation.createdAt).toEqual(createdAt);
     expect(cancellation.cancelatedBy.id.value).toEqual('cancelated_by');
+    expect(cancellation.appointment.id.value).toEqual('appointment_id');
   });
 
   it('should validate reason', () => {
     const { sut } = makeSut();
 
     const testable = sut.create({
-      reason: null,
-      createdAt: new Date(),
-      cancelatedBy: { id: new EntityID('cancelated_by') } as User
+      ...makeFixture(),
+      reason: null
     });
 
     expect(testable.isLeft()).toBeTruthy();
@@ -44,9 +48,8 @@ describe('Cancellation Unitary Tests', () => {
     const { sut } = makeSut();
 
     const testable = sut.create({
-      reason: 'Cancellation Reason',
-      createdAt: null,
-      cancelatedBy: { id: new EntityID('cancelated_by') } as User
+      ...makeFixture(),
+      createdAt: null
     });
 
     expect(testable.isLeft()).toBeTruthy();
@@ -57,12 +60,23 @@ describe('Cancellation Unitary Tests', () => {
     const { sut } = makeSut();
 
     const testable = sut.create({
-      reason: 'Cancellation Reason',
-      createdAt: new Date(),
+      ...makeFixture(),
       cancelatedBy: null
     });
 
     expect(testable.isLeft()).toBeTruthy();
     expect(testable.value).toEqual(new InvalidCancellation('Cancelated By is required'));
+  });
+
+  it('should validate appointment', () => {
+    const { sut } = makeSut();
+
+    const testable = sut.create({
+      ...makeFixture(),
+      appointment: null
+    });
+
+    expect(testable.isLeft()).toBeTruthy();
+    expect(testable.value).toEqual(new InvalidCancellation('Appointment is required'));
   });
 });
