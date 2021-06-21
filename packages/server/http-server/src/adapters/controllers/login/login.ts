@@ -1,6 +1,6 @@
 import { Controller, HttpRequest, HttpResponse } from '@adapters/contracts';
 import { MissingParamError } from '@adapters/errors';
-import { badRequest, serverError } from '@adapters/helpers/http-helper';
+import { badRequest, ok, serverError } from '@adapters/helpers/http-helper';
 import { LoginUseCase } from '@usecases/login';
 
 export class LoginController implements Controller {
@@ -20,9 +20,6 @@ export class LoginController implements Controller {
       return serverError();
     }
 
-    return {
-      statusCode: 200,
-      body: ''
-    };
+    return ok(loginOrError.value);
   }
 }
