@@ -1,9 +1,18 @@
 import { LoginController } from '@adapters/controllers/login';
 import { MissingParamError } from '@adapters/errors';
-import { badRequest } from '@adapters/helpers/http-helper';
+import { badRequest, serverError } from '@adapters/helpers/http-helper';
 import { FakeEncrypter } from '@entities/output-ports/encrypter';
 import { LoginUseCase } from '@usecases/login';
+import { InfraError } from '@usecases/output-ports/errors';
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users';
+import { left } from '@server/shared';
+
+const makeFixture = () => ({
+  body: {
+    user: 'any_user',
+    password: 'any_password'
+  }
+});
 
 const makeLoginUseCase = () => {
   const makedFakeUsersRepository = new FakeUsersRepository();
@@ -16,7 +25,8 @@ const makeSut = () => {
   const sut = new LoginController(makedLoginUseCase);
 
   return {
-    sut
+    sut,
+    makedLoginUseCase
   };
 };
 
@@ -27,5 +37,17 @@ describe('Login Controller Unitary Tests', () => {
     const testable = await sut.handle({});
 
     expect(testable).toEqual(badRequest(new MissingParamError('User or password')));
+  });
+
+  test('should return internal server error if use case returns any left response', async () => {
+    const { sut, makedLoginUseCase } = makeSut();
+
+    jest
+      .spyOn(makedLoginUseCase, 'execute')
+      .mockImplementation(() => Promise.resolve(left(new InfraError('any_infra_error'))));
+
+    const testable = await sut.handle(makeFixture());
+
+    expect(testable).toEqual(serverError());
   });
 });
