@@ -6,6 +6,7 @@ import { LoginUseCase } from '@usecases/login';
 import { InfraError } from '@usecases/output-ports/errors';
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users';
 import { left } from '@server/shared';
+import { ValidatePayloadHelper } from '@adapters/helpers/validate-payload';
 
 const makeFixture = () => ({
   body: {
@@ -22,7 +23,8 @@ const makeLoginUseCase = () => {
 
 const makeSut = () => {
   const makedLoginUseCase = makeLoginUseCase();
-  const sut = new LoginController(makedLoginUseCase);
+  const makedValidatePayload = new ValidatePayloadHelper();
+  const sut = new LoginController(makedLoginUseCase, makedValidatePayload);
 
   return {
     sut,
@@ -36,7 +38,7 @@ describe('Login Controller Unitary Tests', () => {
 
     const testable = await sut.handle({});
 
-    expect(testable).toEqual(badRequest(new MissingParamError('User or password')));
+    expect(testable).toEqual(badRequest(new MissingParamError('user or password')));
   });
 
   test('should return internal server error if use case returns any left response', async () => {
