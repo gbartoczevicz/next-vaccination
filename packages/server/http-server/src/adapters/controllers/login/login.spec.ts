@@ -9,7 +9,7 @@ import { left } from '@server/shared';
 
 const makeFixture = () => ({
   body: {
-    user: 'any_user',
+    user: 'any_user@mail.com',
     password: 'any_password'
   }
 });
@@ -44,10 +44,18 @@ describe('Login Controller Unitary Tests', () => {
 
     jest
       .spyOn(makedLoginUseCase, 'execute')
-      .mockImplementation(() => Promise.resolve(left(new InfraError('any_infra_error'))));
+      .mockImplementationOnce(() => Promise.resolve(left(new InfraError('any_infra_error'))));
 
     const testable = await sut.handle(makeFixture());
 
     expect(testable).toEqual(serverError());
+  });
+
+  test('should return status 200 case everything works out', async () => {
+    const { sut } = makeSut();
+
+    const testable = await sut.handle(makeFixture());
+
+    expect(testable.status_code).toEqual(200);
   });
 });
