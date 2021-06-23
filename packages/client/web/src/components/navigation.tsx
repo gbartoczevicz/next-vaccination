@@ -9,7 +9,7 @@ import {
   Tooltip,
   Link as ChakraLink
 } from '@chakra-ui/react';
-import { MdHome as Inicio, MdPeople as Contato, MdPerson as Perfil, MdAddBox as Hospital, MdPowerSettingsNew as Sair } from 'react-icons/md';
+import { MdHome as Home, MdPeople as Pacient, MdPerson as Perfil, MdAddBox as Hospital, MdPowerSettingsNew as Logout } from 'react-icons/md';
 import Link from 'next/link'
 
 const styleLink = {
@@ -26,25 +26,25 @@ const styleLink = {
 export const Navigation: React.FC = () => (
   <Stack spacing="35px">
     <Box>
-      <Tooltip label="Inicio" aria-label="A tooltip">
+      <Tooltip placement="right" label="Inicio" aria-label="A tooltip">
         <Button {...styleLink}>
           <Link href="/dashboard">
-            <Inicio />
+            <Home />
           </Link>
         </Button>
       </Tooltip>
     </Box>
     <Box>
-      <Tooltip label="Pacientes" aria-label="A tooltip">
+      <Tooltip placement="right" label="Pacientes" aria-label="A tooltip">
         <Button {...styleLink}>
           <Link href="/pacient">
-            <Contato />
+            <Pacient />
           </Link>
         </Button>
       </Tooltip>
     </Box>
     <Box>
-      <Tooltip label="Perfil" aria-label="A tooltip">
+      <Tooltip placement="right" label="Perfil" aria-label="A tooltip">
         <Button {...styleLink}>
           <Link href="/perfil">
             <Perfil />
@@ -53,7 +53,7 @@ export const Navigation: React.FC = () => (
       </Tooltip>
     </Box>
     <Box>
-      <Tooltip label="Hospital" aria-label="A tooltip">
+      <Tooltip placement="right" label="Hospital" aria-label="A tooltip">
         <Button {...styleLink}>
           <Link href="/hospital">
             <Hospital />
@@ -62,10 +62,10 @@ export const Navigation: React.FC = () => (
       </Tooltip>
     </Box>
     <Box>
-      <Tooltip label="Sair" aria-label="A tooltip">
+      <Tooltip placement="right" label="Sair" aria-label="A tooltip">
         <Button {...styleLink}>
           <Link href="/">
-            <Sair color="red" />
+            <Logout color="red" />
           </Link>
         </Button>
       </Tooltip>

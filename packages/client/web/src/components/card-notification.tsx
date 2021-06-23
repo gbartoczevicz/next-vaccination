@@ -34,7 +34,7 @@ export const CardNotification: React.FC<ICardNotification> = ({ status, descript
     useEffect(() => {
         const icon = selectIcon(status);
         setIconNotification(icon);
-    });
+    },[]);
 
     return (
         <Flex borderRadius="8px" marginBottom="3" bg="#F5F8FA" w="80%" p="3" color="white">

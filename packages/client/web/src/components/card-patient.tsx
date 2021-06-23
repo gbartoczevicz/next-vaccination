@@ -25,30 +25,31 @@ interface CardPatientContainerProps {
 }
 
 export const CardPatient: React.FC<CardPatientContainerProps> = ({ avatar, status, name, phone, taxNumber, createdTime, confirmedTime }) => (
-    <Flex color="#617480" flexDirection="column" maxWidth="17rem" minHeight="15rem" alignItems="center" borderRadius="13px" bg="white" p="5" marginTop="5">
+    <Flex color="#617480" flexDirection="column" maxWidth="17rem" minHeight="15rem" alignItems="center" borderRadius="8px" bg="white" p="5" marginTop="5">
         <Avatar marginBottom="1rem" size="xl" name={name} src={avatar} />
         <Text as="strong">{name}</Text>
         <Text marginTop="2" fontSize="13px">{`${phone} | ${taxNumber}`}</Text>
 
-        <Flex marginTop="10" p="1rem">
-            <Flex flexDirection="row" marginRight="10" alignItems="center">
+        <Flex alignItems="center" marginTop="10" p="1rem">
+            <Flex marginRight="10" alignItems="center">
                 <Text fontSize="30px">
                     <Calendar />
                 </Text>
                 <Text fontSize="lg">{createdTime}</Text>
             </Flex>
-            <Flex flexDirection="row" color={status === "Concluded" ? "#00BFA6" : "#F50057"} alignItems="center">
-                <Text fontSize="30px">
-                    {status === "Concluded" && (
-                        <AppointmentConcluded />
-                    )}
-                    {status === "Cancelled" && (
-                        <CancelledAppointment />
-                    )}
-
-                </Text>
-                <Text fontSize="lg">{confirmedTime}</Text>
-            </Flex>
+            {status !== "PENDING" && (
+                <Flex color={status === "CONCLUDED" ? "#00BFA6" : "#F50057"} alignItems="center">
+                    <Text fontSize="30px">
+                        {status === "CONCLUDED" && (
+                            <AppointmentConcluded />
+                        )}
+                        {status === "CANCELED" && (
+                            <CancelledAppointment />
+                        )}
+                    </Text>
+                    <Text fontSize="lg">{confirmedTime}</Text>
+                </Flex>
+            )}
         </Flex>
     </Flex>
 );

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Flex,
     Box,
@@ -9,10 +9,9 @@ import {
     HStack,
     Avatar
 } from '@chakra-ui/react';
-
 import { CardPatient, Container } from '@/components';
-
 import { MdFavorite as Heart } from 'react-icons/md';
+import { getResource } from '../../services/dashboard'
 
 const groupButtonStyle = {
     colorScheme: "#617480",
@@ -28,7 +27,92 @@ const groupButtonStyle = {
     marginLeft: "10",
 }
 
+
+const listCases = [
+    {
+        name: 'Mateus',
+        phone: '(043) 40028922',
+        taxNumber: '999.999.999-99',
+        status: 'PENDING',
+        timeVaccinated: '8:00',
+        appointment: '14:00',
+    },
+    {
+        name: 'Gabriel',
+        phone: '(043) 40028922',
+        taxNumber: '999.999.999-99',
+        status: 'CONCLUDED',
+        timeVaccinated: '8:00',
+        appointment: '19:00',
+    },
+    {
+        name: 'Guilherme',
+        phone: '(043) 40028922',
+        taxNumber: '999.999.999-99',
+        status: 'CANCELED',
+        timeVaccinated: '8:00',
+        appointment: '8:00',
+    },
+    {
+        name: 'Pedro',
+        phone: '(043) 40028922',
+        taxNumber: '999.999.999-99',
+        status: 'PENDING',
+        timeVaccinated: '8:00',
+        appointment: '9:00',
+    },
+]
+
 const DashBoard: React.FC = () => {
+    const [data, setData] = useState({});
+    const [statusFilter, setStatusFilter] = useState("ALL");
+    const [columnMorning, setColumnMorning] = useState([]);
+    const [columnEvening, setColumnEvening] = useState([]);
+    const [columnNight, setColumnNight] = useState([]);
+
+    async function loadData() {
+        const data = await getResource();
+        console.log(data)
+        await setData(data);
+        await filterData();
+    }
+
+    function filterData() {
+        const Morning: object[] = [];
+        const Evening: object[] = [];
+        const Night: object[] = [];
+
+        // const { patients } = data;
+
+
+        // patients.map(function (item) {
+
+        //     if (statusFilter === "ALL" || statusFilter === item.status) {
+        //         const [hors, minutes] = item.appointment.split(":");
+
+        //         if (parseInt(hors) >= 13 && parseInt(hors) < 18) {
+        //             Evening.push(item)
+        //         } else if (parseInt(hors) >= 18) {
+        //             Night.push(item);
+        //         } else {
+        //             Morning.push(item);
+        //         }
+        //     }
+        // })
+
+        setColumnMorning(Morning);
+        setColumnNight(Night);
+        setColumnEvening(Evening);
+    }
+
+    useEffect(() => {
+        filterData();
+    }, [statusFilter])
+
+    useEffect(() => {
+        loadData();
+    }, [])
+
     return (
         <Container title="dashboard">
             <Box width="100%">
@@ -47,7 +131,7 @@ const DashBoard: React.FC = () => {
 
                 <Flex w="100%" justifyContent="space-around" marginTop="3rem">
 
-                    <Box color="#617480" justifyContent="space-between" borderRadius="20px" bg="white" height="8rem" width="20rem" p="5">
+                    <Box color="#617480" borderRadius="20px" bg="white" height="8rem" width="20rem" p="5">
                         <Box paddingLeft="5" bg="white" d="flex" alignItems="center">
                             <Text fontSize="23">
                                 <Heart />
@@ -98,39 +182,37 @@ const DashBoard: React.FC = () => {
                         <Heading as="h3">Agendamentos</Heading>
                     </Box>
                     <Flex p="1" bg="white" width="45rem" borderRadius="8px">
-                        <Button {...groupButtonStyle}>Pendentes</Button>
-                        <Button {...groupButtonStyle}>Vacinados</Button>
-                        <Button {...groupButtonStyle}>Cancelados</Button>
-                        <Button {...groupButtonStyle}>Todos</Button>
+                        <Button {...groupButtonStyle} onClick={() => setStatusFilter("PENDING")}>Pendentes</Button>
+                        <Button {...groupButtonStyle} onClick={() => setStatusFilter("VACCINETED")}>Vacinados</Button>
+                        <Button {...groupButtonStyle} onClick={() => setStatusFilter("CANCELED")}>Cancelados</Button>
+                        <Button {...groupButtonStyle} onClick={() => setStatusFilter("ALL")}>Todos</Button>
                     </Flex>
                 </Flex>
 
-                <Flex flexDirection="row" justifyContent="space-around">
-                    <Box>
+                <Flex justifyContent="space-around">
+                    <Box alignItems="center" w="20rem">
                         <Text fontSize="23">Manhã</Text>
-                        <Box alignItems="center">
-                            <CardPatient status="Concluded" avatar=""
-                                name="Mateus" phone="(043) 40028922" taxNumber="999.999.999-99" createdTime="8:00" confirmedTime="8:02" />
-
-                            <CardPatient status="Concluded" avatar=""
-                                name="Pedro" phone="(043) 40028922" taxNumber="999.999.999-99" createdTime="8:00" confirmedTime="8:02" />
-                        </Box>
-
-
+                        {columnMorning.map(item => (
+                            <CardPatient status={item.status} avatar=""
+                                name={item.name} phone={item.phone} taxNumber={item.taxNumber} createdTime={item.appointment} confirmedTime={item.timeVaccinated} />
+                        ))}
                     </Box>
-                    <Box>
+
+
+                    <Box alignItems="center" w="20rem">
                         <Text fontSize="23">Tarde</Text>
-                        <Box alignItems="center">
-                            <CardPatient status="Cancelled" avatar=""
-                                name="Gabriel" phone="(043) 40028922" taxNumber="999.999.999-99" createdTime="8:00" confirmedTime="8:02" />
-                        </Box>
+                        {columnEvening.map(item => (
+                            <CardPatient status={item.status} avatar=""
+                                name={item.name} phone={item.phone} taxNumber={item.taxNumber} createdTime={item.appointment} confirmedTime={item.timeVaccinated} />
+                        ))}
                     </Box>
-                    <Box>
+
+                    <Box alignItems="center" w="20rem">
                         <Text fontSize="23">Noite</Text>
-                        <Box alignItems="center">
-                            <CardPatient status="Cancelled" avatar=""
-                                name="Guilherme" phone="(043) 40028922" taxNumber="999.999.999-99" createdTime="8:00" confirmedTime="8:02" />
-                        </Box>
+                        {columnNight.map(item => (
+                            <CardPatient status={item.status} avatar=""
+                                name={item.name} phone={item.phone} taxNumber={item.taxNumber} createdTime={item.appointment} confirmedTime={item.timeVaccinated} />
+                        ))}
                     </Box>
                 </Flex>
             </Box>

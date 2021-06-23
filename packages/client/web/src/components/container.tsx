@@ -17,7 +17,9 @@ import {
     Avatar,
     Text,
     position,
-    background
+    background,
+    SimpleGrid
+
 } from '@chakra-ui/react';
 
 import { Navigation, CardNotification } from '@/components';
@@ -74,10 +76,12 @@ export const Container: React.FC<iContainer> = ({ children }) => (
                 <Divider w="15rem" background="#F5F8FA" />
                 <Flex my="5" alignItems="center" w="95%" flexDirection="column">
                     <Text fontSize="md" as="strong">Notificações</Text>
-                    <Flex m="2.5rem" w="100%" alignItems="center" flexDirection="column" maxHeight="1px">
-                        {arrNotification.map(data => (
-                            <CardNotification status={data.status} description={data.description} />
-                        ))}
+                    <Flex m="2.5rem" w="100%" flexDirection="column" maxHeight="25rem" overflow="hidden">
+                        <Flex flexDirection="column" alignItems="center" overflow="auto" marginRight="-50px">
+                            {arrNotification.map(data => (
+                                <CardNotification status={data.status} description={data.description} />
+                            ))}
+                        </Flex>
                     </Flex>
                 </Flex>
             </Flex>
