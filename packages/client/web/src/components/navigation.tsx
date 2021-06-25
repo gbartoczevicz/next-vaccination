@@ -1,75 +1,65 @@
 import React from 'react';
+import { Stack, Tooltip, IconButton, Box } from '@chakra-ui/react';
 import {
-  Stack,
-  Box,
-  Text,
-  Flex,
-  Icon,
-  Button,
-  Tooltip,
-  Link as ChakraLink
-} from '@chakra-ui/react';
-import { MdHome as Home, MdPeople as Pacient, MdPerson as Perfil, MdAddBox as Hospital, MdPowerSettingsNew as Logout } from 'react-icons/md';
-import Link from 'next/link'
+  MdHome as Home,
+  MdPeople as Pacient,
+  MdPerson as Perfil,
+  MdAddBox as Hospital,
+  MdPowerSettingsNew as Logout
+} from 'react-icons/md';
+import Link from 'next/link';
 
 const styleLink = {
-  color: "#617480",
-  variant: "link",
-  size: "lg",
-  fontSize: "24px",
+  color: '#617480',
+  variant: 'link',
+  size: 'lg',
+  fontSize: '24px',
   _hover: {
-    background: "white",
-    color: "#6C63FF",
+    background: 'white',
+    color: '#6C63FF'
   }
-}
+};
 
 export const Navigation: React.FC = () => (
   <Stack spacing="35px">
-    <Box>
-      <Tooltip placement="right" label="Inicio" aria-label="A tooltip">
-        <Button {...styleLink}>
-          <Link href="/dashboard">
-            <Home />
-          </Link>
-        </Button>
-      </Tooltip>
-    </Box>
-    <Box>
-      <Tooltip placement="right" label="Pacientes" aria-label="A tooltip">
-        <Button {...styleLink}>
-          <Link href="/pacient">
-            <Pacient />
-          </Link>
-        </Button>
-      </Tooltip>
-    </Box>
-    <Box>
-      <Tooltip placement="right" label="Perfil" aria-label="A tooltip">
-        <Button {...styleLink}>
-          <Link href="/perfil">
-            <Perfil />
-          </Link>
-        </Button>
-      </Tooltip>
-    </Box>
-    <Box>
-      <Tooltip placement="right" label="Hospital" aria-label="A tooltip">
-        <Button {...styleLink}>
-          <Link href="/hospital">
-            <Hospital />
-          </Link>
-        </Button>
-      </Tooltip>
-    </Box>
-    <Box>
-      <Tooltip placement="right" label="Sair" aria-label="A tooltip">
-        <Button {...styleLink}>
-          <Link href="/">
-            <Logout color="red" />
-          </Link>
-        </Button>
-      </Tooltip>
-    </Box>
+    <Link href="/dashboard">
+      <Box>
+        <Tooltip placement="right" label="Inicio">
+          <IconButton aria-label="Início" icon={<Home />} {...styleLink} />
+        </Tooltip>
+      </Box>
+    </Link>
+
+    <Link href="/#">
+      <Box>
+        <Tooltip placement="right" label="Pacientes">
+          <IconButton aria-label="Pacientes" icon={<Pacient />} {...styleLink} />
+        </Tooltip>
+      </Box>
+    </Link>
+
+    <Link href="/profile">
+      <Box>
+        <Tooltip placement="right" label="Perfil">
+          <IconButton aria-label="Perfil" icon={<Perfil />} {...styleLink} />
+        </Tooltip>
+      </Box>
+    </Link>
+
+    <Link href="/vaccination_point">
+      <Box>
+        <Tooltip placement="right" label="Ponto de Vacinação">
+          <IconButton aria-label="Ponto de Vacinação" icon={<Hospital />} {...styleLink} />
+        </Tooltip>
+      </Box>
+    </Link>
+
+    <Link href="/logout">
+      <Box>
+        <Tooltip placement="right" label="Sair">
+          <IconButton aria-label="Sair" icon={<Logout color="red" />} {...styleLink} />
+        </Tooltip>
+      </Box>
+    </Link>
   </Stack>
 );
-

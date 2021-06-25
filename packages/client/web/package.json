@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "mock-server": "json-server --port 3333 --watch ./server-mock.json"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.6.2",

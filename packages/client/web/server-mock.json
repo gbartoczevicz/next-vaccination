@@ -1,0 +1,91 @@
+{
+  "vaccination_point": {
+    "id": 0,
+    "avatar": "https://png.pngtree.com/png-vector/20200329/ourlarge/pngtree-hospital-icon-design-illustration-png-image_2166843.jpg",
+    "name": "Ponto de Vacinação",
+    "address": {},
+    "responsible": {
+      "id": 0,
+      "name": "Responsável"
+    }
+  },
+  "patients": [
+    {
+      "id": 0,
+      "name": "Luiz",
+      "document": "999.999.999-99",
+      "phone": "(43) 40028922",
+      "avatar": "https://tenor.com/view/takao-futenime-bruno-berti-p%C3%A9-gif-20310071",
+      "appointment": "8:00",
+      "timeVaccinated": "7:00"
+    },
+    {
+      "id": 1,
+      "name": "Mateus",
+      "document": "999.999.999-99",
+      "phone": "(43) 40028922",
+      "avatar": "https://tenor.com/view/takao-futenime-bruno-berti-p%C3%A9-gif-20310071",
+      "appointment": "8:00",
+      "timeVaccinated": "7:00"
+    },
+    {
+      "id": 2,
+      "name": "Guilherme",
+      "document": "999.999.999-99",
+      "phone": "(43) 40028922",
+      "avatar": "https://tenor.com/view/takao-futenime-bruno-berti-p%C3%A9-gif-20310071",
+      "appointment": "8:00",
+      "timeVaccinated": "7:00"
+    },
+    {
+      "id": 3,
+      "name": "Gabriel",
+      "document": "999.999.999-99",
+      "phone": "(43) 40028922",
+      "avatar": "https://tenor.com/view/takao-futenime-bruno-berti-p%C3%A9-gif-20310071",
+      "appointment": "8:00",
+      "timeVaccinated": "7:00"
+    },
+    {
+      "id": 4,
+      "name": "Pedro",
+      "document": "999.999.999-99",
+      "phone": "(43) 40028922",
+      "avatar": "https://tenor.com/view/takao-futenime-bruno-berti-p%C3%A9-gif-20310071",
+      "appointment": "8:00",
+      "timeVaccinated": "7:00"
+    }
+  ],
+  "notifications": [
+    {
+      "id": 1,
+      "content": "Profissional da saúde 01 acessou pela primeira vez o sistema às 14:34 do dia 13 de março",
+      "type": "FIRST_ACCESS"
+    },
+    {
+      "id": 2,
+      "content": "O estoque do lote X atingiu menos de 20% da capacidade às 14:34 do dia 11/05",
+      "type": "LOW_STOCK"
+    },
+    {
+      "id": 3,
+      "content": "O estoque do lote X atingiu menos de 40% da capacidade às 14:34 do dia 11/05",
+      "type": "MEDIUM_STOCK"
+    },
+    {
+      "id": 4,
+      "content": "O estoque do lote X atingiu menos de 40% da capacidade às 14:34 do dia 11/05",
+      "type": "MEDIUM_STOCK"
+    },
+    {
+      "id": 5,
+      "content": "O paciente Fulano da Silva cancelou seu agendamento no dia 11/06 as 19:00",
+      "type": "APPOINTMENT_CANCELLED"
+    },
+    {
+      "id": 6,
+      "content": "O paciente Fulano da Silva cancelou seu agendamento no dia 11/06 as 19:00",
+      "type": "APPOINTMENT_CANCELLED"
+    }
+  ]
+}

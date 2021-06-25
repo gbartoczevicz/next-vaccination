@@ -1,55 +1,59 @@
 import React from 'react';
+import { Flex, Text, Avatar } from '@chakra-ui/react';
 import {
-    Flex,
-    Box,
-    Text,
-    SimpleGrid,
-    Heading,
-    Button,
-    HStack,
-    Avatar,
-    BoxProps
+  MdDateRange as Calendar,
+  MdEventAvailable as AppointmentConcluded,
+  MdEventBusy as CancelledAppointment
+} from 'react-icons/md';
 
-} from '@chakra-ui/react';
+import { IPatientDTO } from '@/dtos/patient';
 
-import { MdFavorite as Heart, MdDateRange as Calendar, MdEventAvailable as AppointmentConcluded, MdEventBusy as CancelledAppointment } from 'react-icons/md';
+type PatientCardProps = {
+  patient: IPatientDTO;
+};
 
-interface CardPatientContainerProps {
-    avatar: string;
-    status: string;
-    name: string;
-    phone: string;
-    taxNumber: string;
-    createdTime: string;
-    confirmedTime: string;
-}
+export const CardPatient: React.FC<PatientCardProps> = ({ patient }) => {
+  const isConcluded = patient.appointment.vaccinated_at && !patient.appointment.cancellated_at;
+  const isCancelled = patient.appointment.cancellated_at && !patient.appointment.vaccinated_at;
+  const isPending = !isConcluded && !isCancelled;
 
-export const CardPatient: React.FC<CardPatientContainerProps> = ({ avatar, status, name, phone, taxNumber, createdTime, confirmedTime }) => (
-    <Flex color="#617480" flexDirection="column" maxWidth="17rem" minHeight="15rem" alignItems="center" borderRadius="8px" bg="white" p="5" marginTop="5">
-        <Avatar marginBottom="1rem" size="xl" name={name} src={avatar} />
-        <Text as="strong">{name}</Text>
-        <Text marginTop="2" fontSize="13px">{`${phone} | ${taxNumber}`}</Text>
+  return (
+    <Flex
+      color="#617480"
+      flexDirection="column"
+      maxWidth="17rem"
+      minHeight="15rem"
+      alignItems="center"
+      borderRadius="8px"
+      bg="white"
+      p="5"
+      marginTop="5"
+    >
+      <Avatar marginBottom="1rem" size="xl" name={patient.name} src={patient.avatar} />
+      <Text as="strong">
+        {patient.name} | {patient.id}
+      </Text>
+      <Text marginTop="2" fontSize="13px">{`${patient.phone} | ${patient.document}`}</Text>
 
-        <Flex alignItems="center" marginTop="10" p="1rem">
-            <Flex marginRight="10" alignItems="center">
-                <Text fontSize="30px">
-                    <Calendar />
-                </Text>
-                <Text fontSize="lg">{createdTime}</Text>
-            </Flex>
-            {status !== "PENDING" && (
-                <Flex color={status === "CONCLUDED" ? "#00BFA6" : "#F50057"} alignItems="center">
-                    <Text fontSize="30px">
-                        {status === "CONCLUDED" && (
-                            <AppointmentConcluded />
-                        )}
-                        {status === "CANCELED" && (
-                            <CancelledAppointment />
-                        )}
-                    </Text>
-                    <Text fontSize="lg">{confirmedTime}</Text>
-                </Flex>
-            )}
+      <Flex alignItems="center" marginTop="10" p="1rem">
+        <Flex marginRight="10" alignItems="center">
+          <Text fontSize="30px">
+            <Calendar />
+          </Text>
+          <Text fontSize="lg">{patient.appointment.date}</Text>
         </Flex>
+        {!isPending && (
+          <Flex color={isConcluded ? '#00BFA6' : '#F50057'} alignItems="center">
+            <Text fontSize="30px">
+              {isConcluded && <AppointmentConcluded />}
+              {isCancelled && <CancelledAppointment />}
+            </Text>
+            <Text fontSize="lg">
+              {isConcluded ? patient.appointment.vaccinated_at : patient.appointment.cancellated_at}
+            </Text>
+          </Flex>
+        )}
+      </Flex>
     </Flex>
-);
+  );
+};
