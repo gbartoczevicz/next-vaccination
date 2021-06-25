@@ -30,7 +30,7 @@ export const Navigation: React.FC = () => (
       </Box>
     </Link>
 
-    <Link href="/#">
+    <Link href="/temp">
       <Box>
         <Tooltip placement="right" label="Pacientes">
           <IconButton aria-label="Pacientes" icon={<Pacient />} {...styleLink} />
@@ -46,7 +46,7 @@ export const Navigation: React.FC = () => (
       </Box>
     </Link>
 
-    <Link href="/vaccination_point">
+    <Link href="/temp">
       <Box>
         <Tooltip placement="right" label="Ponto de Vacinação">
           <IconButton aria-label="Ponto de Vacinação" icon={<Hospital />} {...styleLink} />
@@ -54,7 +54,7 @@ export const Navigation: React.FC = () => (
       </Box>
     </Link>
 
-    <Link href="/logout">
+    <Link href="/">
       <Box>
         <Tooltip placement="right" label="Sair">
           <IconButton aria-label="Sair" icon={<Logout color="red" />} {...styleLink} />
