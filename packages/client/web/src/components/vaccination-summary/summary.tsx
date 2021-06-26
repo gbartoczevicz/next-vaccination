@@ -16,7 +16,7 @@ export const VaccinationSummary: React.FC = () => {
 
   return (
     <Flex direction="column">
-      <Flex justifyContent="space-between" alignItems="center" my="24">
+      <Flex justifyContent="space-between" alignItems="center" mb="24">
         <Heading as="h3">Progresso de vacinação</Heading>
 
         <FilterButtonGroup>

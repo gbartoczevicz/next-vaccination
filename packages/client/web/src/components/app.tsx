@@ -20,7 +20,7 @@ export const App: React.FC = ({ children }) => {
         <Navigation />
       </Flex>
 
-      <Box flex="1" p="4rem 7.3rem 0px 7.3rem" overflowY="scroll" justifyContent="center">
+      <Box flex="1" py="4rem" px="7.3rem" overflowY="scroll" justifyContent="center">
         {children}
       </Box>
 
