@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button as ChakraButton, ButtonProps } from '@chakra-ui/react';
+import { Button, ButtonProps } from '@chakra-ui/react';
 
-export const DateFilterButton: React.FC<ButtonProps> = ({ children, ...props }) => (
-  <ChakraButton
+export const FilterButton: React.FC<ButtonProps> = ({ children, ...props }) => (
+  <Button
     colorScheme="#617480"
     variant="link"
     fontSize="20px"
@@ -17,5 +17,5 @@ export const DateFilterButton: React.FC<ButtonProps> = ({ children, ...props }) 
     {...props}
   >
     {children}
-  </ChakraButton>
+  </Button>
 );

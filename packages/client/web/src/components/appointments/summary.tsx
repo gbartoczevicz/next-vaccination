@@ -4,7 +4,7 @@ import { Flex, Heading, HStack } from '@chakra-ui/react';
 import { IAppointmentDTO } from '@/dtos';
 import { httpClient } from '@/services';
 import { AppointmentsListing } from '@/components/appointments';
-import { DateFilterButton, DateFilterButtonGroup } from '@/components/date-filter';
+import { FilterButton, FilterButtonGroup } from '@/components/filter-group';
 
 export const AppointmentsSummary: React.FC = () => {
   const [appointments, setAppointments] = useState<IAppointmentDTO[]>([]);
@@ -18,14 +18,14 @@ export const AppointmentsSummary: React.FC = () => {
       <Flex justifyContent="space-between" alignItems="center" my="24">
         <Heading as="h3">Agendamentos</Heading>
 
-        <DateFilterButtonGroup>
+        <FilterButtonGroup>
           <>
-            <DateFilterButton>Pendentes</DateFilterButton>
-            <DateFilterButton>Concluídos</DateFilterButton>
-            <DateFilterButton>Cancelados</DateFilterButton>
-            <DateFilterButton>Todos</DateFilterButton>
+            <FilterButton>Pendentes</FilterButton>
+            <FilterButton>Concluídos</FilterButton>
+            <FilterButton>Cancelados</FilterButton>
+            <FilterButton>Todos</FilterButton>
           </>
-        </DateFilterButtonGroup>
+        </FilterButtonGroup>
       </Flex>
 
       <HStack spacing="12">
