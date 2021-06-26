@@ -10,8 +10,8 @@ type VaccinationSummaryListingProps = {
 
 export const VaccinationSummaryListing: React.FC<VaccinationSummaryListingProps> = ({ summaries }) => (
   <Flex justifyContent="space-around">
-    {summaries.map((summary) => (
-      <VaccinationCardSummary summary={summary} />
+    {summaries.map((summary, index) => (
+      <VaccinationCardSummary key={index} summary={summary} />
     ))}
   </Flex>
 );
