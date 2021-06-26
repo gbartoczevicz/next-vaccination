@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Flex, Box, Text, Heading, Button } from '@chakra-ui/react';
+import React from 'react';
+import { Flex, Box, Text, Heading, Button, Divider } from '@chakra-ui/react';
 import { MdFavorite as Heart } from 'react-icons/md';
 
-import { CardPatient, App } from '@/components';
-import { httpClient } from '@/services';
-import { IAppointmentDTO } from '@/dtos';
+import { App } from '@/components';
+import { AppointmentsSummary } from '@/components/appointments';
 
 const groupButtonStyle = {
   colorScheme: '#617480',
@@ -21,12 +20,6 @@ const groupButtonStyle = {
 };
 
 const DashBoard: React.FC = () => {
-  const [appointments, setAppointments] = useState<IAppointmentDTO[]>([]);
-
-  useEffect(() => {
-    httpClient.get<IAppointmentDTO[]>('/appointments').then((res) => setAppointments(res.data));
-  }, []);
-
   return (
     <App>
       <Box width="100%">
@@ -126,26 +119,9 @@ const DashBoard: React.FC = () => {
           </Box>
         </Flex>
 
-        <Flex marginTop="20" marginBottom="10" flexDirection="row" justifyContent="space-between">
-          <Box>
-            <Heading as="h3">Agendamentos</Heading>
-          </Box>
-          <Flex p="1" bg="white" width="45rem" borderRadius="8px">
-            <Button {...groupButtonStyle}>Pendentes</Button>
-            <Button {...groupButtonStyle}>Vacinados</Button>
-            <Button {...groupButtonStyle}>Cancelados</Button>
-            <Button {...groupButtonStyle}>Todos</Button>
-          </Flex>
-        </Flex>
+        <Divider />
 
-        <Flex justifyContent="space-around">
-          <Box alignItems="center" w="20rem">
-            <Text fontSize="23">Manhã</Text>
-            {appointments.map((item) => (
-              <CardPatient key={item.id} appointment={item} />
-            ))}
-          </Box>
-        </Flex>
+        <AppointmentsSummary />
       </Box>
     </App>
   );
