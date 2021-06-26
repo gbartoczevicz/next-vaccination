@@ -2,8 +2,7 @@ import React from 'react';
 import { Flex, Box, Text, Heading, Button, Divider } from '@chakra-ui/react';
 import { MdFavorite as Heart } from 'react-icons/md';
 
-import { App } from '@/components';
-import { AppointmentsSummary } from '@/components/appointments';
+import { App, AppointmentsSummary } from '@/components';
 
 const groupButtonStyle = {
   colorScheme: '#617480',
