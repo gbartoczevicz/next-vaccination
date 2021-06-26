@@ -4,6 +4,7 @@ import { Flex, Box, Divider } from '@chakra-ui/react';
 import { Navigation, VaccinationPointSummary, NotificationCollection } from '@/components';
 import { IVaccinationPointSummaryDTO, NotificationCollectionDTO } from '@/dtos';
 import { httpClient } from '@/services';
+import { makeScroll } from '@/utils/makeScroll';
 
 export const App: React.FC = ({ children }) => {
   const [notifications, setNotifications] = useState<NotificationCollectionDTO>([]);
@@ -16,11 +17,11 @@ export const App: React.FC = ({ children }) => {
 
   return (
     <Flex h="100vh" w="100vw">
-      <Flex p="0 1.8rem 0 1.8rem" flexDirection="column" justifyContent="center" backgroundColor="white">
+      <Flex p="0 1.8rem 0 1.8rem" flexDirection="column" justifyContent="center" bgColor="white">
         <Navigation />
       </Flex>
 
-      <Box flex="1" py="4rem" px="7.3rem" overflowY="scroll" justifyContent="center">
+      <Box flex="1" py="4rem" px="7.3rem" overflowY="scroll" css={makeScroll()}>
         {children}
       </Box>
 
