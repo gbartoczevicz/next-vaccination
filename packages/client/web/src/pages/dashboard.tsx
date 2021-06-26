@@ -2,7 +2,7 @@ import React from 'react';
 import { Flex, Box, Text, Heading, Button, Divider } from '@chakra-ui/react';
 import { MdFavorite as Heart } from 'react-icons/md';
 
-import { App, AppointmentsSummary } from '@/components';
+import { App, AppointmentsSummary, VaccinationSummary } from '@/components';
 
 const groupButtonStyle = {
   colorScheme: '#617480',
@@ -117,6 +117,8 @@ const DashBoard: React.FC = () => {
             </Box>
           </Box>
         </Flex>
+
+        <VaccinationSummary />
 
         <Divider />
 

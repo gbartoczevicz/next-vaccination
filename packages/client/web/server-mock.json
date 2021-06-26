@@ -9,6 +9,40 @@
       "name": "Responsável"
     }
   },
+  "summaries": [
+    {
+      "age_group": "ALL",
+      "appointments": {
+        "pending": 100,
+        "concluded": 30,
+        "percentage": 20
+      }
+    },
+    {
+      "age_group": "ELDERLY",
+      "appointments": {
+        "pending": 100,
+        "concluded": 30,
+        "percentage": 20
+      }
+    },
+    {
+      "age_group": "ADULT",
+      "appointments": {
+        "pending": 100,
+        "concluded": 30,
+        "percentage": 20
+      }
+    },
+    {
+      "age_group": "YOUNG",
+      "appointments": {
+        "pending": 100,
+        "concluded": 30,
+        "percentage": 20
+      }
+    }
+  ],
   "appointments": [
     {
       "id": 0,

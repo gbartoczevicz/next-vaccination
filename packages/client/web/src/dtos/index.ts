@@ -3,3 +3,4 @@ export * from '@/dtos/patient';
 export * from '@/dtos/signin';
 export * from '@/dtos/vaccination-point';
 export * from '@/dtos/appointment';
+export * from '@/dtos/vaccination-summary';
