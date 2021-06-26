@@ -3,10 +3,5 @@ export interface IPatientDTO {
   name: string;
   document: string;
   phone: string;
-  avatar: string;
-  appointment: {
-    date: Date;
-    vaccinated_at?: Date;
-    cancellated_at?: Date;
-  };
+  avatar?: string;
 }

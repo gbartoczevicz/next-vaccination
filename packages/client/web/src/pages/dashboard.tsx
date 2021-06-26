@@ -3,8 +3,8 @@ import { Flex, Box, Text, Heading, Button } from '@chakra-ui/react';
 import { MdFavorite as Heart } from 'react-icons/md';
 
 import { CardPatient, App } from '@/components';
-import { IPatientDTO } from '@/dtos/patient';
 import { httpClient } from '@/services';
+import { IAppointmentDTO } from '@/dtos';
 
 const groupButtonStyle = {
   colorScheme: '#617480',
@@ -21,10 +21,10 @@ const groupButtonStyle = {
 };
 
 const DashBoard: React.FC = () => {
-  const [patients, setPatients] = useState<IPatientDTO[]>([]);
+  const [appointments, setAppointments] = useState<IAppointmentDTO[]>([]);
 
   useEffect(() => {
-    httpClient.get<IPatientDTO[]>('/patients').then((res) => setPatients(res.data));
+    httpClient.get<IAppointmentDTO[]>('/appointments').then((res) => setAppointments(res.data));
   }, []);
 
   return (
@@ -141,8 +141,8 @@ const DashBoard: React.FC = () => {
         <Flex justifyContent="space-around">
           <Box alignItems="center" w="20rem">
             <Text fontSize="23">Manhã</Text>
-            {patients.map((item) => (
-              <CardPatient key={item.id} patient={item} />
+            {appointments.map((item) => (
+              <CardPatient key={item.id} appointment={item} />
             ))}
           </Box>
         </Flex>

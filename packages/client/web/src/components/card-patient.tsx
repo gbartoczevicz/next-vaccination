@@ -6,15 +6,15 @@ import {
   MdEventBusy as CancelledAppointment
 } from 'react-icons/md';
 
-import { IPatientDTO } from '@/dtos/patient';
+import { IAppointmentDTO } from '@/dtos';
 
 type PatientCardProps = {
-  patient: IPatientDTO;
+  appointment: IAppointmentDTO;
 };
 
-export const CardPatient: React.FC<PatientCardProps> = ({ patient }) => {
-  const isConcluded = patient.appointment.vaccinated_at && !patient.appointment.cancellated_at;
-  const isCancelled = patient.appointment.cancellated_at && !patient.appointment.vaccinated_at;
+export const CardPatient: React.FC<PatientCardProps> = ({ appointment }) => {
+  const isConcluded = appointment.vaccinated_at && !appointment.cancellated_at;
+  const isCancelled = appointment.cancellated_at && !appointment.vaccinated_at;
   const isPending = !isConcluded && !isCancelled;
 
   return (
@@ -29,18 +29,18 @@ export const CardPatient: React.FC<PatientCardProps> = ({ patient }) => {
       p="5"
       marginTop="5"
     >
-      <Avatar marginBottom="1rem" size="xl" name={patient.name} src={patient.avatar} />
+      <Avatar marginBottom="1rem" size="xl" name={appointment.patient.name} src={appointment.patient.avatar} />
       <Text as="strong">
-        {patient.name} | {patient.id}
+        {appointment.patient.name} | {appointment.patient.id}
       </Text>
-      <Text marginTop="2" fontSize="13px">{`${patient.phone} | ${patient.document}`}</Text>
+      <Text marginTop="2" fontSize="13px">{`${appointment.patient.phone} | ${appointment.patient.document}`}</Text>
 
       <Flex alignItems="center" marginTop="10" p="1rem">
         <Flex marginRight="10" alignItems="center">
           <Text fontSize="30px">
             <Calendar />
           </Text>
-          <Text fontSize="lg">{patient.appointment.date}</Text>
+          <Text fontSize="lg">{appointment.date}</Text>
         </Flex>
         {!isPending && (
           <Flex color={isConcluded ? '#00BFA6' : '#F50057'} alignItems="center">
@@ -48,9 +48,7 @@ export const CardPatient: React.FC<PatientCardProps> = ({ patient }) => {
               {isConcluded && <AppointmentConcluded />}
               {isCancelled && <CancelledAppointment />}
             </Text>
-            <Text fontSize="lg">
-              {isConcluded ? patient.appointment.vaccinated_at : patient.appointment.cancellated_at}
-            </Text>
+            <Text fontSize="lg">{isConcluded ? appointment.vaccinated_at : appointment.cancellated_at}</Text>
           </Flex>
         )}
       </Flex>
