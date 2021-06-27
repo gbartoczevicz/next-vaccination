@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint ./packages/**/**/src --ext .ts",
     "lint:fix": "yarn lint -- --fix",
-    "http-server:test:ci": "cd packages/server/http-server && yarn test:ci",
+    "http-server:test:ci": "cd packages/server/http-server && yarn test:coverage",
     "tickets:test:ci": "cd packages/server/tickets && yarn test:coverage"
   },
   "repository": {
