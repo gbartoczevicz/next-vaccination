@@ -4,13 +4,15 @@ import { Flex, Heading, HStack } from '@chakra-ui/react';
 import { IAppointmentDTO } from '@/dtos';
 import { httpClient } from '@/services';
 import { AppointmentsListing, FilterButton, FilterButtonGroup } from '@/components';
+import { useDateFilter } from '@/context/date-filter';
 
 export const AppointmentsSummary: React.FC = () => {
   const [appointments, setAppointments] = useState<IAppointmentDTO[]>([]);
+  const { period } = useDateFilter();
 
   useEffect(() => {
-    httpClient.get<IAppointmentDTO[]>('/appointments').then((res) => setAppointments(res.data));
-  }, []);
+    httpClient.get<IAppointmentDTO[]>('/appointments', { params: { period } }).then((res) => setAppointments(res.data));
+  }, [period]);
 
   return (
     <Flex direction="column">
