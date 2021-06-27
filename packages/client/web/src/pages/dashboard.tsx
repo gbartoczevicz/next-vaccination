@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { App, AppointmentsSummary, VaccinationSummary } from '@/components';
-import { DateFilterProvider } from '@/context/date-filter';
+import { DateFilterProvider } from '@/contexts';
 
 const DashBoard: React.FC = () => {
   return (

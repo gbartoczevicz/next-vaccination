@@ -6,7 +6,7 @@ import { VaccinationSummaryListing } from '@/components/vaccination-summary';
 
 import { IVaccinationSummaryDTO } from '@/dtos';
 import { httpClient } from '@/services';
-import { useDateFilter } from '@/context/date-filter';
+import { useDateFilter } from '@/contexts';
 
 export const VaccinationSummary: React.FC = () => {
   const [summaries, setSummaries] = useState<IVaccinationSummaryDTO[]>([]);

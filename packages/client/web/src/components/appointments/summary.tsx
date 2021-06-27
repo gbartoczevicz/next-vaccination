@@ -4,7 +4,7 @@ import { Flex, Heading, HStack } from '@chakra-ui/react';
 import { AppointmentStatus, IAppointmentDTO } from '@/dtos';
 import { httpClient } from '@/services';
 import { AppointmentsListing, FilterButton, FilterButtonGroup } from '@/components';
-import { useDateFilter } from '@/context/date-filter';
+import { useDateFilter } from '@/contexts';
 
 export const AppointmentsSummary: React.FC = () => {
   const [appointments, setAppointments] = useState<IAppointmentDTO[]>([]);
