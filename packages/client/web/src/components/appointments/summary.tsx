@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Heading, HStack } from '@chakra-ui/react';
 
-import { IAppointmentDTO } from '@/dtos';
+import { AppointmentStatus, IAppointmentDTO } from '@/dtos';
 import { httpClient } from '@/services';
 import { AppointmentsListing, FilterButton, FilterButtonGroup } from '@/components';
 import { useDateFilter } from '@/context/date-filter';
 
 export const AppointmentsSummary: React.FC = () => {
   const [appointments, setAppointments] = useState<IAppointmentDTO[]>([]);
+  const [status, setStatus] = useState<AppointmentStatus>('PENDING');
   const { period } = useDateFilter();
 
   useEffect(() => {
-    httpClient.get<IAppointmentDTO[]>('/appointments', { params: { period } }).then((res) => setAppointments(res.data));
-  }, [period]);
+    httpClient
+      .get<IAppointmentDTO[]>('/appointments', { params: { period, status } })
+      .then((res) => setAppointments(res.data));
+  }, [period, status]);
 
   return (
     <Flex direction="column">
@@ -21,10 +24,10 @@ export const AppointmentsSummary: React.FC = () => {
 
         <FilterButtonGroup>
           <>
-            <FilterButton>Pendentes</FilterButton>
-            <FilterButton>Concluídos</FilterButton>
-            <FilterButton>Cancelados</FilterButton>
-            <FilterButton>Todos</FilterButton>
+            <FilterButton onClick={() => setStatus('PENDING')}>Pendentes</FilterButton>
+            <FilterButton onClick={() => setStatus('CONCLUDED')}>Concluídos</FilterButton>
+            <FilterButton onClick={() => setStatus('CANCELLED')}>Cancelados</FilterButton>
+            <FilterButton onClick={() => setStatus('ALL')}>Todos</FilterButton>
           </>
         </FilterButtonGroup>
       </Flex>
