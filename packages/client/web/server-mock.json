@@ -1,0 +1,140 @@
+{
+  "vaccination_point": {
+    "id": 0,
+    "avatar": "https://png.pngtree.com/png-vector/20200329/ourlarge/pngtree-hospital-icon-design-illustration-png-image_2166843.jpg",
+    "name": "Ponto de Vacinação",
+    "address": {},
+    "responsible": {
+      "id": 0,
+      "name": "Responsável"
+    }
+  },
+  "summaries": [
+    {
+      "age_group": "ALL",
+      "appointments": {
+        "pending": 100,
+        "concluded": 30,
+        "percentage": 20
+      }
+    },
+    {
+      "age_group": "ELDERLY",
+      "appointments": {
+        "pending": 100,
+        "concluded": 30,
+        "percentage": 20
+      }
+    },
+    {
+      "age_group": "ADULT",
+      "appointments": {
+        "pending": 100,
+        "concluded": 30,
+        "percentage": 20
+      }
+    },
+    {
+      "age_group": "YOUNG",
+      "appointments": {
+        "pending": 100,
+        "concluded": 30,
+        "percentage": 20
+      }
+    }
+  ],
+  "appointments": [
+    {
+      "id": 0,
+      "date": "2021-06-25",
+      "vaccinated_at": null,
+      "cancellated_at": null,
+      "patient": {
+        "id": 0,
+        "name": "Patient 0",
+        "phone": "(00) 00000-0000",
+        "document": "000.000.000-00"
+      }
+    },
+    {
+      "id": 1,
+      "date": "2021-06-25",
+      "vaccinated_at": "2021-06-25 20:59Z",
+      "cancellated_at": null,
+      "patient": {
+        "id": 1,
+        "name": "Patient 1",
+        "phone": "(11) 11111-1111",
+        "document": "111.111.111-11"
+      }
+    },
+    {
+      "id": 2,
+      "date": "2021-06-25",
+      "vaccinated_at": null,
+      "cancellated_at": "2021-06-25 20:59Z",
+      "patient": {
+        "id": 2,
+        "name": "Patient 2",
+        "phone": "(22) 22222-2222",
+        "document": "222.222.222-22"
+      }
+    },
+    {
+      "id": 3,
+      "date": "2021-06-25",
+      "vaccinated_at": null,
+      "cancellated_at": "2021-06-25 20:59Z",
+      "patient": {
+        "id": 3,
+        "name": "Patient 3",
+        "phone": "(33) 33333-3333",
+        "document": "333.333.333-33"
+      }
+    },
+    {
+      "id": 4,
+      "date": "2021-06-25",
+      "vaccinated_at": "2021-06-25 20:59Z",
+      "cancellated_at": null,
+      "patient": {
+        "id": 4,
+        "name": "Patient 4",
+        "phone": "(44) 44444-4444",
+        "document": "444.444.444-44"
+      }
+    }
+  ],
+  "notifications": [
+    {
+      "id": 1,
+      "content": "Profissional da saúde 01 acessou pela primeira vez o sistema às 14:34 do dia 13 de março",
+      "type": "FIRST_ACCESS"
+    },
+    {
+      "id": 2,
+      "content": "O estoque do lote X atingiu menos de 20% da capacidade às 14:34 do dia 11/05",
+      "type": "LOW_STOCK"
+    },
+    {
+      "id": 3,
+      "content": "O estoque do lote X atingiu menos de 40% da capacidade às 14:34 do dia 11/05",
+      "type": "MEDIUM_STOCK"
+    },
+    {
+      "id": 4,
+      "content": "O estoque do lote X atingiu menos de 40% da capacidade às 14:34 do dia 11/05",
+      "type": "MEDIUM_STOCK"
+    },
+    {
+      "id": 5,
+      "content": "O paciente Fulano da Silva cancelou seu agendamento no dia 11/06 as 19:00",
+      "type": "APPOINTMENT_CANCELLED"
+    },
+    {
+      "id": 6,
+      "content": "O paciente Fulano da Silva cancelou seu agendamento no dia 11/06 as 19:00",
+      "type": "APPOINTMENT_CANCELLED"
+    }
+  ]
+}

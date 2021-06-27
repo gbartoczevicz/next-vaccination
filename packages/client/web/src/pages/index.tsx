@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { Flex, Box, useToast, Stack, HStack, Link, Button } from '@chakra-ui/react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -11,6 +12,7 @@ import { getValidationErrors } from '@/utils/errors';
 const Home: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const toast = useToast();
+  const router = useRouter();
 
   const handleSubmit = useCallback(
     async (data: ISignInFormDataDTO) => {
@@ -24,7 +26,7 @@ const Home: React.FC = () => {
       try {
         await schema.validate(data, { abortEarly: false });
 
-        toast({ title: 'Sucesso!', status: 'success' });
+        router.push('/dashboard');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
