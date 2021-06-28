@@ -1,5 +1,4 @@
 export * from '@/components/appointments';
-export * from '@/components/filter-group';
 export * from '@/components/app';
 export * from '@/components/card-notification';
 export * from '@/components/form-submit-button';

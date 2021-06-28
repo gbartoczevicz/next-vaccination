@@ -23,7 +23,7 @@ export const ButtonGroup: React.FC<IButtonGroupProps> = ({ name, options, onChan
   const group = getRootProps();
 
   return (
-    <HStack {...group}>
+    <HStack height="fit-content" bgColor="white" borderRadius="md" p="2" {...group}>
       {options.map(({ label, value }) => {
         const radio = getRadioProps({ value });
         return (

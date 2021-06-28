@@ -13,19 +13,13 @@ export const Button: React.FC<UseRadioProps> = (props) => {
       <Box
         {...checkbox}
         cursor="pointer"
-        borderWidth="1px"
-        borderRadius="md"
-        boxShadow="md"
         _checked={{
-          bg: 'teal.600',
-          color: 'white',
-          borderColor: 'teal.600'
+          color: '#6C63FF'
         }}
-        _focus={{
-          boxShadow: 'outline'
-        }}
-        px={5}
-        py={3}
+        color="#000000"
+        px={4}
+        fontSize="20px"
+        fontWeight="normal"
       >
         {props.children}
       </Box>

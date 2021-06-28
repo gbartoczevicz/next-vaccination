@@ -1,6 +1,11 @@
 import { IPatientDTO } from './patient';
 
-export type AppointmentStatus = 'ALL' | 'PENDING' | 'CANCELLED' | 'CONCLUDED';
+export enum AppointmentStatus {
+  ALL = 'ALL',
+  PENDING = 'PENDING',
+  CANCELLED = 'CANCELLED',
+  CONCLUDED = 'CONCLUDED'
+}
 
 export interface IAppointmentDTO {
   id: string;
