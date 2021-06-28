@@ -10,3 +10,4 @@ export * from '@/components/notification-collection';
 export * from '@/components/splash-banner';
 export * from '@/components/vaccination-point-summary';
 export * from '@/components/vaccination-summary';
+export * from '@/components/button-group';

@@ -3,13 +3,13 @@ import { Flex, Heading, HStack, Code } from '@chakra-ui/react';
 
 import { AppointmentStatus, IAppointmentDTO } from '@/dtos';
 import { httpClient } from '@/services';
-import { AppointmentsListing, FilterButton, FilterButtonGroup } from '@/components';
-import { useDateFilter } from '@/contexts';
+import { AppointmentsListing, FilterButton, FilterButtonGroup, ButtonGroup } from '@/components';
+import { Period, useDateFilter } from '@/contexts';
 
 export const AppointmentsSummary: React.FC = () => {
   const [appointments, setAppointments] = useState<IAppointmentDTO[]>([]);
   const [status, setStatus] = useState<AppointmentStatus>('PENDING');
-  const { period } = useDateFilter();
+  const { period, updatePeriod } = useDateFilter();
 
   useEffect(() => {
     httpClient
@@ -35,6 +35,17 @@ export const AppointmentsSummary: React.FC = () => {
           </>
         </FilterButtonGroup>
       </Flex>
+
+      <ButtonGroup
+        name="Teste"
+        options={[
+          { label: 'Hoje', value: Period.TODAY },
+          { label: 'Últimos 7 dias', value: Period.LAST_7_DAYS },
+          { label: 'Últimos 30 dias', value: Period.LAST_30_DAYS },
+          { label: 'Todo tempo', value: Period.ALL_TIME }
+        ]}
+        onChange={updatePeriod}
+      />
 
       <HStack spacing="12">
         <AppointmentsListing period="MORNING" appointments={appointments} />
