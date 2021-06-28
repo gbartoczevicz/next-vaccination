@@ -6,7 +6,7 @@ import { VaccinationSummaryListing } from '@/components/vaccination-summary';
 
 import { IVaccinationSummaryDTO } from '@/dtos';
 import { httpClient } from '@/services';
-import { useDateFilter } from '@/contexts';
+import { Period, useDateFilter } from '@/contexts';
 
 export const VaccinationSummary: React.FC = () => {
   const [summaries, setSummaries] = useState<IVaccinationSummaryDTO[]>([]);
@@ -25,10 +25,10 @@ export const VaccinationSummary: React.FC = () => {
 
         <FilterButtonGroup>
           <>
-            <FilterButton onClick={() => updatePeriod('TODAY')}>Hoje</FilterButton>
-            <FilterButton onClick={() => updatePeriod('LAST_7_DAYS')}>Últimos 7 dias</FilterButton>
-            <FilterButton onClick={() => updatePeriod('LAST_30_DAYS')}>Últimos 30 dias</FilterButton>
-            <FilterButton onClick={() => updatePeriod('ALL_TIME')}>Todo tempo</FilterButton>
+            <FilterButton onClick={() => updatePeriod(Period.TODAY)}>Hoje</FilterButton>
+            <FilterButton onClick={() => updatePeriod(Period.LAST_7_DAYS)}>Últimos 7 dias</FilterButton>
+            <FilterButton onClick={() => updatePeriod(Period.LAST_30_DAYS)}>Últimos 30 dias</FilterButton>
+            <FilterButton onClick={() => updatePeriod(Period.ALL_TIME)}>Todo tempo</FilterButton>
           </>
         </FilterButtonGroup>
       </Flex>

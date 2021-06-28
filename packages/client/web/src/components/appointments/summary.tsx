@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Heading, HStack } from '@chakra-ui/react';
+import { Flex, Heading, HStack, Code } from '@chakra-ui/react';
 
 import { AppointmentStatus, IAppointmentDTO } from '@/dtos';
 import { httpClient } from '@/services';
@@ -19,6 +19,10 @@ export const AppointmentsSummary: React.FC = () => {
 
   return (
     <Flex direction="column">
+      <Code colorScheme="yellow" color="black" width="fit-content">
+        Current Status: {status} <br /> Current Period: {period}
+      </Code>
+
       <Flex justifyContent="space-between" alignItems="center" my="24">
         <Heading as="h3">Agendamentos</Heading>
 

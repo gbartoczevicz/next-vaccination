@@ -1,6 +1,11 @@
 import React, { createContext, useState, useCallback, useContext } from 'react';
 
-type Period = 'TODAY' | 'LAST_7_DAYS' | 'LAST_30_DAYS' | 'ALL_TIME';
+export enum Period {
+  TODAY = 'TODAY',
+  LAST_7_DAYS = 'LAST_7_DAYS',
+  LAST_30_DAYS = 'LAST_30_DAYS',
+  ALL_TIME = 'ALL_TIME'
+}
 
 interface IContext {
   period: Period;
@@ -10,7 +15,7 @@ interface IContext {
 const DateFilterContext = createContext<IContext>({} as IContext);
 
 export const DateFilterProvider: React.FC = ({ children }) => {
-  const [period, setPeriod] = useState<Period>('TODAY');
+  const [period, setPeriod] = useState<Period>(Period.TODAY);
 
   const updatePeriod = useCallback((toSet: Period) => setPeriod(toSet), []);
 
