@@ -1,3 +1,4 @@
+import { makeUser } from '@entities/user/fake';
 import { EntityID } from '@server/shared';
 import { InvalidPatient } from './errors';
 import { Patient } from './patient';
@@ -10,7 +11,8 @@ describe('Patient Unitary Tests', () => {
 
     const testable = sut.create({
       id: new EntityID('already_created_patient'),
-      avatar: 'avatar.png'
+      avatar: 'avatar.png',
+      user: makeUser({ id: 'already_created_user' })
     });
 
     expect(testable.isRight()).toBeTruthy();
@@ -19,6 +21,7 @@ describe('Patient Unitary Tests', () => {
 
     expect(patient.id.value).toEqual('already_created_patient');
     expect(patient.avatar).toEqual('avatar.png');
+    expect(patient.user.id.value).toEqual('already_created_user');
   });
 
   describe('params validation', () => {
@@ -27,7 +30,8 @@ describe('Patient Unitary Tests', () => {
 
       const testable = sut.create({
         id: null,
-        avatar: 'avatar.png'
+        avatar: 'avatar.png',
+        user: makeUser({})
       });
 
       expect(testable.isLeft()).toBeTruthy();
@@ -39,11 +43,25 @@ describe('Patient Unitary Tests', () => {
 
       const testable = sut.create({
         id: new EntityID(),
-        avatar: null
+        avatar: null,
+        user: makeUser({})
       });
 
       expect(testable.isLeft()).toBeTruthy();
       expect(testable.value).toEqual(new InvalidPatient('Avatar is required'));
+    });
+
+    it('should validate user param', () => {
+      const { sut } = makeSut();
+
+      const testable = sut.create({
+        id: new EntityID(),
+        avatar: 'avatar.png',
+        user: null
+      });
+
+      expect(testable.isLeft()).toBeTruthy();
+      expect(testable.value).toEqual(new InvalidPatient('User is required'));
     });
   });
 });
