@@ -1,5 +1,5 @@
 import { Controller, HttpRequest, HttpResponse } from '@adapters/contracts';
-import { MissingParamError } from '@adapters/errors';
+import { MissingParamsError } from '@adapters/errors';
 import { badRequest, created, serverError } from '@adapters/helpers/http-helper';
 import { ValidatePayload } from '@adapters/helpers/validate-payload';
 import { CreatePatientUseCase } from '@usecases/create-patient';
@@ -27,8 +27,7 @@ export class CreatePatientController implements Controller {
     this.validateHttpRequest.setPayload(httpRequest.body);
 
     if (!this.validateHttpRequest.containsAllRequiredFields()) {
-      const missingFields = this.validateHttpRequest.exibeMissingFields().join(' or ');
-      return badRequest(new MissingParamError(missingFields));
+      return badRequest(MissingParamsError.create(this.validateHttpRequest.exibeMissingFields()));
     }
 
     const userOrError = await this.createUserUseCase.execute(httpRequest.body);

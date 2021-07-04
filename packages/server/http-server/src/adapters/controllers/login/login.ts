@@ -1,5 +1,5 @@
 import { Controller, HttpRequest, HttpResponse } from '@adapters/contracts';
-import { MissingParamError } from '@adapters/errors';
+import { MissingParamsError } from '@adapters/errors';
 import { badRequest, ok, serverError } from '@adapters/helpers/http-helper';
 import { ValidatePayload } from '@adapters/helpers/validate-payload';
 import { LoginUseCase } from '@usecases/login';
@@ -19,8 +19,7 @@ export class LoginController implements Controller {
     this.validateHttpRequest.setPayload(httpRequest.body);
 
     if (!this.validateHttpRequest.containsAllRequiredFields()) {
-      const missingFields = this.validateHttpRequest.exibeMissingFields().join(' or ');
-      return badRequest(new MissingParamError(missingFields));
+      return badRequest(MissingParamsError.create(this.validateHttpRequest.exibeMissingFields()));
     }
 
     const loginOrError = await this.loginUseCase.execute(httpRequest.body);

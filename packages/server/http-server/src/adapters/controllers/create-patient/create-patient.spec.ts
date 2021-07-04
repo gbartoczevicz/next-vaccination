@@ -7,7 +7,7 @@ import { FakePatientsRepository } from '@usecases/output-ports/repositories/pati
 import { FakeUsersRepository } from '@usecases/output-ports/repositories/users';
 import { left, right } from '@server/shared';
 import { badRequest, created, serverError } from '@adapters/helpers/http-helper';
-import { MissingParamError } from '@adapters/errors';
+import { MissingParamsError } from '@adapters/errors';
 import { InfraError } from '@usecases/output-ports/errors';
 import { CreatePatientController } from './create-patient';
 
@@ -56,7 +56,7 @@ describe('Create Patient Controller Unitary Tests', () => {
     const testable = await sut.handle({});
 
     expect(testable).toEqual(
-      badRequest(new MissingParamError('name or email or phone or password or birthday or document'))
+      badRequest(MissingParamsError.create(['name', 'email', 'phone', 'password', 'birthday', 'document']))
     );
   });
 

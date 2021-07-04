@@ -1,5 +1,5 @@
 import { LoginController } from '@adapters/controllers/login';
-import { MissingParamError } from '@adapters/errors';
+import { MissingParamsError } from '@adapters/errors';
 import { badRequest, serverError } from '@adapters/helpers/http-helper';
 import { FakeEncrypter } from '@entities/output-ports/encrypter';
 import { LoginUseCase } from '@usecases/login';
@@ -38,7 +38,7 @@ describe('Login Controller Unitary Tests', () => {
 
     const testable = await sut.handle({});
 
-    expect(testable).toEqual(badRequest(new MissingParamError('user or password')));
+    expect(testable).toEqual(badRequest(MissingParamsError.create(['user', 'password'])));
   });
 
   test('should return internal server error if use case returns any left response', async () => {
